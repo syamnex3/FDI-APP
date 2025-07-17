@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+    <meta charset="UTF-8">
+    <title>Verify OTP</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .otp-container { background-color: #fff; padding: 30px 40px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { margin-bottom: 20px; }
+        input, .btn { width: 90%; padding: 12px; font-size: 16px; margin-top: 20px; border-radius: 5px; border: 1px solid #ccc; }
+        .btn { background-color: #007bff; color: white; border: none; cursor: pointer; text-decoration: none; display: inline-block; }
+        .resend-btn { background-color: #28a745; margin-top: 10px; }
+        .resend-btn:disabled { background-color: #cccccc; cursor: not-allowed; }
+        .messages { list-style-type: none; padding: 0; margin-bottom: 15px; }
+        .messages li { padding: 10px; border-radius: 5px; font-weight: bold; }
+        .messages li.error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        .messages li.success, .messages li.info { color: #0f5132; background-color: #d1e7dd; border: 1px solid #badbcc; }
+        .timer-display { margin-top: 15px; font-weight: bold; color: #555; }
+    </style>
+</head>
+<body>
+<div class="otp-container">
+    <h2>Verify Your Account</h2>
+    
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>An OTP has been sent to your email. Please enter it below.</p>
+    {% endif %}
+
+    <form id="otp-form" action="{% if 'reset_email' in request.session %}{% url 'verify_reset_otp' %}{% else %}{% url 'verify_login_otp' %}{% endif %}" method="post">
+        {% csrf_token %}
+        <input 
+            type="text" 
+            name="otp" 
+            placeholder="Enter 6-digit OTP" 
+            required 
+            id="otp-field" 
+            inputmode="numeric" 
+            maxlength="6" 
+            pattern="^\d{6}$"
+            title="OTP must be exactly 6 digits"
+        >
+        <button type="submit" class="btn" id="verify-btn">Verify</button>
+    </form>
+    
+    <div class="timer-display" id="timer-display"></div>
+    
+    <form action="{% if 'reset_email' in request.session %}{% url 'resend_reset_otp' %}{% else %}{% url 'resend_login_otp' %}{% endif %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn resend-btn" id="resend-btn">Resend OTP</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const otpExpiryTimestamp = "{{ otp_expiry_timestamp }}";
+        const resendBtn = document.getElementById('resend-btn');
+        const timerDisplay = document.getElementById('timer-display');
+        const otpField = document.getElementById('otp-field');
+        let timerInterval;
+
+        function startTimer() {
+            resendBtn.disabled = true;
+            timerInterval = setInterval(function() {
+                const now = new Date();
+                const expiry = new Date(otpExpiryTimestamp);
+                const secondsLeft = Math.round((expiry - now) / 1000);
+
+                if (secondsLeft > 0) {
+                    timerDisplay.textContent = `Time remaining: ${secondsLeft}s`;
+                } else {
+                    timerDisplay.textContent = "OTP expired.";
+                    resendBtn.disabled = false;
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+
+        if (otpExpiryTimestamp) {
+            startTimer();
+        } else {
+            resendBtn.disabled = false;
+        }
+
+        // Disable all buttons if account is blocked
+        const otpBlocked = "{{ otp_blocked|yesno:'true,false' }}";
+        if (otpBlocked === "true") {
+            otpField.disabled = true;
+            document.getElementById('verify-btn').disabled = true;
+            resendBtn.disabled = true;
+        }
+
+        // Restrict OTP input to only 6 numeric digits
+        otpField.addEventListener('input', function() {
+            // Remove non-digits and limit to 6 characters
+            this.value = this.value.replace(/\D/g, '').slice(0, 6);
+        });
+    });
+</script>
+
+</body>
+</html>

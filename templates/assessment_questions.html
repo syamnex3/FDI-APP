@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+    <meta charset="UTF-8">
+    <title>Assessment Questions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 900px;
+        
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .question-card {
+            border: 1px solid #e2e8f0;
+        }
+        .question-tag {
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        .time-tag {
+            background-color: #e0f2fe;
+            color: #2563eb;
+        }
+        .points-tag {
+            background-color: #fffbeb;
+            color: #d97706;
+        }
+        /* Header styles */
+        .top-header {
+            position: fixed;
+            width: 100%;
+            z-index: 10;
+            background-color: #1d2686;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: #fff;
+            padding: 10px 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            top: 0;
+            height: 48px;
+        }
+        .brand-title-text {
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .profile-menu-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: #fff;
+            font-weight: bold;
+        }
+        .profile-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #1d2686;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .profile-help-icon {
+            color: #fff;
+            font-size: 20px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            min-width: 200px;
+            display: none;
+            z-index: 100;
+            margin-top: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        .profile-dropdown.show {
+            display: block;
+        }
+        .profile-dropdown-header {
+            padding: 8px 12px;
+            background-color: #f0f2f5;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            color: #333;
+        }
+        .profile-dropdown-header span {
+            font-size: 14px;
+        }
+        .profile-dropdown-header small {
+            color: #666;
+            font-weight: 400;
+            font-size: 11px;
+        }
+        .profile-dropdown-item {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+        .profile-dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+        .profile-dropdown-item i {
+            color: #1d2686;
+        }
+        /* Add top padding to main content to avoid overlap with fixed header */
+        .main-content {
+            padding-top: 60px;
+        }
+        .question-card .font-bold,
+.question-card .text-base,
+.question-card .font-semibold,
+.question-card .text-gray-900,
+.question-card .text-gray-800,
+.question-card .text-gray-700 {
+    font-family: Calibri, 'Inter', sans-serif !important;
+}
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <span class="brand-title-text">FDI</span>
+        <div class="profile-menu-container" id="profileMenuContainer">
+            <div class="profile-avatar">S</div>
+            <i class="fas fa-question-circle profile-help-icon" id="helpIcon"></i>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="profile-dropdown-header">
+                    <span>Sri</span><br>
+                    <small>srharshak@nexnoratech.onmicros....</small><br>
+                    <small>Nexnoratech</small>
+                </div>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-building"></i> Company Profile
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-users"></i> Team Members
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-envelope"></i> Email Templates
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-question-circle"></i> Connect Question Library
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-chart-bar"></i> Plan Usage
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-cog"></i> Setting Options
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-user-circle"></i> My Account 
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="container main-content">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">Available Questions</h1>
+        <form method="post" action="{% url 'delete_selected_questions' %}">
+            {% csrf_token %}
+            <input type="hidden" name="language" value="{{ language }}">
+            <input type="hidden" name="level" value="{{ level }}">
+            <div class="flex items-center mb-4">
+                <input type="checkbox" id="selectAll" class="mr-2 w-4 h-4">
+                <label for="selectAll" class="mr-4 font-semibold text-gray-700">Select All</label>
+                <a href="{% url 'classic_question_type' %}" class="ml-2">
+                    <button type="button" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center font-semibold">
+                        <i class="fas fa-plus mr-2"></i>Create New Question
+                    </button>
+                </a>
+                <a href="{% url 'candidate_preview' %}" title="Preview Assessment" class="ml-2" target="_blank">
+                    <button type="button" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </a>
+                <div class="flex-1"></div>
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition flex items-center font-semibold"
+                    onclick="return confirm('Are you sure you want to delete selected questions?')">
+                    <i class="fas fa-trash-alt mr-2"></i>Delete Selected
+                </button>
+            </div>
+            {% for q in questions %}
+            <div class="mb-6 p-4 question-card rounded-lg shadow-md bg-white flex items-start">
+                <input type="checkbox" name="selected_questions" value="{{ q.question_id }}" class="question-checkbox mt-2 mr-4 w-4 h-4">
+                <div class="flex-1">
+                    <div class="font-bold text-xl mb-2 text-gray-900">Q{{ forloop.counter }}: {{ q.question_text_full }}</div>
+                    <div class="flex flex-wrap gap-3 mb-3">
+                        <span class="bg-gray-100 px-3 py-1 rounded-full text-sm question-tag">{{ q.question_type }}</span>
+                        <span class="bg-gray-100 px-3 py-1 rounded-full text-sm question-tag">{{ q.domain }}</span>
+                        <span class="bg-gray-100 px-3 py-1 rounded-full text-sm question-tag">{{ q.difficulty }}</span>
+                        <span class="time-tag px-3 py-1 rounded-full text-sm">🕒 {{ q.time }}</span>
+                        <span class="points-tag px-3 py-1 rounded-full text-sm">🏅 {{ q.points }}</span>
+                    </div>
+                    <div class="text-base text-gray-700 mb-1"><strong>Topic:</strong> {{ q.topic }}</div>
+                    {% if q.options %}
+                    <div class="mt-3">
+                        <p class="font-semibold text-gray-800">Options:</p>
+                        <ul class="list-disc list-inside ml-4 text-gray-700">
+                            {% for option in q.options %}
+                                <li>{{ option }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-600 text-center text-lg">No questions found for this selection.</p>
+            {% endfor %}
+        </form>
+        <div class="flex justify-end mt-8 mb-8">
+            <button
+                onclick="window.location.href='{% url 'invite-candidates' %}'"
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition font-semibold text-lg"
+            >
+                Invite Candidates
+            </button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile dropdown logic
+            const profileMenuContainer = document.getElementById('profileMenuContainer');
+            const profileDropdown = document.getElementById('profileDropdown');
+            const helpIcon = document.getElementById('helpIcon');
+            profileMenuContainer.addEventListener('click', function(event) {
+                if (event.target === helpIcon || helpIcon.contains(event.target)) {
+                    event.stopPropagation();
+                } else {
+                    event.stopPropagation();
+                    profileDropdown.classList.toggle('show');
+                }
+            });
+            document.addEventListener('click', function(event) {
+                if (!profileMenuContainer.contains(event.target)) {
+                    profileDropdown.classList.remove('show');
+                }
+            });
+
+            // Select All logic
+            const selectAll = document.getElementById('selectAll');
+            selectAll.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.question-checkbox');
+                checkboxes.forEach(cb => cb.checked = selectAll.checked);
+            });
+            document.addEventListener('change', function(event) {
+                if (event.target.classList.contains('question-checkbox')) {
+                    const checkboxes = document.querySelectorAll('.question-checkbox');
+                    if (!event.target.checked) {
+                        selectAll.checked = false;
+                    } else if ([...checkboxes].every(c => c.checked)) {
+                        selectAll.checked = true;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invite Candidates UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Added Open Sans for email content -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            height: 100vh; /* Changed to height */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevent body scrollbar */
+        }
+
+        /* Custom scrollbar for the content area */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Layout & Positioning */
+        .flex-grow { flex-grow: 1; }
+        .hidden { display: none; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .z-index-10 { z-index: 10; }
+        .z-index-20 { z-index: 20; }
+        .z-index-50 { z-index: 50; }
+        .z-index-1000 { z-index: 1000; }
+        .flex-container { display: flex; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .justify-end { justify-content: flex-end; }
+        .grid-container { display: grid; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        .inline-block { display: inline-block; }
+        .align-middle { vertical-align: middle; }
+        .full-width { width: 100%; }
+        .min-full-width { min-width: 100%; }
+        .overflow-hidden { overflow: hidden; }
+        .overflow-x-auto { overflow-x: auto; }
+        .no-wrap { white-space: nowrap; }
+        .sticky-top { position: sticky; top: 0; }
+
+        /* Spacing */
+        .padding-4 { padding: 1rem; }
+        .padding-x-1 { padding-left: 0.25rem; padding-right: 0.25rem; }
+        .padding-y-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .padding-x-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .padding-y-1-5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+        .padding-bottom-4 { padding-bottom: 1rem; }
+        .margin-bottom-2 { margin-bottom: 0.5rem; }
+        .margin-x-px { margin-left: 1px; margin-right: 1px; }
+        .margin-top-0 { margin-top: 0; }
+        .margin-bottom-0-5 { margin-bottom: 0.125rem; }
+        .margin-bottom-3 { margin-bottom: 0.75rem; }
+        .margin-bottom-4 { margin-bottom: 1rem; }
+        .margin-bottom-8 { margin-bottom: 2rem; }
+        .margin-top-2 { margin-top: 0.5rem; }
+        .margin-top-4 { margin-top: 1rem; }
+        .margin-right-1 { margin-right: 0.25rem; }
+        .margin-left-1 { margin-left: 0.25rem; }
+        .margin-right-2 { margin-right: 0.5rem; }
+        .margin-x-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
+        .padding-right-1 { padding-right: 0.25rem; }
+        .gap-x-6 > *:not(:first-child) { margin-left: 1.5rem; }
+        .gap-x-4 > *:not(:first-child) { margin-left: 1rem; }
+        .gap-x-8 > *:not(:first-child) { margin-left: 2rem; }
+        .gap-large { gap: 1.5rem; }
+        .label-spacing { margin-bottom: 0.5rem; } 
+
+        /* New spacing classes */
+        .padding-y-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+        .padding-x-4 { padding-left: 1rem; padding-right: 1rem; }
+        .space-x-2 > *:not(:first-child) { margin-left: 0.5rem; }
+        .margin-bottom-2 { margin-bottom: 0.5rem; }
+        .margin-top-2 { margin-top: 0.5rem; }
+        .margin-left-1 { margin-left: 0.25rem; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .margin-y-1 { margin-top: 0.25rem; margin-bottom: 0.25rem; }
+
+
+        /* Colors & Backgrounds */
+        .nav-background { background-color: #212121; }
+        .text-white { color: #fff; }
+        .body-background { background-color: #f0f2f5; }
+        .background-white { background-color: #fff; }
+        .text-gray-300 { color: #d1d5db; }
+        .text-gray-400 { color: #9ca3af; }
+        .text-gray-500 { color: #6b7280; }
+        .text-gray-600 { color: #4b5563; }
+        .text-gray-700 { color: #374151; }
+        .text-gray-800 { color: #1f2937; }
+        .text-gray-900 { color: #111827; }
+        .text-blue-600 { color: #2563eb; }
+        .background-blue-600 { background-color: #2563eb; }
+        .background-red-500 { background-color: #ef4444; }
+        .background-green-500 { background-color: #22c55e; }
+        .background-red-100 { background-color: #fee2e2; }
+        .text-red-700 { color: #b91c1c; }
+        .background-orange-100 { background-color: #fff7ed; }
+        .text-orange-700 { color: #c2410c; }
+        .background-blue-50 { background-color: #eff6ff; }
+        .background-gray-50 { background-color: #f9fafb; }
+        .background-gray-300 { background-color: #d1d5db; }
+        .header-background { background-color: #1a237e; } /* This is used for the header of "Invite Candidates" section */
+        .header-text { color: #ffffff; }
+        .required-star { color: #ef4444; }
+
+        /* New color classes */
+        .background-blue-500 { background-color: #3b82f6; }
+        .border-blue-300 { border-color: #93c5fd; }
+        .background-sky-100 { background-color: #e0f2fe; }
+        .background-sky-500 { background-color: #0ea5e9; }
+        .hover-background-sky-600:hover { background-color: #0284c7; }
+        .border-sky-600 { border-color: #0284c7; }
+        .hover-background-gray-100:hover { background-color: #f3f4f6; }
+        .background-black { background-color: #000; } /* This will be changed for main-header */
+
+
+        /* Typography */
+        .text-extra-large { font-size: 1.25rem; }
+        .text-large { font-size: 1.125rem; }
+        .text-base { font-size: 1rem; }
+        .font-bold { font-weight: 700; }
+        .tracking-wide { letter-spacing: 0.05em; }
+        .text-small { font-size: 0.875rem; }
+        .font-medium { font-weight: 500; }
+        .text-extra-small { font-size: 0.75rem; }
+        .font-semibold { font-weight: 600; }
+        .text-align-left { text-align: left; }
+        .text-align-right { text-align: right; }
+
+        /* Borders & Shadows */
+        .shadow-medium { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .shadow-small { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+        .border { border-width: 1px; border-style: solid; }
+        .border-bottom { border-bottom-width: 1px; border-bottom-style: solid; }
+        .border-top { border-top-width: 1px; border-top-style: solid; }
+        .border-gray-200 { border-color: #e5e7eb; }
+        .border-blue-600 { border-color: #2563eb; }
+        .border-transparent { border-color: transparent; }
+        .border-gray-300 { border-color: #d1d5db; }
+        .border-red-200 { border-color: #fecaca; }
+        .border-orange-200 { border-color: #fed7aa; }
+        .border-right { border-right-width: 1px; border-right-style: solid; }
+        .border-y-divider > *:not(:first-child) { border-top-width: 1px; border-color: #e5e7eb; }
+
+        /* Interaction */
+        .cursor-pointer { cursor: pointer; }
+        .transition-all { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .hover-text-gray-300:hover { color: #d1d5db; }
+        .hover-text-gray-700:hover { color: #374151; }
+        .hover-border-gray-300:hover { border-color: #d1d5db; }
+        .hover-background-red-200:hover { background-color: #fecaca; }
+        .hover-background-orange-200:hover { background-color: #fed7aa; }
+        .hover-background-blue-700:hover { background-color: #1d4ed8; }
+        .hover-background-blue-100:hover { background-color: #dbeafe; }
+        .transition-background-color { transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out; }
+        .transition-shadow { transition: shadow 0.2s ease-in-out; }
+
+
+        /* Form Element Styles */
+        .input-field {
+            padding: 0.375rem;
+            font-size: 0.875rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            width: 100%;
+            outline: none;
+        }
+        .input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+        }
+
+        /* Specific Component Styles */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.625rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 9999px;
+        }
+        .badge.status-ready {
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-800 */
+        }
+        .badge.status-duplicate {
+            background-color: #ffedd5; /* orange-100 */
+            color: #9a3412; /* orange-800 */
+        }
+        .badge.status-invalid {
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-800 */
+        }
+
+        .tab-button {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+            border-bottom-width: 2px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            cursor: pointer;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #1a237e;
+        }
+        .tab-active {
+            border-color: #2563eb;
+        }
+        .tab-inactive {
+            border-color: transparent;
+        }
+        .tab-inactive:hover {
+            color: #ffffff;
+            border-color: transparent;
+        }
+
+        /* Phone Input specific styling */
+        .phone-group {
+            display: flex;
+            align-items: center;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .phone-country-code {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            color: #4b5563;
+            background-color: #f3f4f6;
+            border-right: 1px solid #d1d5db;
+        }
+
+        .phone-group input {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+        .phone-group input::placeholder {
+            color: #a0aec0;
+        }
+
+        /* Drag and drop area */
+        .drop-zone {
+            border: 2px dashed #cbd5e0;
+            background-color: #f7fafc;
+            padding: 2.5rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #718096;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .drop-zone.highlight {
+            border-color: #4299e1;
+            background-color: #ebf8ff;
+        }
+        .drop-zone input[type="file"] {
+            display: none;
+        }
+
+        /* Button Styles */
+        .action-button {
+            padding: 0.25rem 0.625rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .action-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .header-icon-button {
+            padding: 0.25rem; /* Decreased padding */
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+            border: 1px solid transparent;
+            width: 2.5rem; /* Adjusted width */
+            height: 2.5rem; /* Adjusted height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background-color: transparent;
+            color: #fff;
+            border-color: transparent;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .panel-button {
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .delete-button {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+        .delete-button:hover { background-color: #fecaca; }
+        .all-button {
+            background-color: #fff7ed;
+            color: #c2410c;
+            border-color: #fed7aa;
+        }
+        .all-button:hover { background-color: #fed7aa; }
+        .select-button {
+            background-color: #2563eb;
+            color: #fff;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            border: none;
+        }
+        .select-button:hover { background-color: #1d4ed8; }
+        .phone-button {
+            background-color: #eff6ff;
+            color: #2563eb;
+            padding: 0.5rem 0.75rem;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .phone-button:hover {
+            background-color: #22c55e;
+            color: #fff;
+        }
+        .checkbox-field {
+            border-radius: 0.25rem;
+            border: 1px solid #d1d5db;
+            color: #2563eb;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+        .checkbox-field:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Table Specific Styles */
+        .table-header-cell {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            text-align: left;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .table-data-cell {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .table-email-cell {
+            color: #3b82f6;
+            display: flex; /* Make it a flex container */
+            align-items: center; /* Vertically align items */
+            gap: 0.25rem; /* Adjusted gap to match margin-right-1 for consistent spacing */
+        }
+        /* Style for the new SVG icon */
+        .user-profile-svg { /* Renamed from user-list-svg for clarity */
+            width: 1.5em; /* Increased size */
+            height: 1.5em; /* Increased size */
+            vertical-align: middle; /* Align with text */
+            fill: #3b82f6; /* Set to blue */
+            cursor: pointer; /* Add cursor pointer */
+        }
+        .user-profile-svg:hover {
+            fill: #2563eb; /* Darker blue on hover */
+        }
+
+        /* Styles for the rich text editor toolbar icons */
+        .rte-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+            background-color: #f9fafb;
+        }
+
+        .rte-toolbar .icon-button {
+            background: none;
+            border: none;
+            padding: 0.25rem;
+            border-radius: 0.125rem;
+            cursor: pointer;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .rte-toolbar .icon-button:hover {
+            background-color: #e5e7eb;
+        }
+
+        .rte-toolbar .icon-button.active {
+            background-color: #dbeafe;
+            color: #2563eb;
+        }
+
+        .table-actions-cell {
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            align-items: flex-end; /* Align items to the right */
+            justify-content: center; /* Center content vertically */
+            padding-right: 0.75rem;
+            gap: 0.25rem; /* Small gap between stacked icons */
+        }
+
+        .candidate-info-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .user-icon {
+            color: #2563eb;
+            font-size: 0.9rem;
+        }
+
+        /* Styles for the combined user and list icon */
+        .combined-user-list-icon { /* This is the three dots icon */
+            display: inline-flex;
+            align-items: center;
+            color: #6b7280; /* Changed color for better visibility */
+            font-size: 1rem; /* Slightly larger */
+            vertical-align: middle;
+            cursor: pointer; /* Add cursor pointer */
+        }
+        .combined-user-list-icon:hover {
+            color: #2563eb; /* Add hover effect */
+        }
+
+        /* Dropdown specific styles */
+        .dropdown-menu {
+          position: absolute;
+          margin-top: 0.5rem;
+          width: 12rem; /* Default width for other dropdowns */
+          background-color: #fff;
+          border-radius: 0.375rem;
+          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+          z-index: 20;
+          padding-top: 0.25rem;
+          padding-bottom: 0.25rem;
+          color: #374151;
+        }
+        
+        /* UPDATED Dropdown Link Styles */
+        .dropdown-menu a {
+          display: block;
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
+          color: #374151;
+          text-decoration: none;
+        }
+        .dropdown-menu a:hover {
+          background-color: #f3f4f6;
+          text-decoration: none;
+        }
+        /* END UPDATED Dropdown Link Styles */
+
+        /* Specific positioning for left-aligned dropdowns */
+        .dropdown-menu.left-aligned {
+            left: 0;
+            right: auto;
+        }
+
+        /* Specific positioning for right-aligned dropdowns */
+        .dropdown-menu.right-aligned {
+            left: auto;
+            right: 0;
+        }
+
+        .submenu-menu {
+          position: absolute;
+          left: 100%;
+          top: 0;
+          margin-top: 0;
+          width: 12rem;
+          background-color: #fff;
+          border-radius: 0.375rem;
+          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+          z-index: 30;
+          padding-top: 0.25rem;
+          padding-bottom: 0.25rem;
+          margin-left: 0.25rem;
+        }
+        .submenu-menu a {
+          display: block;
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
+          color: inherit;
+          text-decoration: none;
+        }
+        .submenu-menu a:hover {
+          background-color: #f3f4f6;
+        }
+
+        /* UPDATED PROFILE DROPDOWN STYLES */
+        #profile-dropdown-menu {
+            width: 16rem; /* DECREASED width from 18rem */
+            padding-top: 0;
+            padding-bottom: 0.5rem;
+        }
+
+        #profile-dropdown-menu .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        #profile-dropdown-menu p {
+            margin: 0;
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 0.65rem 1rem;
+            font-size: 0.875rem;
+            color: #374151;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dropdown-item-icon {
+            width: 1.5rem;
+            margin-right: 0.75rem;
+            color: #1A237E; /* Dark blue to match header and image */
+            font-size: 1rem;
+            text-align: center;
+        }
+        /* END UPDATED PROFILE DROPDOWN STYLES */
+
+
+        /* Utility for small circle elements */
+        .width-6 { width: 1.5rem; }
+        .height-6 { height: 1.5rem; }
+        .rounded-full { border-radius: 9999px; }
+        .rounded-medium { border-radius: 0.375rem; }
+        .rounded-small { border-radius: 0.125rem; }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif; /* Ensure modal content uses Inter font */
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .modal-header h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .modal-close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        .modal-close-button:hover {
+            color: #374151;
+        }
+
+        .modal-body {
+            flex-grow: 1;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #374151;
+            line-height: 1.5;
+        }
+
+        .modal-body p, .modal-body ul {
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-body ul {
+            list-style-type: disc;
+            padding-left: 1.25rem;
+        }
+        .modal-body ul li {
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-footer {
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            text-align: right;
+        }
+
+        .email-subject-input {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .email-template-section {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .email-template-section label {
+            font-size: 0.875rem;
+            color: #374151;
+        }
+        .email-template-section select {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        /* Rich text editor content area */
+        .email-content-area {
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            padding: 1rem;
+            min-height: 200px;
+            margin-bottom: 1rem;
+            background-color: #fff;
+            overflow-y: auto;
+            /* Changed font to Open Sans */
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.9rem; /* Slightly larger font for content */
+            line-height: 1.6; /* Improved line height for readability */
+            color: #333; /* Darker text color for better contrast */
+        }
+
+        /* Success Message Box */
+        .success-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #22c55e;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1001;
+            font-weight: 500;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .success-message.show {
+            opacity: 1;
+        }
+
+        .success-message .close-icon {
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-left: 10px;
+        }
+
+        /* Ensure content doesn't push body scrollbar when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (min-width: 768px) {
+            .medium-screen-flex { display: flex; }
+            .medium-screen-show { display: block; }
+            .medium-screen-grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .medium-screen-gap-4 { gap: 1rem; }
+            .small-screen-margin-bottom-0 { margin-bottom: 0; }
+        }
+        @media (min-width: 1024px) {
+            .large-screen-grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .large-screen-grid-col-span-4 { grid-column: span 4 / span 4; }
+        }
+
+        /* NEW STYLES - Refactored Header */
+        .main-header {
+            background-color: #1A237E; /* MODIFIED: Exact color from image */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            color: #fff;
+            padding: 0.25rem 0; /* MODIFIED: Removed horizontal padding to make it full width */
+            border-radius: 0 !important; /* Ensures no rounded corners */
+        }
+
+        .header-content {
+            width: 100%;
+            padding: 0.25rem 1rem; /* py-0.5 px-4 - Decreased vertical padding, ADDED horizontal padding */
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem; /* space-x2 */
+            margin-bottom: 0.5rem; /* mb-2 */
+        }
+
+        .header-app-name {
+            color: #fff;
+            font-weight: 600; /* f-sbold */
+            font-size: 1.125rem; /* t-lg */
+        }
+
+        .header-button {
+            padding: 0 1rem; /* MODIFIED: Increased horizontal padding for consistency */
+            height: 2.5rem; 
+            display: inline-flex; 
+            align-items: center; 
+            border-radius: 0.375rem; 
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            border: 1px solid transparent;
+            cursor: pointer;
+            background-color: transparent; 
+            color: #fff; 
+            border-color: transparent; 
+            text-decoration: none; 
+            font-size: 0.875rem;
+        }
+
+        .header-right-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem; /* Added gap for spacing between icons */
+        }
+
+        .header-right-section .dropdown {
+            margin-left: auto; /* Pushes this and subsequent elements to the far right */
+        }
+        
+        /* Media Queries for Header */
+        @media (min-width: 640px) { /* sm breakpoint, approximate */
+            .header-left-section.small-screen-margin-bottom-0 {
+                margin-bottom: 0;
+            }
+        }
+
+        /* UPDATED Profile Side Panel Styles */
+        .profile-side-panel {
+            position: fixed;
+            top: 0;
+            right: -320px; /* Start off-screen */
+            width: 300px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: right 0.3s ease-in-out;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .profile-side-panel.show {
+            right: 0; /* Slide into view */
+        }
+        
+        .profile-initials-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 9999px;
+            background-color: #6a0dad;
+            color: #fff;
+            font-size: 2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem auto;
+        }
+
+        .profile-name-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .profile-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+        
+        .profile-edit-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #6b7280;
+            padding: 0.25rem;
+        }
+        .profile-edit-icon:hover {
+            color: #1f2937;
+        }
+
+        .profile-email {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .profile-email-icon {
+            color: #6b7280;
+        }
+        
+        .profile-close-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        [contenteditable="true"] {
+            outline: 1px solid #3b82f6;
+            background-color: #f9fafb;
+            padding: 0.1rem 0.25rem;
+            border-radius: 0.25rem;
+        }
+
+        /* Error message style */
+        .error-message {
+            color: #ef4444; /* Red color for error */
+            font-size: 0.75rem; /* text-extra-small */
+            margin-top: 0.25rem; /* Small margin top */
+            display: none; /* Hidden by default */
+        }
+
+        /* Styles for candidate initials display in modal */
+        .candidate-initials-container {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping for many initials */
+            gap: 0.5rem; /* Space between initial circles */
+            padding: 0.5rem; /* Add some padding around the initials */
+            border: 1px solid #e5e7eb; /* Subtle border */
+            border-radius: 0.375rem; /* Rounded corners */
+            background-color: #f9fafb; /* Light background */
+            flex-grow: 1; /* Allow it to take available space */
+        }
+
+        .candidate-initial-circle {
+            width: 1.75rem; /* Slightly larger circle for initials in modal */
+            height: 1.75rem;
+            border-radius: 9999px;
+            background-color: #2563eb; /* Blue color for initials */
+            color: #fff;
+            font-size: 0.875rem; /* Smaller font size for initials */
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+        
+        /* NEW: Styles for the 'S' profile icon */
+        .profile-s-icon-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        .profile-s-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem; /* MODIFIED: Further reduced size */
+            height: 1.5rem; /* MODIFIED: Further reduced size */
+            border-radius: 9999px;
+            background-color: white;
+            color: #1A237E;
+            font-size: 0.75rem; /* MODIFIED: Further reduced font size */
+            font-weight: 600;
+        }
+        
+        /* NEW: Styles for the help icon */
+        .help-icon-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem; /* MODIFIED: Further reduced size */
+            height: 1.5rem; /* MODIFIED: Further reduced size */
+            border-radius: 9999px;
+            background-color: white;
+            color: #1A237E;
+            font-size: 0.875rem; /* MODIFIED: Further reduced font size */
+            font-weight: 700;
+        }
+
+        /* MODIFICATION: Added container for help icon to ensure alignment */
+        .help-icon-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            margin-right: 2rem; /* MODIFIED: Increased margin to create more gap with right edge */
+        }
+
+        /* Ensures no rounded corners for the header background */
+        .header-background {
+            background-color: #1a237e;
+            color: #ffffff;
+            border-radius: 0 !important; /* Ensures no rounded corners */
+        }
+
+    </style>
+</head>
+<body class="body-background">
+
+    <!-- MODIFICATION: Removed inline style as it's now in CSS block -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="header-left-section small-screen-margin-bottom-0">
+                <span class="header-app-name">FDI</span>
+
+                <div class="dropdown relative" data-clicked-open="false">
+                    <button class="header-button">Assessment</button>
+                    <div class="dropdown-menu absolute left-aligned margin-top-2 rounded-medium shadow-medium z-index-20 hidden padding-y-1 text-gray-700">
+                        <a href="Assessment.html" class="block padding-x-4 padding-y-2 text-small hover-background-gray-100">Assessments</a>
+                        <div class="submenu relative">
+                            <a href="#" class="block padding-x-4 padding-y-2 text-small hover-background-gray-100 flex-container justify-between items-center">
+                                Library <span class="text-extra-small margin-left-1">▶</span>
+                            </a>
+                            <div class="submenu-menu absolute left-full top: 0; margin-top: 0; width: 48 background-white rounded-medium shadow-medium z-index-20 hidden padding-y-1 margin-left-1">
+                                <a href="#" class="block padding-x-4 padding-y-2 text-small hover-background-gray-100">Question Library</a>
+                                <a href="#" class="block padding-x-4 padding-y-2 text-small hover-background-gray-100">Assessment Library</a>
+                            </div>
+                        </div>
+                        <a href="#" id="openNewAssignmentHeader" class="block padding-x-4 padding-y-2 text-small hover-background-gray-100">New Assignment</a>
+                    </div>
+                </div>
+
+                <div class="dropdown relative" data-clicked-open="false">
+                    <button class="header-button">Interview</button>
+                    <div class="dropdown-menu absolute left-aligned margin-top-2 rounded-medium shadow-medium z-index-20 hidden padding-y-1 text-gray-700">
+                        <a href="#" class="block padding-x-4 padding-y-2 text-small hover-background-gray-100">Interview</a>
+                        <a href="#" class="block padding-x-4 padding-y-2 text-small hover-background-gray-100">Coding/Interview</a>
+                        <a href="#" class="block padding-x-4 padding-y-2 text-small hover-background-gray-100">Coding</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-right-section">
+                <a href="#" class="header-button" onclick="window.open('Mails.html'); return false;" style="text-decoration: none;">Candidate</a>
+                <button class="header-button">QList</button>
+
+                <!-- Profile Icon -->
+                <div class="dropdown relative" data-clicked-open="false">
+                    <button class="header-icon-button" id="profile-dropdown-button">
+                        <div class="profile-s-icon-container">
+                            <div class="profile-s-icon">S</div>
+                        </div>
+                    </button>
+                    <!-- Profile Dropdown Menu -->
+                    <div class="dropdown-menu absolute right-aligned margin-top-2 rounded-medium shadow-medium z-index-20 hidden" id="profile-dropdown-menu">
+                        <div class="padding-x-4 padding-y-2">
+                            <h3 class="font-semibold text-gray-900" id="profile-dropdown-name"></h3>
+                            <p class="text-small text-gray-600 truncate" id="profile-dropdown-email"></p>
+                            <p class="text-small text-gray-500" id="profile-dropdown-company"></p>
+                        </div>
+                        <div class="border-top margin-y-1 border-gray-200"></div>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-building dropdown-item-icon"></i> Company Profile
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-users dropdown-item-icon"></i> Team Members
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-envelope dropdown-item-icon"></i> Email Templates
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-question-circle dropdown-item-icon"></i> Connect Question Library
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-list-alt dropdown-item-icon"></i> Plan Usage
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-cog dropdown-item-icon"></i> Setting Options
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-user-circle dropdown-item-icon"></i> My Account
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt dropdown-item-icon"></i> Logout
+                        </a>
+                    </div>
+                </div>
+                <!-- Help Icon -->
+                <!-- MODIFICATION: Added inline style for margin -->
+                <div class="dropdown relative" data-clicked-open="false">
+                    <button class="header-icon-button">
+                        <div class="help-icon-container">
+                            <div class="help-icon-circle">?</div>
+                        </div>
+                    </button>
+                    <div class="dropdown-menu absolute right-aligned margin-top-2 rounded-medium shadow-medium z-index-20 hidden" style="width: 250px; padding: 1rem;">
+                        <h3 class="font-semibold text-gray-900 margin-bottom-2">Help & Information</h3>
+                        <p class="text-small text-gray-600">This is where help information or links to a help page would go. For now, this is a placeholder.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MODIFICATION: Removed inline style as it's now in CSS block -->
+    <div class="header-background padding-4 margin-top-0">
+        <div class="flex-container items-center header-text margin-bottom-2">
+            <a href="#" class="flex-container items-center header-text" style="text-decoration: none;">
+                <i class="fas fa-chevron-left text-small margin-right-1"></i>
+                My Assessment >
+            </a>
+            <h1 class="text-extra-large font-semibold header-text" style="margin-left: 1rem;">Invite Candidates</h1>
+        </div>
+
+        <div class="padding-bottom-0">
+            <nav class="flex-container gap-x-8" style="margin-bottom: -1px;" aria-label="Tabs">
+                <a href="#" id="add-manually-tab" class="tab-button tab-active">
+                    ADD MANUALLY?
+                </a>
+                <a href="#" id="upload-csv-tab" class="tab-button tab-inactive">
+                    UPLOAD CSV FILE
+                </a>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- MODIFICATION: This container will now scroll -->
+    <div class="flex-grow body-background" style="overflow-y: auto;">
+        <div id="success-message" class="success-message hidden">
+            Invitation sent successfully!
+            <i class="fas fa-times close-icon"></i>
+        </div>
+
+        <div id="add-manually-content" class="background-white padding-4 shadow-medium padding-bottom-4">
+            <div class="flex-container justify-between items-center margin-bottom-3">
+                <div>
+                    <button class="action-button delete-button margin-right-2" id="delete-btn" disabled>
+                        DELETE
+                    </button>
+                    <button class="action-button all-button" id="invite-all-btn">
+                        INVITE ALL CANDIDATES
+                    </button>
+                </div>
+                <div id="assessment-access-dates" style="display: none;">
+                    <p class="text-small font-medium text-gray-700" style="white-space: nowrap;">
+                        Candidates can access assessment From <span id="access-date-from"></span> Till <span id="access-date-till"></span>
+                    </p>
+                </div>
+                <button class="action-button select-button" id="invite-selected-btn">
+                    INVITE SELECTED
+                </button>
+            </div>
+
+            <div class="grid-container grid-cols-1 medium-screen-grid-cols-2 large-screen-grid-cols-4 gap-large margin-bottom-4">
+                <div>
+                    <label for="candidate-name-input" class="inline-block text-extra-small font-weight-medium text-gray-700 label-spacing">
+                        Candidate Name <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="candidate-name-input" class="input-field" placeholder="Enter candidate name">
+                </div>
+                <div>
+                    <label for="candidate-email-input" class="inline-block text-extra-small font-weight-medium text-gray-700 label-spacing">
+                        Candidate Email <span class="required-star">*</span>
+                    </label>
+                    <input type="email" id="candidate-email-input" class="input-field" placeholder="Enter candidate email">
+                    <span id="email-error" class="error-message">Please enter a valid email ending with @gmail.com.</span>
+                </div>
+                <div>
+                    <label for="pan-number-input" class="inline-block text-extra-small font-weight-medium text-gray-700 label-spacing">PAN Num <span class="required-star">*</span></label>
+                    <input type="text" id="pan-number-input" class="input-field" placeholder="Enter PAN number" maxlength="10">
+                </div>
+                <div>
+                    <label for="phone-number-input" class="inline-block text-extra-small font-weight-medium text-gray-700 label-spacing">Phone Number</label>
+                    <div class="phone-group">
+                        <span class="phone-country-code">+91</span>
+                        <input type="tel" id="phone-number-input" class="input-field" placeholder="Enter 10-digit number" maxlength="10">
+                        <button id="add-candidate-btn" class="phone-button">
+                            <i class="fas fa-plus text-extra-small"></i> Add
+                        </button>
+                    </div>
+                    <span id="phone-error" class="error-message">Please enter a valid 10-digit phone number.</span>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <div class="min-full-width inline-block align-middle">
+                    <div class="overflow-hidden border border-gray-200" style="border-radius: 0.5rem;">
+                        <table class="min-full-width border-y-divider">
+                            <thead class="background-gray-50">
+                                <tr>
+                                    <th scope="col" class="padding-y-2 padding-x-3 text-align-left">
+                                        <input type="checkbox" class="checkbox-field" id="select-all-checkbox">
+                                    </th>
+                                    <th scope="col" class="table-header-cell">
+                                        Name/Reference Code
+                                    </th>
+                                    <th scope="col" class="table-header-cell">
+                                        Resume
+                                    </th>
+                                    <th scope="col" class="table-header-cell">
+                                        Contact
+                                    </th>
+                                    <th scope="col" class="table-header-cell">
+                                        Status
+                                    </th>
+                                    <th scope="col" class="table-header-cell text-align-right">
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="candidate-table-body" class="border-y-divider background-white">
+                                <!-- Initial placeholder row removed -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-container justify-end items-center margin-top-4">
+                <span class="text-small text-gray-700 margin-right-2">SHOW</span>
+                <select class="input-field" style="width: auto; padding: 0.375rem 0.75rem;">
+                    <option>10</option>
+                    <option>20</option>
+                    <option>50</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="upload-csv-content" class="background-white padding-4 shadow-medium padding-bottom-4 hidden">
+            <div class="flex-container justify-between items-center margin-bottom-3">
+                <div>
+                    <button class="action-button delete-button margin-right-2" id="delete-btn-csv" disabled>
+                        DELETE
+                    </button>
+                    <button class="action-button all-button" id="invite-all-btn-csv" disabled>
+                        INVITE ALL CANDIDATES
+                    </button>
+                </div>
+                <button class="action-button select-button" id="invite-selected-btn-csv" disabled>
+                    INVITE SELECTED
+                </button>
+            </div>
+
+            <div class="flex-container items-center justify-center gap-x-8 margin-bottom-8 text-gray-500 text-small font-medium">
+                <div id="step-1" class="flex-container items-center">
+                    <span id="step-1-indicator" class="width-6 height-6 rounded-full background-blue-600 text-white flex-container items-center justify-center text-extra-small margin-right-2">1</span>
+                    <a href="#" id="step-1-text" class="text-blue-600 hover-underline">Download CSV template</a>
+                </div>
+                <div id="step-2" class="flex-container items-center">
+                    <span id="step-2-indicator" class="width-6 height-6 rounded-full background-gray-300 text-white flex-container items-center justify-center text-extra-small margin-right-2">2</span>
+                    <span id="step-2-text">Upload CSV File</span>
+                </div>
+                <div id="step-3" class="flex-container items-center">
+                    <span id="step-3-indicator" class="width-6 height-6 rounded-full background-gray-300 text-white flex-container items-center justify-center text-extra-small margin-right-2">3</span>
+                    <span id="step-3-text">Invite Candidates</span>
+                </div>
+            </div>
+
+            <div id="drag-drop-area" class="drop-zone margin-bottom-6">
+                Drag & Drop or <span class="text-blue-600 hover-underline">Browse CSV file</span>
+                <input type="file" id="csv-file-input" accept=".csv">
+                <p id="file-name-display" class="margin-top-2 text-gray-700"></p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <div class="min-full-width inline-block align-middle">
+                    <div class="overflow-hidden border border-gray-200" style="border-radius: 0.5rem;">
+                        <table class="min-full-width border-y-divider">
+                            <thead class="background-gray-50">
+                                <tr>
+                                    <th scope="col" class="padding-y-2 padding-x-3 text-align-left">
+                                        <input type="checkbox" class="checkbox-field" id="select-all-csv-checkbox">
+                                    </th>
+                                    <th scope="col" class="table-header-cell">Name</th>
+                                    <th scope="col" class="table-header-cell">Email</th>
+                                    <th scope="col" class="table-header-cell">Source</th>
+                                    <th scope="col" class="table-header-cell">Processing Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="csv-candidate-table-body" class="border-y-divider background-white">
+                                <!-- CSV candidate rows will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="review-email-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Review Invitation Email</h2>
+                <button class="modal-close-button" id="close-modal-btn">&times;</button>
+            </div>
+            <div class="flex-container items-center gap-large margin-bottom-3">
+                <span class="text-small font-medium text-gray-700">To</span>
+                <div id="candidate-initials-display" class="candidate-initials-container">
+                    </div>
+            </div>
+            <div class="email-template-section">
+                <label for="template-select">Template</label>
+                <select id="template-select">
+                    <option value="assessment-invite">Assessment Invite</option>
+                    <option value="custom-template">Custom Template</option>
+                </select>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="email-subject-input" value="Subject: {{company_name}} invitation for assessment" readonly>
+                
+                <!-- NEW: RTE Toolbar -->
+                <div class="rte-toolbar">
+                    <button class="icon-button" data-command="bold"><i class="fas fa-bold"></i></button>
+                    <button class="icon-button" data-command="italic"><i class="fas fa-italic"></i></button>
+                    <button class="icon-button" data-command="insertUnorderedList"><i class="fas fa-list-ul"></i></button>
+                    <button class="icon-button" data-command="insertOrderedList"><i class="fas fa-list-ol"></i></button>
+                    <button class="icon-button" data-command="createLink"><i class="fas fa-link"></i></button>
+                    <button class="icon-button" data-command="insertImage"><i class="fas fa-image"></i></button>
+                </div>
+
+                <div class="email-content-area" id="email-content-editor" contenteditable="true">
+                    <p>Hi <span id="email-candidate-names"></span>,</p>
+                    <p>{{company_name}} has invited you to take an assessment. The details are below-</p>
+                    <ul>
+                        <li>Assessment Name: {{assessment_name}}</li>
+                        <li>Number of Questions(s): {{ number_of_questions }}</li>
+                        <li>Start time: {{ start_time }}</li>
+                        <li>End time: {{ end_time }}</li>
+                        <li>Time limit: {{time_limit}}</li>
+                    </ul>
+                    <p>If you are unable to attempt the assessment within the due date, you can request an <span style="color: #2563eb; text-decoration: underline; cursor: pointer;">extension</span> before you start the assessment.</p>
+                    <p>To get acquainted with the environment, you can refer to <span style="color: #2563eb; text-decoration: underline; cursor: pointer;">Platform Help</span> and also check out <span style="color: #2563eb; text-decoration: underline; cursor: pointer;">System Requirements</span>.</p>
+                    <p style="text-align: center; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                        <button style="background-color: #2563eb; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 500; border: none; cursor: pointer;">Start Assessment</button>
+                    </p>
+                    <p>General Instructions:</p>
+                    <ul>
+                        <li>{{id_proof_instruction}}</li>
+                        <li>Make sure that you have a stable internet connection. We recommend using Chrome or Firefox browser.</li>
+                        <li>Please close all programs that upload or download files in the background (eg. Dropbox, Google Drive, torrent etc).</li>
+                        <li>To avoid any distractions, you should close all chat windows, screen-saver etc. before starting the test.</li>
+                        <li>If you encounter any issues during the test or have questions about your experience, please contact the FaceDInterview support team at <span style="color: #2563eb; text-decoration: underline; cursor: pointer;">{{contact_us_email}}</span>.</li>
+                        <li>They'll be happy to assist you promptly.</li>
+                    </ul>
+                    <p>Good Luck!</p>
+                    <p style="text-align: right; margin-top: 2rem;">For any help, please send email to <span style="color: #2563eb; text-decoration: underline; cursor: pointer;">{{contact_us_email}}</span></p>
+                    <p style="text-align: right;">Powered by FaceDInterview</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="action-button select-button" id="send-invite-btn">SEND INVITE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="newAssignmentModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>New Assignment</h2>
+                <button id="closeNewAssignmentModal" class="modal-close-button">&times;</button>
+            </div>
+            <div class="grid-container medium-screen-grid-cols-2 gap-large margin-top-2">
+                <div id="automaticAssign" class="border border-gray-300 rounded-medium padding-4 text-align-center hover-shadow-large transition-shadow cursor-pointer">
+                    <img src="https://placehold.co/80x80/3B82F6/FFFFFF?text=Auto" alt="Automatic" class="width-20 height-20 margin-x-auto margin-bottom-4 rounded-medium">
+                    <h3 class="text-large font-semibold text-gray-800 margin-bottom-0-5">Automatic</h3>
+                    <p class="text-small text-gray-600">Automatically creates assignments based on predefined rules and data.</p>
+                </div>
+                <div id="customAssign" class="border border-gray-300 rounded-medium padding-4 text-align-center hover-shadow-large transition-shadow cursor-pointer">
+                    <img src="https://placehold.co/80x80/10B981/FFFFFF?text=Manual" alt="Custom" class="width-20 height-20 margin-x-auto margin-bottom-4 rounded-medium">
+                    <h3 class="text-large font-semibold text-gray-800 margin-bottom-0-5">Manual</h3>
+                    <p class="text-small text-gray-600">Manually create and customize your assignment details.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- UPDATED Profile Side Panel -->
+    <div id="profileModal" class="modal-overlay" style="display: none; justify-content: flex-end;">
+        <div class="profile-side-panel">
+            <button class="profile-close-icon" id="closeProfileModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="profile-initials-circle" id="profile-initials"></div>
+             <div class="profile-name-container">
+                <h3 class="profile-name" id="profile-panel-name"></h3>
+                <button id="profile-edit-btn" class="profile-edit-icon" title="Edit Profile"><i class="fas fa-pencil-alt"></i></button>
+            </div>
+            <div class="profile-email">
+                <i class="fas fa-envelope profile-email-icon"></i>
+                <span id="profile-panel-email" class="text-blue-600"></span>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const assessmentName = "{{ assessment_name|escapejs }}";
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab elements
+            const addManuallyTab = document.getElementById('add-manually-tab');
+            const uploadCsvTab = document.getElementById('upload-csv-tab');
+            const addManuallyContent = document.getElementById('add-manually-content');
+            const uploadCsvContent = document.getElementById('upload-csv-content');
+
+            // CSV upload elements
+            const csvFileInput = document.getElementById('csv-file-input');
+            const dragDropArea = document.getElementById('drag-drop-area');
+            const fileNameDisplay = document.getElementById('file-name-display');
+            const csvCandidateTableBody = document.getElementById('csv-candidate-table-body');
+
+            // Manual add candidate elements
+            const candidateNameInput = document.getElementById('candidate-name-input');
+            const candidateEmailInput = document.getElementById('candidate-email-input');
+            const panNumberInput = document.getElementById('pan-number-input'); 
+            const phoneNumberInput = document.getElementById('phone-number-input');
+            const phoneErrorSpan = document.getElementById('phone-error');
+            const addCandidateBtn = document.getElementById('add-candidate-btn');
+            const candidateTableBody = document.getElementById('candidate-table-body');
+            const emailErrorSpan = document.getElementById('email-error'); // Get the error message span
+
+            // Action buttons
+            const deleteBtn = document.getElementById('delete-btn');
+            const inviteAllBtn = document.getElementById('invite-all-btn');
+            const inviteSelectedBtn = document.getElementById('invite-selected-btn');
+            const selectAllCheckbox = document.getElementById('select-all-checkbox');
+            
+            // CSV Action Buttons
+            const deleteBtnCsv = document.getElementById('delete-btn-csv');
+            const inviteAllBtnCsv = document.getElementById('invite-all-btn-csv');
+            const inviteSelectedBtnCsv = document.getElementById('invite-selected-btn-csv');
+
+            // Assessment access date display elements
+            const assessmentAccessDatesDiv = document.getElementById('assessment-access-dates');
+            const accessDateFromSpan = document.getElementById('access-date-from');
+            const accessDateTillSpan = document.getElementById('access-date-till');
+
+            // Modals
+            const reviewEmailModal = document.getElementById('review-email-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const sendInviteBtn = document.getElementById('send-invite-btn');
+            
+            const newAssignmentModal = document.getElementById("newAssignmentModal"); 
+            const openNewAssignmentHeaderBtn = document.getElementById("openNewAssignmentHeader");
+            const closeNewAssignmentModalBtn = document.getElementById("closeNewAssignmentModal");
+            const automaticAssignBtn = document.getElementById("automaticAssign");
+            const customAssignBtn = document.getElementById("customAssign");
+            
+            // Profile Dropdown elements
+            const profileDropdownButton = document.getElementById('profile-dropdown-button');
+            const profileDropdownMenu = document.getElementById('profile-dropdown-menu');
+            
+            // Profile Side Panel elements
+            const profileModal = document.getElementById('profileModal');
+            const profileSidePanel = profileModal.querySelector('.profile-side-panel');
+            const closeProfileModalBtn = document.getElementById('closeProfileModal');
+            const profileEditBtn = document.getElementById('profile-edit-btn');
+            const profilePanelName = document.getElementById('profile-panel-name');
+            const profilePanelEmail = document.getElementById('profile-panel-email');
+            const profileInitials = document.getElementById('profile-initials');
+
+            // RTE elements
+            const rteToolbar = document.querySelector('.rte-toolbar');
+            const emailContentEditor = document.getElementById('email-content-editor');
+
+            // Success message elements
+            const successMessage = document.getElementById('success-message');
+            const successMessageCloseIcon = successMessage.querySelector('.close-icon');
+
+            // Initials display element in modal
+            const candidateInitialsDisplay = document.getElementById('candidate-initials-display');
+
+            let messageTimeout; 
+            let selectedCandidatesForInvite = [];
+            let currentlyEditingRow = null; // To keep track of the row being edited
+
+            /**
+             * Formats a Date object into "DD Mon at HH:MM AM/PM" format.
+             */
+            function formatDateForDisplay(date) {
+                const day = date.getDate();
+                const month = date.toLocaleString('en-US', { month: 'short' });
+                const hours = date.getHours();
+                const minutes = date.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                const formattedHours = hours % 12 === 0 ? 12 : hours % 12; 
+                const formattedMinutes = minutes < 10 ? '0' + minutes : minutes; 
+
+                return `${day} ${month} at ${formattedHours}:${formattedMinutes} ${ampm}`;
+            }
+
+            /**
+             * Extracts initials from a given name.
+             */
+            function getInitials(name) {
+                if (!name) return '';
+                const parts = name.split(' ').filter(n => n); 
+                if (parts.length === 0) return '';
+                if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+                return (parts[0].charAt(0) + (parts[1] ? parts[1].charAt(0) : '')).toUpperCase();
+            }
+
+            /**
+             * Updates the state of action buttons and the assessment access date display.
+             */
+            function updateButtonStatesAndDateDisplay() {
+                const checkboxes = candidateTableBody.querySelectorAll('.candidate-checkbox');
+                let checkedCount = 0;
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        checkedCount++;
+                    }
+                });
+
+                deleteBtn.disabled = checkedCount === 0;
+                inviteAllBtn.disabled = candidateTableBody.rows.length === 0 || checkedCount > 0;
+
+                if (checkedCount > 0) {
+                    inviteSelectedBtn.textContent = `INVITE SELECTED (${checkedCount})`;
+                } else {
+                    inviteSelectedBtn.textContent = 'INVITE SELECTED';
+                }
+
+                if (checkedCount > 0) {
+                    assessmentAccessDatesDiv.style.display = 'block';
+                    const now = new Date();
+                    const futureDate = new Date();
+                    futureDate.setDate(now.getDate() + 7); 
+                    accessDateFromSpan.textContent = formatDateForDisplay(now);
+                    accessDateTillSpan.textContent = `${formatDateForDisplay(futureDate)} (IST)`; 
+                } else {
+                    assessmentAccessDatesDiv.style.display = 'none';
+                }
+
+                selectAllCheckbox.checked = checkboxes.length > 0 && checkedCount === checkboxes.length;
+            }
+
+            /**
+             * Shows the specified content section and activates its corresponding tab.
+             */
+            function showContent(contentToShow, tabToActivate) {
+                addManuallyContent.classList.add('hidden');
+                uploadCsvContent.classList.add('hidden');
+
+                addManuallyTab.classList.remove('tab-active');
+                addManuallyTab.classList.add('tab-inactive');
+                uploadCsvTab.classList.remove('tab-active');
+                uploadCsvTab.classList.add('tab-inactive');
+
+                contentToShow.classList.remove('hidden');
+
+                tabToActivate.classList.add('tab-active');
+                tabToActivate.classList.remove('tab-inactive');
+                
+                if (contentToShow === addManuallyContent) {
+                    updateButtonStatesAndDateDisplay();
+                }
+            }
+
+            /**
+             * Displays the success message temporarily.
+             */
+            function showSuccessMessage(message) {
+                clearTimeout(messageTimeout); 
+                successMessage.textContent = message;
+                successMessage.classList.remove('hidden');
+                void successMessage.offsetWidth; 
+                successMessage.classList.add('show');
+
+                messageTimeout = setTimeout(() => {
+                    hideSuccessMessage();
+                }, 5000);
+            }
+
+            /**
+             * Hides the success message.
+             */
+            function hideSuccessMessage() {
+                successMessage.classList.remove('show');
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 300); 
+            }
+
+            /**
+             * Formats the PAN number input as per Indian PAN card format (AAAAA9999A).
+             */
+            function formatPanInput(event) {
+                let value = event.target.value.toUpperCase();
+                let formattedValue = '';
+
+                for (let i = 0; i < value.length; i++) {
+                    const char = value[i];
+                    if (i < 5) { 
+                        if (/[A-Z]/.test(char)) formattedValue += char;
+                    } else if (i >= 5 && i < 9) { 
+                        if (/[0-9]/.test(char)) formattedValue += char;
+                    } else if (i === 9) { 
+                        if (/[A-Z]/.test(char)) formattedValue += char;
+                    }
+                    if (formattedValue.length === 10) break;
+                }
+                event.target.value = formattedValue;
+            }
+
+            /**
+             * Opens the profile side panel with candidate details.
+             */
+            window.openProfileModal = function(name, email, rowElement) {
+                currentlyEditingRow = rowElement; // Store the row being edited
+                profilePanelName.textContent = name;
+                profilePanelEmail.textContent = email;
+                profileInitials.textContent = getInitials(name);
+                
+                profileModal.style.display = 'flex';
+                document.body.classList.add("modal-open");
+                setTimeout(() => {
+                    profileSidePanel.classList.add('show');
+                }, 10);
+            }
+
+            /**
+             * Closes the profile side panel and resets edit state.
+             */
+            function closeProfileModal() {
+                profileSidePanel.classList.remove('show');
+                
+                profileSidePanel.addEventListener('transitionend', function handler() {
+                    profileModal.style.display = 'none';
+                    document.body.classList.remove("modal-open");
+                    
+                    // Reset edit state
+                    profilePanelName.contentEditable = 'false';
+                    profilePanelEmail.contentEditable = 'false';
+                    profileEditBtn.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+                    profilePanelName.removeAttribute('style');
+                    profilePanelEmail.removeAttribute('style');
+                    
+                    currentlyEditingRow = null; // Clear the currently editing row
+                    profileSidePanel.removeEventListener('transitionend', handler);
+                }, { once: true });
+            }
+
+
+            // Event Listeners for Tab Clicks
+            addManuallyTab.addEventListener('click', function(e) {
+                e.preventDefault(); 
+                showContent(addManuallyContent, addManuallyTab);
+            });
+
+            uploadCsvTab.addEventListener('click', function(e) {
+                e.preventDefault(); 
+                showContent(uploadCsvContent, uploadCsvTab);
+            });
+
+            // Initial state
+            showContent(addManuallyContent, addManuallyTab);
+
+            // Function to validate email format for @gmail.com
+            function isValidEmail(email) {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+                return emailRegex.test(email);
+            }
+
+            // Function to display/hide email error message
+            function validateEmailInput() {
+                const email = candidateEmailInput.value.trim();
+                if (email === '' || isValidEmail(email)) {
+                    emailErrorSpan.style.display = 'none';
+                    return true;
+                } else {
+                    emailErrorSpan.style.display = 'block';
+                    return false;
+                }
+            }
+            
+            // Function to validate phone number
+            function validatePhoneNumber() {
+                const phone = phoneNumberInput.value.trim();
+                if (phone === '' || phone.length === 10) {
+                    phoneErrorSpan.style.display = 'none';
+                    return true;
+                } else {
+                    phoneErrorSpan.style.display = 'block';
+                    return false;
+                }
+            }
+
+            // Add event listener for email input to validate on type/change
+            candidateEmailInput.addEventListener('input', validateEmailInput);
+            candidateEmailInput.addEventListener('blur', validateEmailInput);
+
+            // Add event listener for phone number input
+            phoneNumberInput.addEventListener('input', function(event) {
+                let value = event.target.value.replace(/\D/g, '');
+                if (value.length > 10) {
+                    value = value.slice(0, 10);
+                }
+                event.target.value = value;
+                validatePhoneNumber();
+            });
+
+            // Add Candidate Functionality
+            addCandidateBtn.addEventListener('click', function() {
+                const name = candidateNameInput.value.trim();
+                const email = candidateEmailInput.value.trim();
+                const panNumber = panNumberInput.value.trim(); 
+
+                const isEmailValid = validateEmailInput();
+                const isPhoneValid = validatePhoneNumber();
+
+                if (!isEmailValid || email === '') {
+                    console.error('Validation failed: Please enter a valid @gmail.com email address.');
+                    return;
+                }
+                if (!isPhoneValid) {
+                    console.error('Validation failed: Please enter a valid 10-digit phone number if you choose to provide one.');
+                    return;
+                }
+
+                if (name === '') {
+                    console.error('Please enter candidate name.');
+                    return; 
+                }
+                
+                const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+                if (panNumber === '' || !panRegex.test(panNumber)) {
+                    console.error('Please enter a valid PAN number (e.g., ABCDE1234F).');
+                    return;
+                }
+
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td class="padding-y-2 padding-x-3 no-wrap text-small font-medium text-gray-900">
+                        <input type="checkbox" class="checkbox-field candidate-checkbox">
+                    </td>
+                    <td class="table-data-cell">
+                        <span>${name}</span>
+                    </td>
+                    <td class="table-data-cell"></td> 
+                    <td class="table-data-cell table-email-cell">
+                        <svg class="user-profile-svg" viewBox="0 0 24 24" fill="#3b82f6" xmlns="http://www.w3.org/2000/svg" data-name="${name}" data-email="${email}">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        <span>${email}</span>
+                    </td>
+                    <td class="table-data-cell"></td> 
+                    <td class="table-data-cell table-actions-cell">
+                        <svg class="user-profile-svg" viewBox="0 0 24 24" fill="#3b82f6" xmlns="http://www.w3.org/2000/svg" data-name="${name}" data-email="${email}">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </td>
+                `;
+                
+                candidateTableBody.appendChild(newRow);
+
+                candidateNameInput.value = '';
+                candidateEmailInput.value = '';
+                panNumberInput.value = ''; 
+                phoneNumberInput.value = '';
+                emailErrorSpan.style.display = 'none';
+                phoneErrorSpan.style.display = 'none';
+                
+                updateButtonStatesAndDateDisplay();
+            });
+
+            // Delegate event listener for candidate checkboxes
+            candidateTableBody.addEventListener('change', function(event) {
+                if (event.target.classList.contains('candidate-checkbox')) {
+                    updateButtonStatesAndDateDisplay();
+                }
+            });
+            
+            // Event listener for the profile icon
+            candidateTableBody.addEventListener('click', function(event) {
+                const profileIcon = event.target.closest('.user-profile-svg');
+                if (profileIcon) {
+                    const name = profileIcon.dataset.name;
+                    const email = profileIcon.dataset.email;
+                    const row = profileIcon.closest('tr');
+                    openProfileModal(name, email, row);
+                }
+            });
+
+            selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                const checkboxes = candidateTableBody.querySelectorAll('.candidate-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+                updateButtonStatesAndDateDisplay();
+            });
+            
+            deleteBtn.addEventListener('click', function() {
+                const checkedCheckboxes = [...candidateTableBody.querySelectorAll('.candidate-checkbox:checked')];
+                
+                if (checkedCheckboxes.length > 0) {
+                    checkedCheckboxes.forEach(checkbox => {
+                        const row = checkbox.closest('tr');
+                        if (row) {
+                            row.remove();
+                        }
+                    });
+                    updateButtonStatesAndDateDisplay();
+                }
+            });
+
+            panNumberInput.addEventListener('input', formatPanInput);
+
+            candidateNameInput.addEventListener('input', function(event) {
+                event.target.value = event.target.value.replace(/[^a-zA-Z\s]/g, '');
+            });
+
+            function handleFile(file) {
+                if (file && file.type === 'text/csv') {
+                    fileNameDisplay.textContent = `Selected file: ${file.name}`;
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const text = e.target.result;
+                        const rows = text.split('\n').slice(1);
+                        csvCandidateTableBody.innerHTML = '';
+                        rows.forEach(row => {
+                            const columns = row.split(',');
+                            if(columns.length >= 2 && columns[0].trim() && columns[1].trim()) {
+                                const newRow = document.createElement('tr');
+                                newRow.innerHTML = `
+                                    <td class="padding-y-2 padding-x-3">
+                                        <input type="checkbox" class="checkbox-field csv-candidate-checkbox">
+                                    </td>
+                                    <td class="table-data-cell">${columns[0].trim()}</td>
+                                    <td class="table-data-cell">${columns[1].trim()}</td>
+                                `;
+                                csvCandidateTableBody.appendChild(newRow);
+                            }
+                        });
+                        updateStepper(2);
+                        updateCsvButtonStates();
+                    };
+                    reader.readAsText(file);
+                } else {
+                    fileNameDisplay.textContent = 'Please select a valid CSV file.';
+                    csvFileInput.value = ''; 
+                }
+            }
+            
+            csvFileInput.addEventListener('change', function() {
+                if (this.files.length > 0) handleFile(this.files[0]);
+            });
+
+            dragDropArea.addEventListener('click', () => csvFileInput.click());
+            dragDropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dragDropArea.classList.add('highlight');
+            });
+            dragDropArea.addEventListener('dragleave', () => dragDropArea.classList.remove('highlight'));
+            dragDropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dragDropArea.classList.remove('highlight');
+                if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+            });
+
+            inviteSelectedBtn.addEventListener('click', function() {
+                const selectedCheckboxes = candidateTableBody.querySelectorAll('.candidate-checkbox:checked');
+                selectedCandidatesForInvite = [];
+
+                if (candidateInitialsDisplay) {
+                    candidateInitialsDisplay.innerHTML = '';
+                }
+
+                if (selectedCheckboxes.length > 0) {
+                    selectedCheckboxes.forEach(checkbox => {
+                        const row = checkbox.closest('tr');
+                        if (row) {
+                            const nameCell = row.cells[1];
+                            const emailCell = row.querySelector('.table-email-cell span:last-child');
+                            if(nameCell && emailCell){
+                                const candidateName = nameCell.textContent.trim();
+                                const candidateEmail = emailCell.textContent.trim();
+                                
+                                selectedCandidatesForInvite.push({ name: candidateName, email: candidateEmail });
+
+                                const initials = getInitials(candidateName);
+                                const initialSpan = document.createElement('span');
+                                initialSpan.className = 'candidate-initial-circle';
+                                initialSpan.textContent = initials;
+                                candidateInitialsDisplay.appendChild(initialSpan);
+                            }
+                        }
+                    });
+
+                    // NEW: Update the greeting in the email preview with all selected names
+                    const emailCandidateNamesSpan = document.getElementById('email-candidate-names');
+                    if (emailCandidateNamesSpan) {
+                        const names = selectedCandidatesForInvite.map(c => c.name).join(', ');
+                        emailCandidateNamesSpan.textContent = names;
+                    }
+
+                    reviewEmailModal.style.display = 'flex';
+                    document.body.classList.add("modal-open");
+                } else {
+                    console.error('Please select at least one candidate to invite.');
+                }
+            });
+
+
+            closeModalBtn.addEventListener('click', function() {
+                reviewEmailModal.style.display = 'none';
+                document.body.classList.remove("modal-open");
+            });
+
+            reviewEmailModal.addEventListener('click', function(e) {
+                if (e.target === reviewEmailModal) {
+                    reviewEmailModal.style.display = 'none';
+                    document.body.classList.remove("modal-open");
+                }
+            });
+
+            sendInviteBtn.addEventListener('click', function() {
+                // Collect selected candidates
+                const candidates = selectedCandidatesForInvite; // [{name, email}]
+                const emailContent = document.getElementById('email-content-editor').innerHTML;
+
+                fetch('/send-invite-email/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        candidates: candidates,
+                        assessment_name: assessmentName, // <-- use the variable here
+                        email_content: emailContent
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        reviewEmailModal.style.display = 'none';
+                        document.body.classList.remove("modal-open");
+                        showSuccessMessage('Invitation(s) sent successfully!');
+                    } else {
+                        alert('Failed to send email: ' + (data.error || 'Unknown error'));
+                    }
+                });
+            });
+
+            // Helper to get CSRF token
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            if(successMessageCloseIcon){
+                successMessageCloseIcon.addEventListener('click', hideSuccessMessage);
+            }
+
+            function openNewAssignmentModal() {
+                if (newAssignmentModal) {
+                    newAssignmentModal.style.display = 'flex';
+                    document.body.classList.add("modal-open");
+                }
+            }
+
+            function closeNewAssignmentModal() {
+                if (newAssignmentModal) {
+                    newAssignmentModal.style.display = 'none';
+                    document.body.classList.remove("modal-open");
+                }
+            }
+
+            if (openNewAssignmentHeaderBtn) {
+                openNewAssignmentHeaderBtn.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    openNewAssignmentModal();
+                });
+            }
+
+            if (closeNewAssignmentModalBtn) closeNewAssignmentModalBtn.addEventListener("click", closeNewAssignmentModal);
+            if (automaticAssignBtn) automaticAssignBtn.addEventListener("click", () => {
+                closeNewAssignmentModal();
+                console.log("Navigating to question.html (Automatic)");
+            });
+            if (customAssignBtn) customAssignBtn.addEventListener("click", () => {
+                closeNewAssignmentModal();
+                console.log("Navigating to assessment.html (Manual)");
+            });
+            if (newAssignmentModal) newAssignmentModal.addEventListener('click', (e) => {
+                if (e.target === newAssignmentModal) closeNewAssignmentModal();
+            });
+
+
+            document.querySelectorAll('.dropdown').forEach(function(dropdown) {
+                const dropdownButton = dropdown.querySelector('button');
+                const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+                dropdown.hoverTimeout = null;
+
+                dropdown.setAttribute('data-clicked-open', 'false');
+
+                if (dropdownButton) {
+                    dropdownButton.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        clearTimeout(dropdown.hoverTimeout);
+                        const isCurrentlyClickOpen = dropdown.getAttribute('data-clicked-open') === 'true';
+                        document.querySelectorAll('.dropdown').forEach(otherDropdown => {
+                            const otherMenu = otherDropdown.querySelector('.dropdown-menu');
+                            if (otherDropdown !== dropdown && !otherDropdown.closest('.submenu')) {
+                                otherMenu?.classList.add('hidden');
+                                otherDropdown.setAttribute('data-clicked-open', 'false');
+                                clearTimeout(otherDropdown.hoverTimeout);
+                            }
+                        });
+                        if (!isCurrentlyClickOpen) {
+                            dropdownMenu?.classList.remove('hidden');
+                            dropdown.setAttribute('data-clicked-open', 'true');
+                        } else {
+                            dropdownMenu?.classList.add('hidden');
+                            dropdown.setAttribute('data-clicked-open', 'false');
+                        }
+                    });
+                }
+
+                dropdown.addEventListener('mouseenter', function() {
+                    clearTimeout(dropdown.hoverTimeout);
+                    const anyDropdownClickedOpen = Array.from(document.querySelectorAll('.dropdown')).some(d => d.getAttribute('data-clicked-open') === 'true');
+                    if (anyDropdownClickedOpen) return;
+                    if (dropdown.getAttribute('data-clicked-open') === 'true') return;
+                    document.querySelectorAll('.dropdown').forEach(otherDropdown => {
+                        const otherMenu = otherDropdown.querySelector('.dropdown-menu');
+                        if (otherDropdown !== dropdown && otherDropdown.getAttribute('data-clicked-open') === 'false' && !otherDropdown.closest('.submenu')) {
+                            otherMenu?.classList.add('hidden');
+                            clearTimeout(otherDropdown.hoverTimeout);
+                        }
+                    });
+                    dropdownMenu?.classList.remove('hidden');
+                });
+
+                dropdown.addEventListener('mouseleave', function() {
+                    if (dropdown.getAttribute('data-clicked-open') === 'false') {
+                        dropdown.hoverTimeout = setTimeout(() => {
+                            dropdownMenu?.classList.add('hidden');
+                        }, 300);
+                    }
+                });
+            });
+
+            document.addEventListener('click', function(event) {
+                document.querySelectorAll('.dropdown').forEach(function(dropdown) {
+                    if (!dropdown.contains(event.target)) {
+                        dropdown.querySelector('.dropdown-menu')?.classList.add('hidden');
+                        dropdown.setAttribute('data-clicked-open', 'false');
+                        clearTimeout(dropdown.hoverTimeout);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.submenu').forEach(function(submenu) {
+                const submenuMenu = submenu.querySelector('.submenu-menu');
+                let submenuHoverTimeout = null;
+                submenu.addEventListener('mouseenter', () => {
+                    clearTimeout(submenuHoverTimeout);
+                    submenuMenu?.classList.remove('hidden');
+                });
+                submenu.addEventListener('mouseleave', () => {
+                    submenuHoverTimeout = setTimeout(() => {
+                        submenuMenu?.classList.add('hidden');
+                    }, 300);
+                });
+                submenu.querySelector('a')?.addEventListener('click', (e) => e.stopPropagation());
+            });
+
+            document.querySelectorAll('.submenu-menu').forEach(function(submenuMenu) {
+                submenuMenu.addEventListener('click', (e) => e.stopPropagation());
+            });
+
+            profileDropdownButton.addEventListener('click', function(event) {
+                event.stopPropagation(); 
+                const isCurrentlyClickOpen = profileDropdownButton.closest('.dropdown').getAttribute('data-clicked-open') === 'true';
+
+                document.querySelectorAll('.dropdown').forEach(otherDropdown => {
+                    if (otherDropdown.querySelector('button') !== profileDropdownButton) {
+                        otherDropdown.querySelector('.dropdown-menu')?.classList.add('hidden');
+                        otherDropdown.setAttribute('data-clicked-open', 'false');
+                        clearTimeout(otherDropdown.hoverTimeout);
+                    }
+                });
+
+                if (!isCurrentlyClickOpen) {
+                    profileDropdownMenu.classList.remove('hidden');
+                    profileDropdownButton.closest('.dropdown').setAttribute('data-clicked-open', 'true');
+                    
+                    const profileDropdownName = document.getElementById('profile-dropdown-name');
+                    const profileDropdownEmail = document.getElementById('profile-dropdown-email');
+                    const profileDropdownCompany = document.getElementById('profile-dropdown-company');
+
+                    if(profileDropdownName) profileDropdownName.textContent = "Sri";
+                    if(profileDropdownEmail) profileDropdownEmail.textContent = "srharshak@nexnoratech.onmicros....";
+                    if(profileDropdownCompany) profileDropdownCompany.textContent = "Nexnoratech";
+
+                } else {
+                    profileDropdownMenu.classList.add('hidden');
+                    profileDropdownButton.closest('.dropdown').setAttribute('data-clicked-open', 'false');
+                }
+            });
+            
+            if (closeProfileModalBtn) {
+                closeProfileModalBtn.addEventListener('click', closeProfileModal);
+            }
+            if (profileModal) {
+                profileModal.addEventListener('click', (e) => {
+                    if (e.target === profileModal) {
+                        closeProfileModal();
+                    }
+                });
+            }
+
+            if (profileEditBtn) {
+                profileEditBtn.addEventListener('click', () => {
+                    const isEditable = profilePanelName.getAttribute('contenteditable') === 'true';
+                    
+                    if (isEditable) {
+                        profilePanelName.setAttribute('contenteditable', 'false');
+                        profilePanelEmail.setAttribute('contenteditable', 'false');
+                        profileEditBtn.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+                        profileEditBtn.title = 'Edit Profile';
+
+                        const newName = profilePanelName.textContent.trim();
+                        const newEmail = profilePanelEmail.textContent.trim();
+
+                        if (currentlyEditingRow) {
+                            const nameSpan = currentlyEditingRow.querySelector('td:nth-child(2) span');
+                            if (nameSpan) nameSpan.textContent = newName;
+                            
+                            const emailSpan = currentlyEditingRow.querySelector('.table-email-cell span');
+                            if (emailSpan) emailSpan.textContent = newEmail;
+                            
+                            const icons = currentlyEditingRow.querySelectorAll('.user-profile-svg');
+                            icons.forEach(icon => {
+                                icon.dataset.name = newName;
+                                icon.dataset.email = newEmail;
+                            });
+                        }
+                        
+                        showSuccessMessage("Profile updated!");
+
+                    } else {
+                        profilePanelName.setAttribute('contenteditable', 'true');
+                        profilePanelEmail.setAttribute('contenteditable', 'true');
+                        profileEditBtn.innerHTML = '<i class="fas fa-save"></i>';
+                        profileEditBtn.title = 'Save Profile';
+                        profilePanelName.focus();
+                    }
+                });
+            }
+
+            updateButtonStatesAndDateDisplay();
+            
+            const step2Indicator = document.getElementById('step-2-indicator');
+            const step3Indicator = document.getElementById('step-3-indicator');
+            const step2Text = document.getElementById('step-2-text');
+            const step3Text = document.getElementById('step-3-text');
+            
+            function updateStepper(step) {
+                if (step >= 2) {
+                    step2Indicator.classList.remove('background-gray-300');
+                    step2Indicator.classList.add('background-blue-600');
+                    step2Text.classList.remove('text-gray-500');
+                    step2Text.classList.add('text-blue-600');
+                }
+                if (step >= 3) {
+                    step3Indicator.classList.remove('background-gray-300');
+                    step3Indicator.classList.add('background-blue-600');
+                    step3Text.classList.remove('text-gray-500');
+                    step3Text.classList.add('text-blue-600');
+                }
+            }
+
+            function updateCsvButtonStates() {
+                const checkboxes = csvCandidateTableBody.querySelectorAll('.csv-candidate-checkbox');
+                const checkedCount = [...checkboxes].filter(c => c.checked).length;
+                
+                inviteAllBtnCsv.disabled = checkboxes.length === 0;
+                deleteBtnCsv.disabled = checkedCount === 0;
+                inviteSelectedBtnCsv.disabled = checkedCount === 0;
+            }
+
+            csvCandidateTableBody.addEventListener('change', updateCsvButtonStates);
+            if (selectAllCsvCheckbox) {
+                selectAllCsvCheckbox.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    csvCandidateTableBody.querySelectorAll('.csv-candidate-checkbox').forEach(c => c.checked = isChecked);
+                    updateCsvButtonStates();
+                });
+            }
+
+            inviteAllBtnCsv.addEventListener('click', () => {
+                updateStepper(3);
+                showSuccessMessage('All candidates invited!');
+            });
+            
+            inviteSelectedBtnCsv.addEventListener('click', () => {
+                updateStepper(3);
+                showSuccessMessage('Selected candidates invited!');
+            });
+            
+            deleteBtnCsv.addEventListener('click', function() {
+                const checkedCheckboxes = csvCandidateTableBody.querySelectorAll('.csv-candidate-checkbox:checked');
+                checkedCheckboxes.forEach(checkbox => {
+                    checkbox.closest('tr').remove();
+                });
+                updateCsvButtonStates();
+                selectAllCsvCheckbox.checked = false;
+            });
+
+            if (rteToolbar) {
+                rteToolbar.addEventListener('click', function(e) {
+                    const button = e.target.closest('.icon-button');
+                    if (button) {
+                        e.preventDefault();
+                        const command = button.dataset.command;
+                        let value = null;
+
+                        if (command === 'createLink' || command === 'insertImage') {
+                            value = prompt(`Enter the URL for the ${command === 'createLink' ? 'link' : 'image'}:`);
+                            if (!value) return;
+                        }
+                        
+                        document.execCommand(command, false, value);
+                        emailContentEditor.focus();
+                        updateToolbarButtons();
+                    }
+                });
+            }
+
+            function updateToolbarButtons() {
+                if (!rteToolbar) return;
+                const commands = ['bold', 'italic', 'insertUnorderedList', 'insertOrderedList'];
+                commands.forEach(command => {
+                    const button = rteToolbar.querySelector(`[data-command="${command}"]`);
+                    if (button) {
+                        if (document.queryCommandState(command)) {
+                            button.classList.add('active');
+                        } else {
+                            button.classList.remove('active');
+                        }
+                    }
+                });
+            }
+
+            if (emailContentEditor) {
+                emailContentEditor.addEventListener('keyup', updateToolbarButtons);
+                emailContentEditor.addEventListener('mouseup', updateToolbarButtons);
+                emailContentEditor.addEventListener('focus', updateToolbarButtons);
+            }
+
+        });
+    </script>
+
+</body>
+</html>

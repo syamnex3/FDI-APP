@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+  <meta charset="UTF-8" />
+  <title>Invite Options</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Add Font Awesome for icons (needed for the new header) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Link to Google Fonts for Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* General Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100vh;
+      overflow: hidden; /* Prevent scrolling on the entire body/html */
+      font-family: 'Inter', sans-serif; /* Using Inter font */
+      background-color: #f9fafc;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    /* CSS Variables for Header Height */
+    :root {
+      --header-height: 70px; /* Estimated height of the fixed top header for desktop */
+      --mobile-header-height: 60px; /* Estimated height for mobile */
+    }
+
+
+    /* Top Header */
+    .top-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+    }
+
+    /* Brand title section - dark blue bar at the very top (from new header) */
+    .brand-title {
+      background-color: #1d2686;
+      color: #fff;
+      font-size: 20px;
+      padding: 10px 12px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 0;
+    }
+
+    /* Text within the brand title (from new header) */
+    .brand-title-text {
+        color: #fff;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    /* Main header below the brand title, containing breadcrumbs and status */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* Breadcrumb navigation (from new header) */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-size: 12px;
+      color: #999;
+    }
+
+    /* "Back" link in breadcrumb (from new header) */
+    .breadcrumb-link {
+      padding: 5px 10px;
+      cursor: pointer;
+      color: #1d2686;
+      font-size: 12px;
+      transition: 0.2s ease;
+      margin-right: 8px;
+      margin-left: -4px;
+      background-color: transparent;
+      border: none;
+      border-radius: 0;
+    }
+
+    /* Headings within the breadcrumb (from new header) */
+    .breadcrumb-heading {
+      color: #999;
+      text-decoration: none;
+      transition: color 0.2s;
+      font-size: 12px;
+    }
+
+    .breadcrumb-heading:hover {
+      color: #1d2686;
+    }
+
+    /* Separator icon in breadcrumb ('>') (from new header) */
+    .breadcrumb-separator {
+      font-size: 16px;
+      color: #ccc;
+      margin-left: 4px;
+      margin-right: 4px;
+      font-weight: normal;
+    }
+
+    /* Status section (Active, Candidate, Invite) */
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 13px;
+    }
+
+    /* Active dot indicator */
+    .status .active-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #28a745;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* Invite button (from new header) */
+    .invite-btn {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      font-weight: 600;
+      font-size: 13px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .invite-btn:hover {
+      background-color: #218838;
+      transform: translateY(-1px);
+    }
+    .invite-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Profile Menu Container (S, dropdown arrow) (from new header) */
+    .profile-menu-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    /* Profile avatar (the 'S' circle) (from new header) */
+    .profile-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: #e0e0e0;
+      color: #1d2686;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    /* Styles for the new question mark icon next to 'S' (from new header) */
+    .profile-help-icon {
+        color: #fff;
+        font-size: 20px;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    /* Profile dropdown menu (from new header) */
+    .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      overflow: hidden;
+      min-width: 200px;
+      display: none;
+      z-index: 100;
+      margin-top: 8px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .profile-dropdown.show {
+      display: block;
+    }
+
+    /* Header within the dropdown (Sri, email, company) (from new header) */
+    .profile-dropdown-header {
+        padding: 8px 12px;
+        background-color: #f0f2f5;
+        border-bottom: 1px solid #eee;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .profile-dropdown-header span {
+        font-size: 14px;
+    }
+
+    .profile-dropdown-header small {
+        color: #666;
+        font-weight: 400;
+        font-size: 11px;
+    }
+
+    /* Individual items in the dropdown menu (from new header) */
+    .profile-dropdown-item {
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      font-size: 12px;
+      transition: background-color 0.2s;
+    }
+
+    .profile-dropdown-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .profile-dropdown-item i {
+        color: #1d2686;
+    }
+
+    /* Page Wrapper and Container */
+    .page-wrapper {
+      /* This margin-top pushes the content down below the fixed header without a gap */
+      margin-top: var(--header-height);
+      /* This calculates the height of the scrollable area: full viewport height minus header height */
+      height: calc(100vh - var(--header-height));
+      overflow-y: auto; /* This element will have the scrollbar when its content overflows */
+      overflow-x: hidden; /* Keep horizontal scroll hidden here */
+      padding: 20px 0 60px 0; /* Add back vertical padding for content inside scrollable area */
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 32px; /* Inner padding for content within the container */
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      max-width: 100%; /* Stretches to full width of page-wrapper */
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 20px;
+      color: #1d2686;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #444;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .form-inline {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      transform: scale(1.1);
+      margin-right: 4px;
+      accent-color: #1d2686; /* Accent color for checkboxes/radios */
+    }
+
+    input[type="number"],
+    input[type="date"],
+    select,
+    input[type="text"],
+    input[type="password"] {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      min-width: 120px;
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #1d2686;
+      box-shadow: 0 0 0 2px rgba(29, 38, 134, 0.2);
+      outline: none;
+    }
+
+    /* Specific number input width */
+    .form-group input[type="number"][value="3"] {
+        width: 40px !important;
+        min-width: 20px !important;
+        padding: 6px 5px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #888;
+      margin-top: 6px;
+      clear: both;
+    }
+
+    fieldset {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      background-color: #fafafa;
+      margin-top: 20px;
+    }
+
+    legend {
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      padding: 0 8px;
+      background-color: #fafafa;
+      border-radius: 4px;
+    }
+
+    /* New wrapper for the save button */
+    .button-align-wrapper {
+      max-width: 100%; /* Stretches to full width */
+      margin: 20px auto 0;
+      padding: 0 24px; /* Retained horizontal padding for the button wrapper */
+    }
+
+    .save-btn {
+      text-align: right;
+      margin-top: 0;
+    }
+
+    .btn-save {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+    }
+
+    .btn-save:hover {
+      background-color: #0056b3;
+      transform: translateY(-1px);
+    }
+
+    .btn-save:active {
+      transform: translateY(0);
+    }
+
+    /* Dropdown placeholder styling */
+    select option[value=""] {
+      display: none;
+    }
+
+    select option[disabled] {
+      color: #aaa;
+    }
+
+    /* Section dividers */
+    .section {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+    .section:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+
+    /* Style for the new light line */
+    .light-line {
+        border: none;
+        border-top: 1px solid #eee;
+        margin: 20px 0;
+    }
+
+    /* Modal for messages */
+    #customModal {
+        position: fixed;
+        left: 50%;
+        top: 20px;
+        transform: translateX(-50%);
+        padding: 15px 25px;
+        background-color: rgba(0,0,0,0.75);
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 10001;
+        font-size: 14px;
+        text-align: center;
+        opacity: 1;
+        transition: opacity 0.5s ease-out, top 0.5s ease-out;
+    }
+
+    /* Styles for the new "Capture candidate details" section */
+    .candidate-details-section {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+
+    .candidate-details-section .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .candidate-details-section .section-header h2 {
+        margin-bottom: 0;
+        font-size: 20px;
+        color: #1d2686;
+    }
+
+    .candidate-details-section .section-actions {
+        display: flex;
+        gap: 10px;
+        font-size: 13px;
+    }
+
+    .candidate-details-section .section-actions span {
+        color: #1d2686;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    .candidate-details-section .section-actions span:hover {
+        text-decoration: underline;
+    }
+
+    .candidate-details-section fieldset {
+        margin-bottom: 25px;
+    }
+
+    .candidate-details-section legend {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1d2686;
+        padding: 5px 10px;
+    }
+
+    .candidate-details-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+        .candidate-details-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .candidate-field-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 8px 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        min-height: 40px;
+    }
+
+    /* Ensure leading checkbox is properly sized and aligned */
+    .candidate-field-item input[type="checkbox"] {
+        transform: scale(1.0);
+        margin-right: 0;
+        accent-color: #1d2686;
+        flex-shrink: 0;
+    }
+
+    .candidate-field-item label {
+        flex-grow: 1;
+        font-size: 14px;
+        color: #555;
+        cursor: pointer;
+        margin-bottom: 0;
+    }
+
+    /* Styles for the custom toggle switch */
+    .required-switch {
+        position: relative;
+        display: none; /* Controlled by JS based on leading checkbox */
+        width: 20px;
+        height: 10px;
+        flex-shrink: 0;
+    }
+    .required-switch.always-visible {
+        display: inline-block !important; /* Force visible for permanently required fields */
+    }
+
+
+    .required-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .required-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 10px;
+    }
+
+    .required-slider:before {
+        position: absolute;
+        content: "";
+        height: 6px;
+        width: 6px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    .required-switch input:checked + .required-slider {
+        background-color: #8cc63f; /* Green when checked */
+    }
+
+    .required-switch input:checked + .required-slider:before {
+        transform: translateX(10px);
+    }
+
+    /* Style for the "Required" text next to the label */
+    .required-text {
+        font-size: 11px;
+        color: #888;
+        margin-left: 5px;
+        display: none; /* Controlled by JS based on both checkboxes */
+        flex-shrink: 0;
+    }
+    .required-text.always-visible {
+        display: inline !important; /* Force visible for permanently required fields */
+    }
+
+
+    /* Optional fields sections */
+    .personal-optional-fields,
+    .educational-optional-fields,
+    .professional-optional-fields {
+        display: none;
+    }
+    .personal-optional-fields.expanded,
+    .educational-optional-fields.expanded,
+    .professional-optional-fields.expanded {
+        display: contents; /* Allows grid to lay out children correctly */
+    }
+
+    .show-more-link {
+        color: #1d2686;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 15px;
+        display: block;
+        text-align: center;
+        font-weight: 500;
+    }
+    .show-more-link:hover {
+        text-decoration: underline;
+    }
+
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: 8px;
+      }
+      .breadcrumb {
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      .status {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .button-align-wrapper {
+        padding: 0 15px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 12px;
+      }
+      .form-group, .form-inline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      input[type="number"],
+      input[type="date"],
+      select,
+      input[type="text"],
+      input[type="password"] {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+      .form-group label {
+        margin-bottom: 4px;
+      }
+      .brand-title {
+        font-size: 18px;
+        padding: 8px 10px;
+      }
+      .header {
+        padding: 8px 10px;
+      }
+      .page-wrapper {
+        margin-top: var(--mobile-header-height); /* Adjusted for mobile header height */
+        height: calc(100vh - var(--mobile-header-height)); /* Adjusted for mobile header height */
+      }
+      .container {
+        padding: 15px;
+        max-width: 100%; /* Ensure full width on small screens as well */
+      }
+      .candidate-details-grid {
+          grid-template-columns: 1fr;
+      }
+      .breadcrumb-link, .breadcrumb-heading, .status {
+        font-size: 11px;
+      }
+      .invite-btn {
+        font-size: 11px;
+        padding: 5px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-header">
+    <!-- Top bar with FDI and Profile (from new header) -->
+    <div class="brand-title">
+        <span class="brand-title-text">FDI</span>
+        <!-- Profile Menu Section moved here -->
+        <div class="profile-menu-container" id="profileMenuContainer">
+            <div class="profile-avatar">S</div> <!-- Initial for 'Sri' -->
+            <!-- New question mark icon next to the profile avatar -->
+            <i class="fas fa-question-circle profile-help-icon" id="helpIcon"></i>
+
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="profile-dropdown-header">
+                    <span>Sri</span><br>
+                    <small>srharshak@nexnoratech.onmicros....</small><br>
+                    <small>Nexnoratech</small>
+                </div>
+                <a href="/company-profile/" class="profile-dropdown-item">
+                    <i class="fas fa-building"></i> Company Profile
+                </a>
+                <a href="/team-members/" class="profile-dropdown-item">
+                    <i class="fas fa-users"></i> Team Members
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-envelope"></i> Email Templates
+                </a>
+                <a href="/question-library/" class="profile-dropdown-item">
+                    <i class="fas fa-question-circle"></i> Connect Question Library
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-chart-bar"></i> Plan Usage
+                </a>
+                <a href="/setting/" class="profile-dropdown-item">
+                    <i class="fas fa-cog"></i> Setting Options
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-user-circle"></i> My Account
+                </a>
+                <a href="/logout/" class="profile-dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main header content below the top bar (from new header) -->
+    <div class="header">
+      <div class="breadcrumb">
+        <span class="breadcrumb-link" onclick="history.back()">Back</span>
+        <a href="/assessment-summary/" class="breadcrumb-heading">SUMMARY</a>
+        <!-- Changed to Font Awesome fa-greater-than icon for precise control -->
+        <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+        <a href="/question-library/" class="breadcrumb-heading">QUESTION</a>
+        <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+        <a href="/configuration/" class="breadcrumb-heading">CONFIGURE</a>
+        <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+        <span style="font-weight: bold; color: #1d2686;">INVITE OPTIONS</span>
+      </div>
+
+      <div class="status">
+        <span><span class="active-dot"></span> Active</span>
+        <!-- Changed icon to fa-solid fa-users -->
+        <a href="your_candidate_page.html" style="cursor:pointer; text-decoration: none; color: inherit;"><i class="fa-solid fa-users"></i> CANDIDATE</a>
+        <!-- Changed to an <a> tag styled as a button to link to a new page -->
+        <a href="invite_page.html" class="invite-btn">+ INVITE</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-wrapper">
+    <main class="container">
+      <h1>Invite Options</h1>
+
+      <div class="section">
+        <h2>Test Access</h2>
+        <div class="form-group">
+          <label ><input type="radio" name="access" checked > Invite expires within</label>
+          <input type="number" value="3" min="1"> days of invitation </div>
+        <div class="form-group form-inline">
+          <label><input type="radio" name="access"> Assessment Starts:</label>
+          <input type="date" id="assessmentStartDate"> <label>Ends:</label>
+          <input type="date" id="assessmentEndDate"> </div>
+        <div class="form-group">
+          <label><input type="checkbox" checked> Send reminder email</label>
+          <input type="number" value="1" min="1" style="width:60px; min-width:60px;"> day(s) before assessment expires </div>
+        <div class="form-group">
+          <label><input type="checkbox"> Enable Calendar Invite</label>
+        </div>
+        <div class="hint">Specify the validity of the assessment either by number of days or start/end date.</div>
+      </div>
+
+      <div class="section">
+        <h2>Email Template</h2>
+        <div class="form-group">
+          <label for="inviteSelect">Invite:</label>
+          <select id="inviteSelect" required>
+            <option value="" disabled selected hidden>Select an option</option>
+            <option value="assessment">Assessment Invite</option>
+            <option value="interview">Interview Invite</option>
+          </select>
+        </div>
+
+        <!-- MODIFIED: Added ID to this group -->
+        <div class="form-group" id="reminderGroup">
+          <label for="reminderSelect">Reminder:</label>
+          <select id="reminderSelect" required>
+            <option value="" disabled selected hidden>Select an option</option>
+            <!-- MODIFIED: Added specific values -->
+            <option value="assessment-reminder">Assessment Reminder</option>
+            <option value="interview-reminder">Interview Reminder</option>
+          </select>
+        </div>
+
+        <!-- MODIFIED: Added ID to this fieldset -->
+        <fieldset id="reinviteFieldset">
+          <legend>Reinvite Options</legend>
+          <div class="form-group">
+            <label>Reset Attempt:</label>
+            <!-- MODIFIED: Added ID and values -->
+            <select id="resetAttemptSelect">
+              <option value="assessment-reset">Assessment re-invite - reset attempt</option>
+              <option value="interview-reset">Interview re-invite - reset attempt</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Continue Attempt:</label>
+            <!-- MODIFIED: Added ID and values -->
+            <select id="continueAttemptSelect">
+              <option value="assessment-continue">Assessment re-invite - continue attempt</option>
+              <option value="interview-continue">Interview re-invite - continue attempt</option>
+            </select>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- MODIFIED: Added ID to this group -->
+      <div class="form-group" id="submissionGroup" style="display: flex; align-items: center; gap: 16px;">
+        <label for="submissionType" style="min-width: 120px;padding-top: 15px;">Submission:</label>
+        <!-- MODIFIED: Added values -->
+        <select id="submissionType" style="margin-top: 16px;margin-left: -40px;">
+          <option value="assessment">Assessment</option>
+          <option value="interview">Interview</option>
+        </select>
+      </div>
+
+      <!-- MODIFIED: Added ID to this group -->
+      <div class="form-group" id="disqualificationGroup" style="display: flex; align-items: center; gap: 16px;">
+        <input type="checkbox" id="disqualify" />
+        <label for="disqualify" style="white-space: nowrap;">Enable disqualification emails:</label>
+        <!-- MODIFIED: Added ID and values -->
+        <select id="disqualificationSelect" style="min-width: 240px;">
+          <option value="assessment">Assessment disqualification</option>
+          <option value="interview">Interview disqualification</option>
+        </select>
+      </div>
+
+      <hr class="light-line">
+
+      <div class="form-group form-inline">
+        <label style="min-width: 160px;">Sender Email:</label> <input type="text" id="senderEmail" value="assistant@fdi.com" readonly style="flex: 1;">
+        <button class="btn-save" type="button" onclick="editSenderEmail(this)">✎ Edit</button>
+      </div>
+
+      <hr class="light-line">
+
+      <div class="form-group form-inline">
+        <label style="min-width: 160px;">Public Invite URL:</label> <input type="text" id="publicUrl" readonly style="flex: 1;"> <button class="btn-save" type="button" onclick="copyToClipboard('publicUrl')">Copy</button>
+      </div>
+      <div class="hint">Share this URL with candidates so they can provide their details and attempt the assessment.</div>
+
+      <hr class="light-line">
+
+      <div class="form-group form-inline">
+        <label style="min-width: 160px;">Private Invite URL:</label> <input type="text" id="privateUrl" readonly style="flex: 1;"> <button class="btn-save" type="button" onclick="handlePrivateUrlCopy()">Copy</button>
+      </div>
+      <div class="hint">Share this private URL with candidates using the password you set.</div>
+     <div class="form-group form-inline" style="margin-top: 16px;">
+        <label style="min-width: 160px;">Set Invite Password:</label> <input type="password" id="invitePassword" value="" style="flex: 1;" placeholder="Enter password (min 6 characters)">
+        <button class="btn-save" type="button" onclick="resetPassword()">Reset Password</button>
+      </div>
+
+      <!-- New section for Capture Candidate Details starts here -->
+      <div class="candidate-details-section">
+          <p style="font-size: 14px; color: #666; margin-bottom: 20px;">
+              For URL based invite, you can capture candidate information before the test begins.
+              Please enable fields below to capture additional candidate details.
+          </p>
+
+          <fieldset class="personal-fields-fieldset">
+              <div class="section-header">
+                  <legend>Personal</legend>
+                  <div class="section-actions">
+                      <span class="select-all-btn" data-target="personal">Select All</span>
+                      <span class="clear-all-btn" data-target="personal">Clear All</span>
+                  </div>
+              </div>
+              <div class="candidate-details-grid">
+                  <!-- Always visible and disabled personal fields for Full Name and Personal Email -->
+                  <div class="candidate-field-item">
+                      <input type="checkbox" id="personalFullNameCheckbox" checked disabled>
+                      <label for="personalFullNameCheckbox" style="width: 100%;">Full Name</label>
+                      <span class="required-text always-visible">Required</span>
+                      <label class="required-switch always-visible" aria-disabled="true">
+                          <input type="checkbox" id="personalFullNameToggle" checked disabled>
+                          <span class="required-slider"></span>
+                      </label>
+                  </div>
+                  <div class="candidate-field-item">
+                      <input type="checkbox" id="personalEmailCheckbox" checked disabled>
+                      <label for="personalEmailCheckbox" style="width: 100%;">Personal Email</label>
+                      <span class="required-text always-visible">Required</span>
+                      <label class="required-switch always-visible" aria-disabled="true">
+                          <input type="checkbox" id="personalEmailToggle" checked disabled>
+                          <span class="required-slider"></span>
+                      </label>
+                  </div>
+
+                  <!-- Optional personal fields to be toggled -->
+                  <div class="personal-optional-fields">
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="personalResumeCheckbox">
+                          <label for="personalResumeCheckbox" style="width: 100%;">Resume</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="personalResumeToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="personalAlternateEmailCheckbox">
+                          <label for="personalAlternateEmailCheckbox" style="width: 100%;">Email ID (Alternate)</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="personalAlternateEmailToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="personalGenderCheckbox">
+                          <label for="personalGenderCheckbox" style="width: 100%;">Gender</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="personalGenderToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="personalPhoneCheckbox">
+                          <label for="personalPhoneCheckbox" style="width: 100%;">Phone</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="personalPhoneToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="personalCurrentLocationCheckbox">
+                          <label for="personalCurrentLocationCheckbox" style="width: 100%;">Current Location</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="personalCurrentLocationToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="personalLinkedInCheckbox">
+                          <label for="personalLinkedInCheckbox" style="width: 100%;">LinkedIn Profile</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="personalLinkedInToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                  </div>
+              </div>
+              <span class="show-more-link" data-target="personal">Show more personal fields</span>
+          </fieldset>
+
+          <fieldset class="educational-fields-fieldset">
+              <div class="section-header">
+                  <legend>Educational</legend>
+                  <div class="section-actions">
+                      <span class="select-all-btn" data-target="educational">Select All</span>
+                      <span class="clear-all-btn" data-target="educational">Clear All</span>
+                  </div>
+              </div>
+              <div class="candidate-details-grid">
+                  <div class="candidate-field-item">
+                      <input type="checkbox" id="eduHighestDegreeCheckbox">
+                      <label for="eduHighestDegreeCheckbox" style="width: 100%;">Highest Degree</label>
+
+                      <label class="required-switch">
+                          <input type="checkbox" id="eduHighestDegreeToggle">
+                          <span class="required-slider"></span>
+                      </label>
+                  </div>
+                  <div class="candidate-field-item">
+                      <input type="checkbox" id="eduDegreeCheckbox">
+                      <label for="eduDegreeCheckbox" style="width: 100%;">Degree</label>
+
+                      <label class="required-switch">
+                          <input type="checkbox" id="eduDegreeToggle">
+                          <span class="required-slider"></span>
+                      </label>
+                  </div>
+                  <!-- Optional educational fields to be toggled -->
+                  <div class="educational-optional-fields">
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="eduGradCollegeNameCheckbox">
+                          <label for="eduGradCollegeNameCheckbox" style="width: 100%;">Graduation College Name</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="eduGradCollegeNameToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="eduUniversityRollCheckbox">
+                          <label for="eduUniversityRollCheckbox" style="width: 100%;">University Roll Number</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="eduUniversityRollToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="eduGradCompletionYearCheckbox">
+                          <label for="eduGradCompletionYearCheckbox" style="width: 100%;">Graduation Completion Year</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="eduGradCompletionYearToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="eduBranchDeptCheckbox">
+                          <label for="eduBranchDeptCheckbox" style="width: 100%;">Branch / Department</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="eduBranchDeptToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="eduMajorCheckbox">
+                          <label for="eduMajorCheckbox" style="width: 100%;">Major</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="eduMajorToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="eduGradPercentageCheckbox">
+                          <label for="eduGradPercentageCheckbox" style="width: 100%;">Graduation Percentage / CGPA</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="eduGradPercentageToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="eduPostGradDegreeCheckbox">
+                          <label for="eduPostGradDegreeCheckbox" style="width: 100%;">Post Graduation Degree</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="eduPostGradDegreeToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                  </div>
+              </div>
+              <span class="show-more-link" data-target="educational">Show more educational fields</span>
+          </fieldset>
+
+          <!-- New Professional Fields Section -->
+          <fieldset class="professional-fields-fieldset">
+              <div class="section-header">
+                  <legend>Professional</legend>
+                  <div class="section-actions">
+                      <span class="select-all-btn" data-target="professional">Select All</span>
+                      <span class="clear-all-btn" data-target="professional">Clear All</span>
+                  </div>
+              </div>
+              <div class="candidate-details-grid">
+                  <div class="candidate-field-item">
+                      <input type="checkbox" id="profTechnicalSkillsCheckbox">
+                      <label for="profTechnicalSkillsCheckbox" style="width: 100%;">Technical Skills</label>
+
+                      <label class="required-switch">
+                          <input type="checkbox" id="profTechnicalSkillsToggle">
+                          <span class="required-slider"></span>
+                      </label>
+                  </div>
+                  <div class="candidate-field-item">
+                      <input type="checkbox" id="profOtherSkillsCheckbox">
+                      <label for="profOtherSkillsCheckbox" style="width: 100%;">Other Skills</label>
+
+                      <label class="required-switch">
+                          <input type="checkbox" id="profOtherSkillsToggle">
+                          <span class="required-slider"></span>
+                      </label>
+                  </div>
+                  <div class="candidate-field-item">
+                      <input type="checkbox" id="profWorkExperienceCheckbox">
+                      <label for="profWorkExperienceCheckbox" style="width: 100%;">Work Experience (Years)</label>
+
+                      <label class="required-switch">
+                          <input type="checkbox" id="profWorkExperienceToggle">
+                          <span class="required-slider"></span>
+                      </label>
+                  </div>
+                  <div class="candidate-field-item">
+                      <input type="checkbox" id="profCurrentJobRoleCheckbox">
+                      <label for="profCurrentJobRoleCheckbox" style="width: 100%;">Current Job Role</label>
+
+                      <label class="required-switch">
+                          <input type="checkbox" id="profCurrentJobRoleToggle">
+                          <span class="required-slider"></span>
+                      </label>
+                  </div>
+                  <div class="professional-optional-fields">
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="profFullTimeOpportunityCheckbox">
+                          <label for="profFullTimeOpportunityCheckbox" style="width: 100%;">Open for a full-time opportunity?</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="profFullTimeOpportunityToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="profTeamNameCheckbox">
+                          <label for="profTeamNameCheckbox" style="width: 100%;">Team Name</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="profTeamNameToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="profTeamLeadNameCheckbox">
+                          <label for="profTeamLeadNameCheckbox" style="width: 100%;">Team Lead Name</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="profTeamLeadNameToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                      <div class="candidate-field-item">
+                          <input type="checkbox" id="profCollegeEmailCheckbox">
+                          <label for="profCollegeEmailCheckbox" style="width: 100%;">College Email Address</label>
+
+                          <label class="required-switch">
+                              <input type="checkbox" id="profCollegeEmailToggle">
+                              <span class="required-slider"></span>
+                          </label>
+                      </div>
+                  </div>
+              </div>
+              <span class="show-more-link" data-target="professional">Show more professional fields</span>
+          </fieldset>
+      </div>
+      <!-- End of new section for Capture Candidate Details -->
+
+    </main>
+    <div class="button-align-wrapper">
+        <div class="save-btn">
+          <button class="btn-save">Save Changes</button>
+        </div>
+    </div>
+  </div>
+<script>
+  // Declare these variables globally or in a scope accessible to all functions that need them
+  let publicUrlInput;
+  let privateUrlInput;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Assign elements once DOM is ready
+    publicUrlInput = document.getElementById('publicUrl');
+    privateUrlInput = document.getElementById('privateUrl');
+
+    // Function to show a custom modal (replaces alert)
+    function showModal(message) {
+        const existingModal = document.getElementById('customModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        const modal = document.createElement('div');
+        modal.id = 'customModal';
+        modal.style.position = 'fixed';
+        modal.style.left = '50%';
+        modal.style.top = '20px';
+        modal.style.transform = 'translateX(-50%)';
+        modal.style.padding = '15px 25px';
+        modal.style.backgroundColor = 'rgba(0,0,0,0.75)';
+        modal.style.color = 'white';
+        modal.style.borderRadius = '8px';
+        modal.style.boxSizing = 'border-box';
+        modal.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+        modal.style.zIndex = '10001';
+        modal.style.fontSize = '14px';
+        modal.style.textAlign = 'center';
+        modal.textContent = message;
+
+        document.body.appendChild(modal);
+
+        setTimeout(() => {
+            modal.style.transition = 'opacity 0.5s ease-out, top 0.5s ease-out';
+            modal.style.opacity = '0';
+            modal.style.top = '0px';
+            setTimeout(() => modal.remove(), 500);
+        }, 3000);
+    }
+
+    // Function to format date asYYYYMMDD for URLs
+    function getFormattedDateForUrl() {
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const year = today.getFullYear();
+        return `${year}${month}${day}`;
+    }
+
+    // Set Public Invite URL
+    const djangoBaseURL = "http://192.168.1.16:8000"; // Updated to fdi.com as per request
+
+    // Set Public Invite URL
+    if (publicUrlInput) {
+        // Ensure trailing slash is added here
+        const publicUrl = `${djangoBaseURL}/assess/${getFormattedDateForUrl()}/`;
+        publicUrlInput.value = publicUrl;
+        console.log("Public Invite URL:", publicUrl);
+    }
+
+    // Set Private Invite URL
+    if (privateUrlInput) {
+        // Ensure trailing slash is added here
+        const privateUrl = `${djangoBaseURL}/invite/${getFormattedDateForUrl()}/`;
+        privateUrlInput.value = privateUrl;
+        console.log("Private Invite URL:", privateUrl);
+    }
+
+    // Save button behavior
+    const mainSaveButton = document.querySelector('.button-align-wrapper .btn-save');
+    if (mainSaveButton) {
+        mainSaveButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        showModal('Settings saved (stub).');
+      });
+    }
+
+    // Disable first inviteSelect option after change
+    const inviteSelect = document.getElementById('inviteSelect');
+    if (inviteSelect) {
+      inviteSelect.addEventListener('change', () => {
+        if (inviteSelect.options.length > 0 && inviteSelect.options[0].value === "") {
+            inviteSelect.options[0].disabled = true;
+        }
+      });
+    }
+    // Similar logic for reminderSelect
+    const reminderSelect = document.getElementById('reminderSelect');
+    if (reminderSelect) {
+      reminderSelect.addEventListener('change', () => {
+        if (reminderSelect.options.length > 0 && reminderSelect.options[0].value === "") {
+            reminderSelect.options[0].disabled = true;
+        }
+      });
+    }
+
+    // Helper function to copy text without visually selecting the original input
+    function copyTextToClipboard(text, callback) {
+        if (navigator.clipboard && window.isSecureContext) {
+            // Use modern Clipboard API if available and context is secure
+            navigator.clipboard.writeText(text).then(() => {
+                callback(true, null); // Success
+            }).catch(err => {
+                console.error('Failed to copy using navigator.clipboard:', err);
+                callback(false, err); // Failure
+            });
+        } else {
+            // Fallback for non-secure contexts or older browsers using a temporary textarea
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = text;
+            tempTextArea.style.position = 'fixed'; // Keep it off-screen
+            tempTextArea.style.top = '-9999px';
+            tempTextArea.style.left = '-9999px';
+            document.body.appendChild(tempTextArea);
+            tempTextArea.focus();
+            tempTextArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tempTextArea); // Clean up
+                callback(successful, null);
+            } catch (err) {
+                document.body.removeChild(tempTextArea); // Clean up
+                console.error('Fallback copy failed:', err);
+                return;
+            }
+        }
+    }
+
+    // ✅ Copy button handlers (already present)
+    window.copyToClipboard = function(id) {
+        const input = document.getElementById(id);
+        if (!input) return showModal("Input field not found.");
+        navigator.clipboard.writeText(input.value).then(() => {
+            showModal("Copied to clipboard!");
+        }).catch(() => {
+            showModal("Copy failed. Try manually.");
+        });
+    };
+
+    window.handlePrivateUrlCopy = function() {
+      // Direct call to copyTextToClipboard using the globally accessible privateUrlInput
+      if (privateUrlInput) { // Check if it's defined
+          copyTextToClipboard(privateUrlInput.value, (success, error) => {
+              if (success) {
+                  showModal("Private URL copied to clipboard!");
+              } else {
+                  showModal("Copy failed. Please try copying manually.");
+                  console.error('Copy operation failed:', error);
+              }
+          });
+      } else {
+          showModal("Error: Private URL field not found.");
+      }
+    };
+
+
+    window.resetPassword = function() {
+      const passwordField = document.getElementById("invitePassword");
+      showModalForPassword("Enter new password (min 6 characters):", (newPassword) => {
+        if (newPassword !== null) {
+          if (newPassword.length >= 6) {
+              // This fetch call is a placeholder as there's no backend to update the password.
+              // In a real application, you'd send `newPassword` to your server.
+              console.log('Attempting to reset password to:', newPassword);
+              if (passwordField) {
+                  passwordField.value = newPassword; // Update UI immediately
+              }
+              showModal('Password reset successfully (locally).');
+              /*
+              fetch('/update-invite-password', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ newPassword: newPassword })
+              })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      if (passwordField) {
+                          passwordField.value = newPassword;
+                      }
+                      showModal(data.message);
+                  } else {
+                      showModal(data.message);
+                  }
+              })
+              .catch(error => {
+                  console.error('Error updating password:', error);
+                  showModal('Failed to update password. Please try again.');
+              });
+              */
+          } else if (newPassword.length > 0) {
+              showModal("Password too short. Min 6 characters.");
+          } else {
+              showModal("Password not changed.");
+          }
+        }
+      });
+    };
+
+    // Custom modal for password input (replaces prompt)
+    function showModalForPassword(message, callback) {
+        const existingModal = document.getElementById('customPromptModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        const modal = document.createElement('div');
+        modal.id = 'customPromptModal';
+        modal.style.position = 'fixed';
+        modal.style.left = '50%';
+        modal.style.top = '50%';
+        modal.style.transform = 'translate(-50%, -50%)';
+        modal.style.padding = '25px';
+        modal.style.backgroundColor = 'white';
+        modal.style.color = '#333';
+        modal.style.borderRadius = '8px';
+        modal.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+        modal.style.zIndex = '10002';
+        modal.style.fontSize = '16px';
+        modal.style.textAlign = 'center';
+        modal.style.maxWidth = '300px';
+        modal.style.display = 'flex';
+        modal.style.flexDirection = 'column';
+        modal.style.gap = '15px';
+
+        const text = document.createElement('p');
+        text.textContent = message;
+        modal.appendChild(text);
+
+        const input = document.createElement('input');
+        input.type = 'password';
+        input.style.padding = '8px';
+        input.style.border = '1px solid #ccc';
+        input.style.borderRadius = '4px';
+        input.style.width = '100%';
+        modal.appendChild(input);
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.display = 'flex';
+        buttonContainer.style.justifyContent = 'space-around';
+        buttonContainer.style.width = '100%';
+
+        const okButton = document.createElement('button');
+        okButton.textContent = 'OK';
+        okButton.style.padding = '8px 15px';
+        okButton.style.backgroundColor = '#007bff';
+        okButton.style.color = 'white';
+        okButton.style.border = 'none';
+        okButton.style.borderRadius = '4px';
+        okButton.style.cursor = 'pointer';
+        okButton.onclick = () => {
+            modal.remove();
+            callback(input.value);
+        };
+        buttonContainer.appendChild(okButton);
+
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        cancelButton.style.padding = '8px 15px';
+        cancelButton.style.backgroundColor = '#6c757d';
+        cancelButton.style.color = 'white';
+        cancelButton.style.border = 'none';
+        cancelButton.style.borderRadius = '4px';
+        cancelButton.style.cursor = 'pointer';
+        cancelButton.onclick = () => {
+            modal.remove();
+            callback(null);
+        };
+        buttonContainer.appendChild(cancelButton);
+
+        modal.appendChild(buttonContainer);
+        document.body.appendChild(modal);
+        input.focus();
+    }
+
+
+    window.editSenderEmail = function(button) {
+      const field = document.getElementById("senderEmail");
+
+      if (field) {
+          if (field.hasAttribute("readonly")) {
+            field.removeAttribute("readonly");
+            field.focus();
+            field.select();
+            if(button) button.textContent = "Save Email";
+            showModal("Sender email is now editable.");
+          } else {
+            field.setAttribute("readonly", "readonly");
+            if(button) button.textContent = "✎ Edit";
+            showModal(`Sender email saved as: ${field.value} (locally).`);
+          }
+      }
+    };
+
+    // --- New JavaScript for Candidate Details Section ---
+
+    /**
+     * Updates the state of the candidate field item, including toggle visibility and required text.
+     * @param {HTMLElement} leadingCheckbox The main checkbox for the field.
+     */
+    function updateFieldItemState(leadingCheckbox) {
+        const fieldItem = leadingCheckbox.closest('.candidate-field-item');
+        const toggleInput = fieldItem ? fieldItem.querySelector('.required-switch input[type="checkbox"]') : null;
+        const toggleLabel = toggleInput ? toggleInput.closest('.required-switch') : null;
+        const requiredTextSpan = fieldItem ? fieldItem.querySelector('.required-text') : null;
+
+        // IDs of fields that are always enabled and required
+        const permanentlyRequiredFieldIds = ['personalFullNameCheckbox', 'personalEmailCheckbox'];
+        const isPermanentlyRequired = permanentlyRequiredFieldIds.includes(leadingCheckbox.id);
+
+        if (isPermanentlyRequired) {
+            // For permanently required fields:
+            if (toggleLabel) {
+                toggleLabel.style.display = 'inline-block';
+                toggleLabel.setAttribute('aria-disabled', 'true'); // Visually disabled for interaction
+                if (toggleInput) {
+                    toggleInput.checked = true; // Always ON for these
+                    toggleInput.setAttribute('disabled', 'disabled'); // Always disabled
+                }
+            }
+            if (requiredTextSpan) requiredTextSpan.style.display = 'inline'; // Always visible
+        } else {
+            // For all other fields:
+            if (leadingCheckbox.checked) {
+                // When the leading checkbox is checked, make the toggle visible and ENABLED
+                if (toggleLabel) {
+                    toggleLabel.style.display = 'inline-block';
+                    toggleLabel.removeAttribute('aria-disabled');
+                    if (toggleInput) {
+                        toggleInput.removeAttribute('disabled');
+                        // DO NOT explicitly set toggleInput.checked here.
+                        // Let the browser's native click handling on the toggle itself manage its state.
+                        // This fixes the issue of toggles not turning on when clicked.
+                    }
+                }
+            } else {
+                // When the leading checkbox is UNCHECKED, hide the toggle and ensure it's OFF
+                if (toggleInput && toggleLabel) {
+                    toggleLabel.style.display = 'none';
+                    toggleLabel.setAttribute('aria-disabled', 'true');
+                    toggleInput.setAttribute('disabled', 'disabled');
+                    toggleInput.checked = false; // Explicitly turn it OFF when main checkbox is unchecked
+                }
+            }
+            // Update "Required" text based on the *current* state of the toggle (if visible)
+            // and if the leading checkbox is also checked
+            if (requiredTextSpan && toggleInput) {
+                requiredTextSpan.style.display = (leadingCheckbox.checked && toggleInput.checked) ? 'inline' : 'none';
+            }
+        }
+    }
+
+
+    /**
+     * Selects or clears all checkboxes and updates their states within a specified fieldset.
+     * @param {string} sectionId 'personal', 'educational', or 'professional'
+     * @param {boolean} checkedState true to check all, false to uncheck all
+     */
+    function toggleAllFields(sectionId, checkedState) {
+        const fieldset = document.querySelector(`.${sectionId}-fields-fieldset`);
+        if (!fieldset) return;
+
+        const permanentlyRequiredFieldIds = ['personalFullNameCheckbox', 'personalEmailCheckbox'];
+
+        fieldset.querySelectorAll('.candidate-field-item').forEach(item => {
+            const leadingCheckbox = item.querySelector('input[type="checkbox"]:not(.required-switch input)');
+            if (!leadingCheckbox) return;
+
+            // Do not alter permanently required fields
+            if (permanentlyRequiredFieldIds.includes(leadingCheckbox.id)) {
+                return;
+            }
+
+            // Set the main checkbox state
+            leadingCheckbox.checked = checkedState;
+
+            // Update the rest of the field item's state (toggle visibility, required text)
+            const toggleInput = item.querySelector('.required-switch input[type="checkbox"]');
+            if (toggleInput) {
+                if (checkedState === true) {
+                    // When selecting all, make toggle visible and enabled
+                    toggleInput.closest('.required-switch').style.display = 'inline-block';
+                    toggleInput.removeAttribute('disabled');
+                    toggleInput.closest('.required-switch').removeAttribute('aria-disabled');
+                    // Keep the toggle's current state when selecting all, or default to unchecked if it was previously off.
+                    // If you want 'Select All' to also force 'Required' on, you would set: toggleInput.checked = true;
+                    // For now, it respects the last state or remains unchecked.
+                } else { // checkedState === false (Clear All)
+                    toggleInput.closest('.required-switch').style.display = 'none';
+                    toggleInput.setAttribute('disabled', 'disabled');
+                    toggleInput.closest('.required-switch').setAttribute('aria-disabled', 'true');
+                    toggleInput.checked = false; // Turn off when clearing all
+                }
+            }
+
+            // Update "Required" text based on the new state of BOTH the leading checkbox AND the toggle
+            const requiredTextSpan = item.querySelector('.required-text');
+            if (requiredTextSpan && toggleInput) {
+                requiredTextSpan.style.display = (leadingCheckbox.checked && toggleInput.checked) ? 'inline' : 'none';
+            }
+        });
+    }
+
+
+    /**
+     * Toggles the visibility of optional personal fields.
+     */
+    function togglePersonalOptionalFields() {
+        const optionalFieldsContainer = document.querySelector('.personal-optional-fields');
+        const showMoreLink = document.querySelector('.show-more-link[data-target="personal"]');
+
+        if (optionalFieldsContainer && showMoreLink) {
+            const isExpanded = optionalFieldsContainer.classList.toggle('expanded');
+            showMoreLink.textContent = isExpanded ? 'Show less personal fields' : 'Show more personal fields';
+
+            // Also update the display state of the toggles within the newly revealed/hidden fields
+            // Re-run updateFieldItemState for each leading checkbox to correctly manage its associated toggle.
+            optionalFieldsContainer.querySelectorAll('.candidate-field-item input[type="checkbox"]:not(.required-switch input)').forEach(leadingCheckbox => {
+                updateFieldItemState(leadingCheckbox);
+            });
+        }
+    }
+
+    /**
+     * Toggles the visibility of optional educational fields.
+     */
+    function toggleEducationalOptionalFields() {
+        const optionalFieldsContainer = document.querySelector('.educational-optional-fields');
+        const showMoreLink = document.querySelector('.show-more-link[data-target="educational"]');
+
+        if (optionalFieldsContainer && showMoreLink) {
+            const isExpanded = optionalFieldsContainer.classList.toggle('expanded');
+            showMoreLink.textContent = isExpanded ? 'Show less educational fields' : 'Show more educational fields';
+
+            optionalFieldsContainer.querySelectorAll('.candidate-field-item input[type="checkbox"]:not(.required-switch input)').forEach(leadingCheckbox => {
+                updateFieldItemState(leadingCheckbox);
+            });
+        }
+    }
+
+    /**
+     * Toggles the visibility of optional professional fields.
+     */
+    function toggleProfessionalOptionalFields() {
+        const optionalFieldsContainer = document.querySelector('.professional-optional-fields');
+        const showMoreLink = document.querySelector('.show-more-link[data-target="professional"]');
+
+        if (optionalFieldsContainer && showMoreLink) {
+            const isExpanded = optionalFieldsContainer.classList.toggle('expanded');
+            showMoreLink.textContent = isExpanded ? 'Show less professional fields' : 'Show more professional fields';
+
+            optionalFieldsContainer.querySelectorAll('.candidate-field-item input[type="checkbox"]:not(.required-switch input)').forEach(leadingCheckbox => {
+                updateFieldItemState(leadingCheckbox);
+            });
+        }
+    }
+
+
+    // Attach event listeners for leading checkboxes
+    document.querySelectorAll('.candidate-field-item input[type="checkbox"]:not(.required-switch input)').forEach(leadingCheckbox => {
+        // Skip adding event listener to permanently disabled checkboxes as their state is fixed
+        if (leadingCheckbox.id === 'personalFullNameCheckbox' || leadingCheckbox.id === 'personalEmailCheckbox') {
+            return;
+        }
+        leadingCheckbox.addEventListener('change', (event) => {
+            updateFieldItemState(event.target);
+        });
+    });
+
+    // Attach event listeners for toggle inputs (the hidden input inside the switch)
+    document.querySelectorAll('.required-switch input[type="checkbox"]').forEach(toggleInput => {
+        // Skip adding event listener to permanently disabled toggles
+        if (toggleInput.id === 'personalFullNameToggle' || toggleInput.id === 'personalEmailToggle') {
+            return;
+        }
+        toggleInput.addEventListener('change', (event) => {
+            const fieldItem = event.target.closest('.candidate-field-item');
+            const leadingCheckbox = fieldItem.querySelector('input[type="checkbox"]:not(.required-switch input)');
+            // When the toggle itself is clicked, we need to ensure the 'Required' text updates
+            // based on its new checked state and the leading checkbox's state.
+            const requiredTextSpan = fieldItem.querySelector('.required-text');
+            if (requiredTextSpan && leadingCheckbox) {
+                requiredTextSpan.style.display = (leadingCheckbox.checked && event.target.checked) ? 'inline' : 'none';
+            }
+        });
+    });
+
+
+    // Event listeners for "Select All" and "Clear All" buttons
+    document.querySelectorAll('.select-all-btn').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const targetSection = event.target.dataset.target;
+            toggleAllFields(targetSection, true); // True for select all
+        });
+    });
+
+    document.querySelectorAll('.clear-all-btn').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const targetSection = event.target.dataset.target;
+            toggleAllFields(targetSection, false); // False for clear all
+        });
+    });
+
+    // Event listeners for "Show more/less" links
+    document.querySelector('.show-more-link[data-target="personal"]').addEventListener('click', togglePersonalOptionalFields);
+    document.querySelector('.show-more-link[data-target="educational"]').addEventListener('click', toggleEducationalOptionalFields);
+    document.querySelector('.show-more-link[data-target="professional"]').addEventListener('click', toggleProfessionalOptionalFields);
+
+
+    // Initialize state on page load for all fields
+    // This needs to be run *after* all event listeners are set up.
+    document.querySelectorAll('.candidate-field-item').forEach(fieldItem => {
+        const leadingCheckbox = fieldItem.querySelector('input[type="checkbox"]:not(.required-switch input)');
+        if (leadingCheckbox) {
+            updateFieldItemState(leadingCheckbox);
+        }
+    });
+
+    // JavaScript for the new header's profile dropdown and help icon
+    const profileMenuContainer = document.getElementById('profileMenuContainer');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const helpIcon = document.getElementById('helpIcon');
+
+    // Toggle dropdown visibility on click, but not when the help icon is clicked
+    if (profileMenuContainer) {
+        profileMenuContainer.addEventListener('click', function(event) {
+            if (event.target === helpIcon || helpIcon.contains(event.target)) {
+                event.stopPropagation(); // Prevent click from propagating to the container
+                // Add any specific action for the help icon here if needed
+            } else {
+                event.stopPropagation(); // Prevent click from propagating to document
+                profileDropdown.classList.toggle('show');
+            }
+        });
+    }
+
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (profileMenuContainer && !profileMenuContainer.contains(event.target)) {
+            profileDropdown.classList.remove('show');
+        }
+    });
+
+    // =================================================================
+    // == NEW LOGIC FOR DYNAMIC INVITE OPTIONS
+    // =================================================================
+    const reminderGroup = document.getElementById('reminderGroup');
+    const reinviteFieldset = document.getElementById('reinviteFieldset');
+    const submissionGroup = document.getElementById('submissionGroup');
+    const disqualificationGroup = document.getElementById('disqualificationGroup');
+
+    // Get the select elements within the groups
+    const resetAttemptSelect = document.getElementById('resetAttemptSelect');
+    const continueAttemptSelect = document.getElementById('continueAttemptSelect');
+    const submissionType = document.getElementById('submissionType');
+    const disqualificationSelect = document.getElementById('disqualificationSelect');
+
+    function updateDependentFields() {
+        const selectedValue = inviteSelect.value;
+
+        // Check if a valid option is selected
+        if (selectedValue === 'assessment' || selectedValue === 'interview') {
+            // Show all dependent field groups with their correct display styles
+            reminderGroup.style.display = 'flex';
+            reinviteFieldset.style.display = 'block';
+            submissionGroup.style.display = 'flex';
+            disqualificationGroup.style.display = 'flex';
+
+            if (selectedValue === 'assessment') {
+                // Set all dropdowns to their "assessment" related values
+                reminderSelect.value = 'assessment-reminder';
+                resetAttemptSelect.value = 'assessment-reset';
+                continueAttemptSelect.value = 'assessment-continue';
+                submissionType.value = 'assessment';
+                disqualificationSelect.value = 'assessment';
+            } else { // selectedValue === 'interview'
+                // Set all dropdowns to their "interview" related values
+                reminderSelect.value = 'interview-reminder';
+                resetAttemptSelect.value = 'interview-reset';
+                continueAttemptSelect.value = 'interview-continue';
+                submissionType.value = 'interview';
+                disqualificationSelect.value = 'interview';
+            }
+        } else {
+            // If no valid option is selected (e.g., initial state), hide all dependent fields
+            reminderGroup.style.display = 'none';
+            reinviteFieldset.style.display = 'none';
+            submissionGroup.style.display = 'none';
+            disqualificationGroup.style.display = 'none';
+        }
+    }
+
+    // Attach the event listener to the main invite dropdown
+    if (inviteSelect) {
+        inviteSelect.addEventListener('change', updateDependentFields);
+    }
+
+    // Run the function once on page load to set the initial state (hidden)
+    updateDependentFields();
+
+  });
+</script>
+
+</body>
+</html>

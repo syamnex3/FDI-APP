@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Questions - FDI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Universal box-sizing for consistent layout */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Base body styles with smaller font and Inter font family */
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafc;
+      font-size: 14px; /* Reduced base font size for the entire body */
+      padding-top: 100px; /* Add padding to account for fixed header */
+    }
+
+    /* Fixed top header for consistent placement */
+    .top-header {
+      position: fixed;
+      width: 100%;
+      z-index: 10;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      top: 0;
+      left: 0;
+    }
+
+    /* Brand title section - dark blue bar at the very top */
+    .brand-title {
+      background-color: #1d2686;
+      color: #fff;
+      font-size: 20px; /* Reduced font size */
+      padding: 10px 12px; /* Reduced padding */
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Text within the brand title */
+    .brand-title-text {
+        color: #fff;
+        font-size: 20px; /* Reduced font size */
+        font-weight: bold;
+    }
+
+    /* Main header below the brand title, containing breadcrumbs and status */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px; /* Reduced padding */
+      border-bottom: 1px solid #eee;
+    }
+
+    /* Breadcrumb navigation */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-size: 12px; /* Reduced font size */
+      color: #999;
+    }
+
+    /* "Back" link in breadcrumb */
+    .breadcrumb-link {
+      padding: 5px 10px; /* Reduced padding */
+      cursor: pointer;
+      color: #1d2686;
+      font-size: 12px; /* Reduced font size */
+      transition: 0.2s ease;
+      margin-right: 8px; /* Reduced gap after "Back" button */
+      margin-left: -4px; /* Adjusted position */
+    }
+
+    /* Headings within the breadcrumb */
+    .breadcrumb-heading {
+      color: #999;
+      text-decoration: none;
+      transition: color 0.2s;
+      font-size: 12px; /* Reduced font size */
+      font-weight: normal;
+    }
+
+    .breadcrumb-heading:hover {
+      color: #1d2686;
+    }
+
+    /* Separator icon in breadcrumb ('>') */
+    .breadcrumb-separator {
+      font-size: 10px; /* Reduced font size for the icon */
+      color: #ccc;
+      margin-left: 4px; /* Reduced margin */
+      margin-right: 4px; /* Reduced margin */
+      font-weight: normal;
+    }
+ 
+    /* New style for the current page in breadcrumb */
+    .breadcrumb-current-page {
+        font-weight: bold; /* Make it bold */
+        color: #1d2686; /* Highlight color */
+        text-decoration: none; /* Ensure no underline */
+        font-size: 12px; /* Keep consistent with other breadcrumb elements */
+    }
+
+    /* Status section (Active, Candidate, Invite) */
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 15px; /* Reduced gap */
+      font-size: 13px; /* Adjusted font size for status text */
+    }
+
+    /* Active dot indicator */
+    .status .active-dot {
+      width: 8px; /* Reduced size */
+      height: 8px; /* Reduced size */
+      background-color: #28a745;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* Create Question button */
+    .create-question-btn {
+      background-color: #1d4ed8; /* Changed to blue */
+      color: #fff;
+      border: none;
+      padding: 6px 12px; /* Reduced padding for a smaller button */
+      font-weight: 600;
+      font-size: 13px; /* Reduced font size */
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .create-question-btn:hover {
+      background-color: #1e40af; /* Darker blue on hover */
+    }
+
+    /* Adjust spacing for the icon inside the create question button */
+    .create-question-btn i {
+      margin-right: 5px; /* Added margin to separate icon and text */
+    }
+
+    /* Profile Menu Container (S, dropdown arrow) */
+    .profile-menu-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px; /* Reduced gap */
+      cursor: pointer;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    /* Profile avatar (the 'S' circle) */
+    .profile-avatar {
+      width: 28px; /* Reduced size */
+      height: 28px; /* Reduced size */
+      border-radius: 50%;
+      background-color: #e0e0e0;
+      color: #1d2686;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px; /* Reduced font size */
+      text-transform: uppercase;
+    }
+
+    /* Styles for the new question mark icon next to 'S' */
+    .profile-help-icon {
+        color: #fff; /* White color for the question mark icon */
+        font-size: 20px; /* Increased font size for visual weight to match 'S' visually */
+        width: 28px; /* Matched width with .profile-avatar */
+        height: 28px; /* Matched height with .profile-avatar */
+        border-radius: 6px; /* Slightly rounded corners for the square */
+        display: flex; /* Use flex to center the icon */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        margin-left: 10px; /* Space it out from the profile avatar/dropdown */
+        cursor: pointer; /* Indicate it's clickable */
+    }
+
+    /* Profile dropdown menu */
+    .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      overflow: hidden;
+      min-width: 200px; /* Slightly reduced width */
+      display: none;
+      z-index: 100;
+      margin-top: 8px; /* Reduced gap */
+      font-family: 'Inter', sans-serif;
+    }
+
+    .profile-dropdown.show {
+      display: block;
+    }
+
+    /* Header within the dropdown (Sri, email, company) */
+    .profile-dropdown-header {
+        padding: 8px 12px; /* Reduced padding */
+        background-color: #f0f2f5;
+        border-bottom: 1px solid #eee;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .profile-dropdown-header span {
+        font-size: 14px; /* Reduced font size */
+    }
+
+    .profile-dropdown-header small {
+        color: #666;
+        font-weight: 400;
+        font-size: 11px; /* Reduced font size */
+    }
+
+    /* Individual items in the dropdown menu */
+    .profile-dropdown-item {
+      padding: 8px 12px; /* Reduced padding */
+      display: flex;
+      align-items: center;
+      gap: 8px; /* Reduced gap */
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      font-size: 12px; /* Reduced font size */
+      transition: background-color 0.2s;
+    }
+
+    .profile-dropdown-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .profile-dropdown-item i {
+        color: #1d2686;
+    }
+
+    /* Styles specific to Classic Question Type page content */
+    .content {
+      padding: 30px 60px;
+    }
+
+    .question-category-tabs {
+      display: flex;
+      gap: 30px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #4b5563;
+      margin-bottom: 25px;
+      cursor: pointer;
+    }
+
+    .question-category-tabs div {
+      padding-bottom: 6px;
+      border-bottom: 2px solid transparent;
+    }
+
+    .question-category-tabs .active {
+      font-weight: bold;
+      color: #1d4ed8;
+      border-bottom: 2px solid #1d4ed8;
+    }
+
+    .question-types {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .question-card {
+      background-color: #e0f2fe; /* Changed to a slightly darker light blue */
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: 0.2s;
+      text-align: center;
+    }
+
+    .question-card:hover {
+      border-color: #1d4ed8;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .question-card i {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #4b5563;
+    }
+
+    .question-card span {
+      display: block;
+      font-size: 14px;
+      color: #111827;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: grid;
+    }
+  </style>
+
+  <script>
+    function showTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+      document.querySelectorAll('.question-category-tabs div').forEach(tb => tb.classList.remove('active'));
+      document.getElementById(tab).classList.add('active');
+      document.getElementById(tab + '-tab').classList.add('active');
+    }
+
+    window.onload = function () {
+      showTab('classic');
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileMenuContainer = document.getElementById('profileMenuContainer');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const helpIcon = document.getElementById('helpIcon'); // Get the new help icon by ID
+
+        // Toggle dropdown visibility on click, but not when the help icon is clicked
+        profileMenuContainer.addEventListener('click', function(event) {
+            // Check if the clicked element is the help icon or contains it
+            if (event.target === helpIcon || helpIcon.contains(event.target)) {
+                event.stopPropagation(); // Prevent click from propagating to the container
+                // Add any specific action for the help icon here if needed
+            } else {
+                event.stopPropagation(); // Prevent click from propagating to document
+                profileDropdown.classList.toggle('show');
+            }
+        });
+
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!profileMenuContainer.contains(event.target)) {
+                profileDropdown.classList.remove('show');
+            }
+        });
+    });
+  </script>
+</head>
+<body>
+
+  <div class="top-header">
+    <!-- Top bar with FDI and Profile -->
+    <div class="brand-title">
+        <span class="brand-title-text">FDI</span>
+        <!-- Profile Menu Section moved here -->
+        <div class="profile-menu-container" id="profileMenuContainer">
+            <div class="profile-avatar">S</div> <!-- Initial for 'Sri' -->
+            <!-- New question mark icon next to the profile avatar -->
+            <i class="fas fa-question-circle profile-help-icon" id="helpIcon"></i>
+
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="profile-dropdown-header">
+                    <span>Sri</span><br>
+                    <small>srharshak@nexnoratech.onmicros....</small><br>
+                    <small>Nexnoratech</small>
+                </div>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-building"></i> Company Profile
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-users"></i> Team Members
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-envelope"></i> Email Templates
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-question-circle"></i> Connect Question Library
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-chart-bar"></i> Plan Usage
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-cog"></i> Setting Options
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-user-circle"></i> My Account
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main header content below the top bar -->
+    <div class="header">
+      <div class="breadcrumb">
+        <span class="breadcrumb-link" onclick="history.back()">Back</span>
+        <a href="#" class="breadcrumb-heading">SUMMARY</a>
+        <!-- Changed to Font Awesome fa-greater-than icon for precise control -->
+        <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+        <a href="#" class="breadcrumb-current-page">QUESTION</a>
+        <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+        <a href="#" class="breadcrumb-heading">CONFIGURE</a>
+        <!-- Removed "CREATE NEW QUESTION" from here -->
+      </div>
+
+      <div class="status">
+        <a href="#" class="create-question-btn"><i class="fas fa-plus-circle"></i> Create new question</a> <!-- Updated button with adjusted icon spacing -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="content">
+
+    <!-- Tabs -->
+    <div class="question-category-tabs">
+      <div id="classic-tab" onclick="showTab('classic')">Classic Question Type</div>
+      <div id="coding-tab" onclick="showTab('coding')">Coding</div>
+      <div id="quant-tab" onclick="showTab('quant')">Quantitative & Analytical</div>
+      <div id="soft-tab" onclick="showTab('soft')">Soft Skills & Communication</div>
+    </div>
+
+    <!-- Classic Question Types -->
+    <div id="classic" class="tab-content active question-types">
+      <div class="question-card" onclick="location.href='multiple_choice.html'"><i class="fas fa-list"></i><span>Multiple Choice</span></div>
+      <div class="question-card" onclick="location.href='multiselectionmainpage.html'"><i class="fas fa-check-double"></i><span>Multiple Selection</span></div>
+      <div class="question-card" onclick="location.href='text_entry_form.html'"><i class="fas fa-keyboard"></i><span>Text Entry</span></div>
+      <div class="question-card" onclick="location.href='text_dropdown_form.html'"><i class="fas fa-caret-square-down"></i><span>Text Drop Down</span></div>
+      <div class="question-card" onclick="location.href='essay_type_form.html'"><i class="fas fa-align-left"></i><span>Essay Type</span></div>
+      <div class="question-card" onclick="location.href='true_false_form.html'"><i class="fas fa-toggle-on"></i><span>True or False</span></div>
+      <div class="question-card" onclick="location.href='LikertsliderMainpage.html'"><i class="fas fa-ruler-horizontal"></i><span>Likert Slider</span></div>
+      <div class="question-card" onclick="location.href='Videomainpage.html'"><i class="fas fa-video"></i><span>Video Response</span></div>
+      <div class="question-card" onclick="location.href='Audiomainpage1.html'"><i class="fas fa-microphone"></i><span>Audio Response</span></div>
+    </div>
+
+    <!-- Coding -->
+    <div id="coding" class="tab-content question-types">
+      <div class="question-card" onclick="location.href='basicCoding.jsp'"><i class="fas fa-laptop-code"></i><span>Coding</span></div>
+    </div>
+
+    <!-- Quantitative & Analytical -->
+    <div id="quant" class="tab-content question-types">
+      <div class="question-card" onclick="location.href='Classificationmainpage.html'"><i class="fas fa-th-list"></i><span>Classification</span></div>
+      <div class="question-card" onclick="location.href='Matchingtables.html'"><i class="fas fa-table"></i><span>Matching Tables</span></div>
+      <div class="question-card" onclick="location.href='multipart_form.html'"><i class="fas fa-layer-group"></i><span>Multipart</span></div>
+      <div class="question-card" onclick="location.href='label_image_text_form.html'"><i class="fas fa-image"></i><span>Label an Image (Text)</span></div>
+      <div class="question-card" onclick="location.href='label_image_dropdown_form.html'"><i class="fas fa-image"></i><span>Label an Image (Dropdown)</span></div>
+      <div class="question-card" onclick="location.href='resequence_form.html'"><i class="fas fa-random"></i><span>Resequence</span></div>
+      <div class="question-card" onclick="location.href='Match the following interface.html'"><i class="fas fa-random"></i><span>Match the Following</span></div>
+      <div class="question-card" onclick="location.href='NumericEntryUnitsMainPage.html'"><i class="fas fa-equals"></i><span>Numeric Entry w/ Units</span></div>
+    </div>
+
+    <!-- Soft Skills & Communication -->
+    <div id="soft" class="tab-content question-types">
+      <div class="question-card" onclick="location.href='SentenceResponse.html'"><i class="fas fa-comments"></i><span>Sentence Response</span></div>
+      <div class="question-card" onclick="location.href='sentence_correction_form.html'"><i class="fas fa-comments"></i><span>Sentence Correction</span></div>
+      <div class="question-card" onclick="location.href='Typing.html'"><i class="fas fa-comments"></i><span>Typing</span></div>
+    </div>
+  </div>
+</body>
+</html>

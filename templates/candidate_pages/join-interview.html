@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Interview</title>
+    <style>
+        /* General styling for all elements */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Body styling: full viewport height and width, centered content */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            flex-direction: column; /* Stack content vertically for header */
+            width: 100vw; /* Ensure body takes full viewport width */
+            height: 100vh; /* Ensure body takes full viewport height */
+            align-items: center;
+            justify-content: flex-start; /* Align to top to make space for header */
+        }
+
+        /* Header Styles */
+        .top-header {
+            position: fixed;
+            width: 100%;
+            z-index: 100; /* Ensure it's above other content */
+            background-color: #1d2686; /* Dark blue background for the whole bar */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            top: 0; /* Pin to the top */
+            left: 0;
+            display: flex;
+            justify-content: flex-start; /* Align FDI to the left */
+            align-items: center;
+            padding: 12px 24px; /* Padding for the entire bar */
+            height: 50px; /* Fixed height for consistency */
+            box-sizing: border-box; /* Include padding in height */
+        }
+ 
+        .brand-title {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+        }
+ 
+        /* Main content wrapper to accommodate fixed header */
+        .main-content-wrapper {
+            width: 100%;
+            height: calc(113vh - 80px); /* Adjust based on header height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 50px; /* No extra padding here, height is calculated */
+        }
+
+        /* Main container for the layout - now fills the entire page */
+        .container {
+            display: flex;
+            width: 100%; /* Make it full width */
+            height: 100%; /* Make it full height */
+            background: white;
+            border-radius: 0; /* Removed border-radius for a seamless full-page fit */
+            overflow: hidden;
+            box-shadow: none; /* Removed box-shadow for a seamless full-page fit */
+        }
+
+        /* Left section for the illustration */
+        .left {
+            flex: 1;
+            background: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Hide any overflow from the image */
+        }
+
+        /* Styling for the illustration image - now fits 100% */
+        .left img {
+            width: 100%; /* Make image fill its container width */
+            height: 100%; /* Make image fill its container height */
+            object-fit: cover; /* Cover the entire container, cropping if necessary */
+            display: block; /* Remove extra space below image */
+        }
+
+        /* Right section for the form content */
+        .right {
+            flex: 1;
+            padding: 50px; /* Adjusted padding */
+            display: flex; /* Use flexbox for vertical centering within right pane */
+            flex-direction: column;
+           
+            align-items: center; /* Center content horizontally within right pane */
+            text-align: center; /* Ensure text is centered */
+        }
+
+        /* Heading styling */
+        h2 {
+            margin-top: 0;
+            margin-bottom: 10px; /* Reduced margin-bottom to decrease space */
+            font-size: 1.3em; /* Increased font size for main heading */
+            color: #333;
+        }
+
+        p {
+            font-size: 1.3em; /* Increased font size for paragraph text */
+            color: #555;
+        }
+
+        /* Container for role selection buttons */
+        .role-buttons {
+            display: flex;
+            width: 100%; /* Ensure buttons take full width of their container */
+            max-width: 500px; /* Increased max width */
+            margin-bottom: 20px;
+            gap: 10px; /* Space between buttons */
+        }
+
+        /* Styling for role buttons (Candidate/Interviewer) */
+        .role-buttons button {
+            flex: 1;
+            padding: 10px 5px; /* Increased padding for more height */
+            border: 2px solid #ccc; /* Default border for inactive */
+            background: #e0e0e0; /* Inactive background color */
+            cursor: pointer;
+            font-size: 1.2em; /* Increased font size */
+            transition: 0.2s; /* Smooth transition for active state */
+            border-radius: 8px; /* Slightly more rounded corners */
+            color: #333; /* Default text color for inactive */
+        }
+
+        /* Styling for the active role button */
+        .role-buttons button.active {
+            background: #2196F3; /* Active background color (blue) */
+            color: white;
+            border-color: #2196F3; /* Blue border for active state */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for active state */
+        }
+
+        /* Styling for input fields */
+        input {
+            width: 100%;
+            max-width: 500px; /* Increased max width */
+            padding: 10px; /* Increased padding */
+            margin-bottom: 15px;
+            font-size: 1.2em; /* Increased font size */
+            border: 1px solid #ccc;
+            border-radius: 8px; /* Slightly more rounded corners */
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Inner shadow for depth */
+        }
+
+        /* Styling for the JOIN button */
+        #joinBtn {
+            background: #4CAF50; /* Green color */
+            color: white;
+            border: none;
+            font-size: 1.3em; /* Increased font size */
+            padding: 8px; /* Increased padding */
+            width: 200px;
+            max-width: 500px; /* Increased max width */
+            cursor: pointer;
+            border-radius: 8px; /* Slightly more rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            transition: background 0.3s ease;
+        }
+
+        /* Hover effect for the JOIN button */
+        #joinBtn:hover {
+            background: #45a049; /* Darker green on hover */
+        }
+
+        /* Styling for the confirmation message */
+        .confirmation {
+            margin-top: 10px;
+            color: green;
+            font-weight: bold;
+            font-size: 1.2em; /* Increased font size for confirmation message */
+            display: none; /* Hidden by default */
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .main-content-wrapper {
+                height: calc(100vh - 80px); /* Adjusted padding for smaller header on mobile */
+            }
+            .top-header {
+                position: relative; /* Allow header to flow naturally on mobile */
+                box-shadow: none; /* Remove shadow if not fixed */
+                height: auto; /* Allow height to adjust */
+                flex-direction: column; /* Stack items in header */
+                align-items: flex-start;
+                padding: 10px 15px;
+                gap: 10px;
+            }
+            .brand-title {
+                font-size: 20px;
+            }
+            .container {
+                flex-direction: column; /* Stack sections vertically */
+                width: 100%;
+                height: 100%; /* Full height on mobile */
+                border-radius: 0; /* No rounded corners on full screen mobile */
+            }
+
+            .left {
+                flex: none; /* Don't grow */
+                height: 30vh; /* Shorter height for image on mobile */
+                padding: 0; /* Removed padding for full image fit */
+            }
+
+            .right {
+                padding: 20px;
+                flex: 1; /* Take remaining space */
+                overflow-y: auto; /* Allow scrolling if content overflows */
+                justify-content: flex-start; /* Align content to top on mobile */
+            }
+
+            h2 {
+                font-size: 2.2em; /* Adjusted for mobile */
+            }
+
+            p {
+                font-size: 1em; /* Adjusted for mobile */
+            }
+
+            .role-buttons button,
+            input,
+            #joinBtn {
+                font-size: 1em; /* Adjusted for mobile */
+                padding: 12px; /* Adjusted for mobile */
+            }
+
+            .confirmation {
+                font-size: 1em; /* Adjusted for mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <div class="brand-title">FDI</div>
+    </div>
+
+    <div class="main-content-wrapper">
+        <div class="container">
+            <div class="left">
+                <img src="https://img.freepik.com/free-vector/businessman-businesswoman-office_24877-55999.jpg?ga=GA1.1.1659834720.1748502797&semt=ais_hybrid&w=740"alt="Interview illustration">
+            </div>
+
+            <div class="right">
+                <h1>Join Interview</h1>
+                <p>What's your role?</p>
+
+                <div class="role-buttons">
+                    <button id="candidateBtn" class="active">Candidate</button>
+                    <button id="interviewerBtn">Interviewer</button>
+                </div>
+
+                <form id="joinForm">
+                    <input type="text" name="fullname" placeholder="Full name *" required>
+                    <input type="email" name="email" placeholder="Email *" required>
+                    <input type="hidden" name="role" id="roleInput" value="Candidate">
+                    <button id="joinBtn" type="submit">JOIN</button>
+                </form>
+
+                <p class="confirmation" id="confirmationMsg">✔️ You have joined the interview successfully!</p>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const roleInput = document.getElementById('roleInput');
+    const candidateBtn = document.getElementById('candidateBtn');
+    const interviewerBtn = document.getElementById('interviewerBtn');
+    const form = document.getElementById('joinForm');
+    const confirmationMsg = document.getElementById('confirmationMsg');
+
+    // Event listener for Candidate button click
+    candidateBtn.addEventListener('click', () => {
+        roleInput.value = 'Candidate'; // Set hidden input value
+        candidateBtn.classList.add('active'); // Add active class to Candidate
+        interviewerBtn.classList.remove('active'); // Remove active class from Interviewer
+    });
+
+    // Event listener for Interviewer button click
+    interviewerBtn.addEventListener('click', () => {
+        roleInput.value = 'Interviewer'; // Set hidden input value
+        interviewerBtn.classList.add('active'); // Add active class to Interviewer
+        candidateBtn.classList.remove('active'); // Remove active class from Candidate
+    });
+
+    // Form submission handler
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission (page reload)
+
+        // Get form values
+        const fullName = form.fullname.value;
+        const email = form.email.value;
+        const role = form.role.value;
+
+        // Log values to console for debugging
+        console.log(`Full Name: ${fullName}`);
+        console.log(`Email: ${email}`);
+        console.log(`Role: ${role}`);
+
+        // Redirect to the new instructions page
+        window.location.href = '/instructions/'; // Redirect to the new page
+    });
+</script>
+
+</body>
+</html>

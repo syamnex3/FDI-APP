@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to PJ TechnoSol</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafc;
+            display: flex; /* Use flexbox for side-by-side layout */
+            flex-direction: column; /* Stack content vertically for header */
+            align-items: stretch; /* Stretch items to fill container height */
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            color: #333;
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        /* Header Styles */
+        .top-header {
+            position: fixed;
+            width: 100%;
+            z-index: 100; /* Ensure it's above other content */
+            background-color: #1d2686; /* Dark blue background for the whole bar */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            top: 0; /* Pin to the top */
+            left: 0;
+            display: flex;
+            justify-content: flex-start; /* Align FDI to the left */
+            align-items: center;
+            padding: 12px 24px; /* Padding for the entire bar */
+            height: 50px; /* Fixed height for consistency */
+            box-sizing: border-box; /* Include padding in height */
+        }
+ 
+        .brand-title {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+        }
+ 
+        /* Main content wrapper to accommodate fixed header */
+        .main-content-wrapper {
+            display: flex;
+            flex: 1; /* Allows it to take up remaining vertical space */
+            padding-top: 80px; /* Adjust based on header height */
+            width: 100%; /* Ensure it takes full width */
+            align-items: stretch; /* Inherit from body flex */
+            margin-top: -30px;
+        }
+
+        /* Left Image Container - now covers full left half */
+        .left-image-container {
+            flex: 1; /* Takes up half the width */
+            display: flex;
+            justify-content: center; /* Center content if image doesn't fill */
+            align-items: center;
+            height: 100vh; /* Occupy full viewport height */
+            overflow: hidden; /* Hide any overflow from the image */
+            box-sizing: border-box;
+        }
+
+        .interview-image {
+            width: 100%; /* Make image fill its container width */
+            height: 100%; /* Make image fill its container height */
+            object-fit: cover; /* Cover the entire container, cropping if necessary */
+            display: block; /* Remove extra space below image */
+        }
+
+        /* Container for the text content and button on the right */
+        .text-content-container {
+            flex: 1; /* Takes up half the width */
+            background: rgba(255, 255, 255, 0.95); /* Slightly less transparent white background for readability */
+            padding: 40px;
+            border-radius: 0; /* Remove border-radius for a sharp split */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Adjusted shadow */
+            text-align: center;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Center content vertically */
+            gap: 25px;
+            height: 100vh; /* Occupy full viewport height */
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1d2686;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        .next-button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        .next-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .next-button:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column; /* Stack content vertically */
+                justify-content: flex-start; /* Align to top */
+            }
+            .main-content-wrapper {
+                padding-top: 80px; /* Adjusted padding for smaller header on mobile */
+                flex-direction: column;
+            }
+            .top-header {
+                position: relative; /* Allow header to flow naturally on mobile */
+                box-shadow: none; /* Remove shadow if not fixed */
+                height: auto; /* Allow height to adjust */
+                flex-direction: column; /* Stack items in header */
+                align-items: flex-start;
+                padding: 10px 15px;
+                gap: 10px;
+            }
+            .brand-title {
+                font-size: 20px;
+            }
+            .left-image-container {
+                height: 50vh; /* Image takes half height on small screens */
+                width: 100%; /* Image takes full width on small screens */
+                padding: 0;
+            }
+            .interview-image {
+                object-fit: cover; /* Ensure it still covers its container */
+                width: 100%; /* Explicitly set width/height for mobile */
+                height: 100%;
+            }
+            .text-content-container {
+                height: auto; /* Auto height for text content */
+                padding: 25px;
+                margin-top: 20px;
+                border-radius: 8px; /* Re-add border-radius for stacked layout */
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1); /* Adjusted shadow for stacked layout */
+            }
+            h1 {
+                font-size: 24px;
+            }
+            p {
+                font-size: 15px;
+            }
+            .next-button {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <div class="brand-title">FDI</div>
+    </div>
+    
+    <div class="main-content-wrapper">
+        <div class="left-image-container">
+            <!-- 
+                IMPORTANT: Ensure 'img.3.jpeg' is in the same directory as this HTML file, 
+                or provide a correct relative path.
+                A fallback placeholder image is provided in case the image fails to load.
+            -->
+            <img src="https://img.freepik.com/free-vector/businessman-businesswoman-office_24877-55999.jpg?ga=GA1.1.1659834720.1748502797&semt=ais_hybrid&w=740" alt="Interview Illustration" class="interview-image" onerror="this.onerror=null;this.src='https://placehold.co/600x800/E0E0E0/333333?text=Image+Not+Found';">
+        </div>
+
+        <div class="text-content-container">
+            <h1>Hi Deepika, Welcome to Nexnora Technologies Pvt Ltd Interview Process!</h1>
+            <p>We appreciate your interest in this opportunity and thank you for taking the time to participate in our interview process.</p>
+
+            <button class="next-button" onclick="window.location.href='/join-interview/'">NEXT &gt;</button>
+        </div>
+    </div>
+    
+</body>
+</html>

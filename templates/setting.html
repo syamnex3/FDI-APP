@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setting Options</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Quill Editor CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* --- HEADER STYLES (from header.html) --- */
+        /* Universal box-sizing for consistent layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Base body styles with smaller font and Inter font family */
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9fafc;
+            font-size: 14px; /* Reduced base font size for the entire body */
+            padding-top: 85px; /* Added padding to prevent content from being hidden by fixed header */
+        }
+
+        /* Fixed top header for consistent placement */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Brand title section - dark blue bar at the very top */
+        .brand-title {
+            background-color: #1d2686;
+            color: #fff;
+            font-size: 20px; /* Reduced font size */
+            padding: 10px 12px; /* Reduced padding */
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Text within the brand title */
+        .brand-title-text {
+            color: #fff;
+            font-size: 20px; /* Reduced font size */
+            font-weight: bold;
+        }
+
+        /* Main header below the brand title, containing breadcrumbs and status */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px; /* Reduced padding */
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Breadcrumb navigation */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            font-size: 12px; /* Reduced font size */
+            color: #999;
+        }
+
+        /* Profile Menu Container (S, dropdown arrow) */
+        .profile-menu-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px; /* Reduced gap */
+            cursor: pointer;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Profile avatar (the 'S' circle) */
+        .profile-avatar {
+            width: 28px; /* Reduced size */
+            height: 28px; /* Reduced size */
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #1d2686;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px; /* Reduced font size */
+            text-transform: uppercase;
+        }
+
+        /* Styles for the new question mark icon next to 'S' */
+        .profile-help-icon {
+            color: #fff; /* White color for the question mark icon */
+            font-size: 20px; /* Increased font size for visual weight to match 'S' visually */
+            width: 28px; /* Matched width with .profile-avatar */
+            height: 28px; /* Matched height with .profile-avatar */
+            border-radius: 6px; /* Slightly rounded corners for the square */
+            display: flex; /* Use flex to center the icon */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            margin-left: 10px; /* Space it out from the profile avatar/dropdown */
+            cursor: pointer; /* Indicate it's clickable */
+        }
+
+        /* Profile dropdown menu */
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            min-width: 200px; /* Slightly reduced width */
+            display: none;
+            z-index: 100;
+            margin-top: 8px; /* Reduced gap */
+            font-family: 'Inter', sans-serif;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        /* Header within the dropdown (Sri, email, company) */
+        .profile-dropdown-header {
+            padding: 8px 12px; /* Reduced padding */
+            background-color: #f0f2f5;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .profile-dropdown-header span {
+            font-size: 14px; /* Reduced font size */
+        }
+
+        .profile-dropdown-header small {
+            color: #666;
+            font-weight: 400;
+            font-size: 11px; /* Reduced font size */
+        }
+
+        /* Individual items in the dropdown menu */
+        .profile-dropdown-item {
+            padding: 8px 12px; /* Reduced padding */
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Reduced gap */
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 12px; /* Reduced font size */
+            transition: background-color 0.2s;
+        }
+
+        .profile-dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .profile-dropdown-item i {
+            color: #1d2686;
+        }
+
+        /* --- ORIGINAL SETTINGS PAGE STYLES --- */
+        /* Generic toggle switch styling from setting2.html */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            background-color: #d1d5db;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        }
+        .toggle-switch.active {
+            background-color: #2563eb;
+        }
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        /* Styles for the main ON/OFF toggle in onboarding settings */
+        .main-toggle-switch {
+            width: 60px; height: 30px; background-color: #d1d5db; border-radius: 9999px; position: relative; cursor: pointer; transition: background-color 0.2s; box-sizing: border-box; display: block;
+        }
+        .main-toggle-switch::before {
+            content: 'OFF'; position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #4b5563; font-weight: 600; font-size: 0.9rem; transition: left 0.2s, right 0.2s, color 0.2s, content 0.2s; z-index: 1; white-space: nowrap;
+        }
+        .main-toggle-switch.active::before {
+            content: 'ON'; left: auto; right: 8px; color: #ffffff;
+        }
+        .main-toggle-switch::after {
+            content: ''; position: absolute; width: 26px; height: 26px; border-radius: 50%; background-color: #ffffff; top: 2px; left: 2px; transition: transform 0.2s, background-color 0.2s; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        }
+        .main-toggle-switch.active {
+            background-color: #22c55e;
+        }
+        .main-toggle-switch.active::after {
+            transform: translateX(30px);
+        }
+        
+        .content-section { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; }
+        .content-section:first-of-type { margin-top: 0; border-top: none; padding-top: 0; }
+        .candidate-instructions-section, .instructions-box { font-family: 'Inter', sans-serif; border: 1px solid #d1d5db; border-radius: 0.5rem; background-color: #ffffff; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .edit-button, .cancel-button { padding: 0.5rem 1rem; border-radius: 0.375rem; background-color: #2563eb; color: white; border: none; cursor: pointer; transition: background-color 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .edit-button:hover, .cancel-button:hover { background-color: #375aeb; }
+        .cancel-button { background-color: #ef4444; }
+        .cancel-button:hover { background-color: #f43f3f; }
+        .instructions-box h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; }
+        .instructions-box ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .instructions-box ul li { margin-bottom: 0.5rem; }
+        input[type="checkbox"]:checked { accent-color: #22c55e; }
+        input[type="radio"]:checked { accent-color: #2563eb; }
+        #aadhaar-ekyc-toggle:disabled ~ .toggle-switch + span { color: #9ca3af; }
+        .email-template-box { background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+        .email-template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .email-template-grid-row { display: contents; }
+        .email-template-label { font-weight: 500; color: #4b5563; text-align: left; padding-right: 1rem; align-self: center; }
+        .email-template-select-container { position: relative; width: 100%; }
+        .email-template-select { width: 100%; padding: 0.5rem 2.5rem 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color: #ffffff; appearance: none; -webkit-appearance: none; -moz-appearance: none; cursor: pointer; font-size: 0.875rem; color: #374151; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: border-color 0.15s, box-shadow 0.15s; }
+        .email-template-select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        .email-template-select-arrow { position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); pointer-events: none; color: #6b7280; font-size: 0.75rem; }
+        .input-with-button-container { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .input-with-button-container input[type="text"] { flex: 1; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem; color: #374151; transition: border-color 0.15s, box-shadow 0.15s; }
+        .input-with-button-container input[type="text"]:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        .input-with-button-container button { padding: 0.75rem 1.5rem; background-color: #2563eb; color: white; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.15s; white-space: nowrap; }
+        .input-with-button-container button:hover { background-color: #1d4ed8; }
+        .chip { display: inline-flex; align-items: center; background-color: #e0e7ff; color: #3b82f6; padding: 0.375rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 500; margin-right: 0.5rem; margin-bottom: 0.5rem; }
+        .chip .remove-icon { cursor: pointer; margin-left: 0.5rem; color: #3b82f6; width: 1rem; height: 1rem; }
+        .chip .remove-icon:hover { color: #1d4ed8; }
+        .email-reminder-container { display: flex; align-items: center; gap: 1rem; }
+        .email-reminder-container input[type="number"] { width: 60px; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; text-align: center; }
+        .email-reminder-container .save-button { background-color: #2563eb; color: white; padding: 0.75rem 1.5rem; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.15s; }
+        .email-reminder-container .save-button:hover { background-color: #1d4ed8; }
+        .email-reminder-container input[type="number"]:disabled { background-color: #e5e7eb; cursor: not-allowed; }
+        .email-reminder-container .save-button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .faq-item { background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; transition: all 0.3s ease-in-out; }
+        .faq-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; cursor: pointer; background-color: #f9fafb; border-bottom: 1px solid transparent; transition: background-color 0.15s; }
+        .faq-header.expanded { border-bottom: 1px solid #e5e7eb; }
+        .faq-header:hover { background-color: #f3f4f6; }
+        .faq-header-text { font-weight: 600; color: #374151; flex-grow: 1; margin-right: 1rem; }
+        .faq-header-text-input { width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem; color: #374151; }
+        .faq-toggle-icon { transition: transform 0.2s ease-out; color: #6b7280; }
+        .faq-toggle-icon.expanded { transform: rotate(180deg); }
+        .faq-body { padding: 1rem 1.5rem; display: none; }
+        .faq-body.show { display: block; }
+        .faq-quill-container { border: 1px solid #d1d5db; border-radius: 0.375rem; margin-bottom: 1rem; }
+        .faq-action-buttons { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem; }
+        .faq-item .ql-container { border: none; height: 150px; }
+        .faq-item .ql-toolbar.ql-snow { border-top-left-radius: 0.375rem; border-top-right-radius: 0.375rem; border-bottom: 1px solid #d1d5db; }
+        .faq-item .ql-container.ql-snow { border-bottom-left-radius: 0.375rem; border-bottom-right-radius: 0.375rem; }
+
+        /* --- ADDED/MERGED STYLES FROM setting4.html --- */
+        .template-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+        .template-table th, .template-table td { padding: 1rem; border-bottom: 1px solid #e5e7eb; text-align: left; vertical-align: middle; }
+        .template-table th { background-color: #f9fafb; font-weight: 600; color: #4b5563; text-transform: uppercase; font-size: 0.75rem; }
+        .template-table tbody tr:last-child td { border-bottom: none; }
+        .template-table .expanded-content-row td { padding: 1rem; background-color: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+        .template-table .ql-editor { padding: 0; }
+        .template-table .action-buttons .dropdown-container { position: relative; display: inline-block; }
+        .template-table .action-buttons .dropdown-toggle { background: none; border: none; color: #6b7280; cursor: pointer; padding: 0.5rem; border-radius: 0.25rem; transition: background-color 0.15s, color 0.15s; font-size: 1rem; }
+        .template-table .action-buttons .dropdown-toggle:hover { background-color: #e5e7eb; color: #1f2937; }
+        .template-table .action-buttons .dropdown-toggle:focus { outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .template-table .action-buttons .dropdown-menu { position: absolute; background-color: white; border-radius: 0.375rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); z-index: 10; min-width: 160px; right: 0; top: 100%; margin-top: 0.5rem; overflow: hidden; display: none; }
+        .template-table .action-buttons .dropdown-menu.show-dropdown { display: block; }
+        .template-table .action-buttons .dropdown-item { padding: 0.75rem 1rem; cursor: pointer; font-size: 0.9rem; color: #374151; transition: background-color 0.15s; display: flex; align-items: center; text-decoration: none; }
+        .template-table .action-buttons .dropdown-item:hover { background-color: #f3f4f6; }
+        .template-table .action-buttons .dropdown-item i { width: 20px; margin-right: 0.75rem; color: #6b7280; }
+        .template-table .action-buttons .dropdown-item.text-red-600 i { color: #ef4444; }
+        .tab-button { padding: 0.5rem 1.25rem; border-radius: 0.375rem; font-weight: 500; color: #4b5563; background-color: #f3f4f6; transition: background-color 0.15s; }
+        .tab-button.active { background-color: #3b82f6; color: white; }
+        #add-template-dropdown { position: absolute; background-color: white; border-radius: 0.375rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 10; min-width: 150px; right: 0; top: 100%; margin-top: 0.5rem; overflow: hidden; }
+        #add-template-dropdown .dropdown-item { padding: 0.75rem 1rem; cursor: pointer; font-size: 0.9rem; color: #374151; transition: background-color 0.15s; }
+        #add-template-dropdown .dropdown-item:hover { background-color: #f3f4f6; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: none; justify-content: flex-end; align-items: flex-start; z-index: 50; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background-color: white; width: 100%; max-width: 600px; height: 100%; box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1); overflow-y: auto; transform: translateX(100%); transition: transform 0.3s ease-out; padding: 1.5rem; display: flex; flex-direction: column; }
+        .modal-overlay.active .modal-content { transform: translateX(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 1.5rem; }
+        .modal-close-btn { background: none; border: none; font-size: 1.5rem; color: #6b7280; cursor: pointer; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; margin-top: auto; }
+        .modal-footer .save-button, .modal-footer .cancel-button { padding: 0.6rem 1.25rem; border: none; border-radius: 0.375rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s; }
+        .modal-footer .save-button { background-color: #2563eb; color: white; }
+        .modal-footer .save-button:hover { background-color: #1d4ed8; }
+        .modal-footer .cancel-button { background-color: #e5e7eb; color: #1f2937; }
+        .modal-footer .cancel-button:hover { background-color: #d1d5db; }
+        #previewRubricModal .modal-content { max-width: 800px; width: 90%; height: auto; max-height: 90vh; padding: 2rem; transform: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        #previewRubricModal .modal-body { overflow-y: auto; }
+        #previewRubricModal {justify-content: center; align-items: center;}
+        .criteria-item { background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; }
+        .rating-item { background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 0.375rem; padding: 0.75rem; margin-bottom: 0.75rem; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Integrated Header -->
+    <div class="top-header">
+        <!-- Top bar with FDI and Profile -->
+        <div class="brand-title">
+            <span class="brand-title-text">FDI</span>
+            <!-- Profile Menu Section -->
+            <div class="profile-menu-container" id="profileMenuContainer">
+                <div class="profile-avatar">S</div> <!-- Initial for 'Sri' -->
+                <i class="fas fa-question-circle profile-help-icon" id="helpIcon"></i>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="profile-dropdown-header">
+                        <span>Sri</span><br>
+                        <small>srharshak@nexnoratech.onmicros....</small><br>
+                        <small>Nexnoratech</small>
+                    </div>
+                    <a href="/company-profile/" class="profile-dropdown-item">
+                        <i class="fas fa-building"></i> Company Profile
+                    </a>
+                    <a href="/team-members/" class="profile-dropdown-item">
+                        <i class="fas fa-users"></i> Team Members
+                    </a>
+                    <a href="#" class="profile-dropdown-item">
+                        <i class="fas fa-envelope"></i> Email Templates
+                    </a>
+                    <a href="/question-library/" class="profile-dropdown-item">
+                        <i class="fas fa-question-circle"></i> Connect Question Library
+                    </a>
+                    <a href="#" class="profile-dropdown-item">
+                        <i class="fas fa-chart-bar"></i> Plan Usage
+                    </a>
+                    <a href="/setting/" class="profile-dropdown-item">
+                        <i class="fas fa-cog"></i> Setting Options
+                    </a>
+                    <a href="#" class="profile-dropdown-item">
+                        <i class="fas fa-user-circle"></i> My Account 
+                    </a>
+                    <a href="/logout/" class="profile-dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modified Navigation Bar -->
+        <div class="header">
+          <div class="breadcrumb">
+            <span style="font-weight: bold; color: #1d2686; font-size: 14px; padding: 5px 8px;">Setting options</span> <!-- Adjusted padding-left here -->
+          </div>
+        </div>
+    </div>
+
+
+    <div class="flex flex-1 container mx-auto mt-4 px-4 pb-4 lg:flex-row flex-col">
+        <!-- Left Navigation Bar (from setting2.html) -->
+        <nav class="w-full lg:w-1/4 bg-white rounded-lg shadow-md p-4 mb-4 lg:mb-0 lg:mr-4 h-fit sticky top-28">
+             <ul class="space-y-2">
+                <li><a href="#managed-service-provider-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="managed-service-provider-section">Managed Service Provider Program Authorization Code</a></li>
+                <li><a href="#company-branding-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="company-branding-section">Company Branding</a></li>
+                <li><a href="#assessment-onboarding-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="assessment-onboarding-section">Assessment Onboarding Settings</a></li>
+                <li><a href="#assessment-proctoring-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="assessment-proctoring-section">Assessment Proctoring Settings</a></li>
+                <li><a href="#connect-onboarding-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="connect-onboarding-section">Connect Onboarding Settings</a></li>
+                <!-- <li><a href="#connect-invite-phone-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="connect-invite-phone-section">Connect Invite Phone Number Settings</a></li> -->
+                <li><a href="#live-interview-disclaimer-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="live-interview-disclaimer-section">Live Interview Candidate Disclaimer</a></li>
+                <li><a href="#live-interview-onboarding-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="live-interview-onboarding-section">Live Interview Onboarding Settings</a></li>
+                <li><a href="#email-template-invite-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="email-template-invite-section">Email Template - Invite Settings</a></li>
+                <li><a href="#flexible-groups-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="flexible-groups-section">Flexible Groups</a></li>
+                <li><a href="#allowed-identity-proofs-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="allowed-identity-proofs-section">Allowed Identity Proofs</a></li>
+                <li><a href="#interview-rubric-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-blue-100 transition-colors duration-150" data-target="interview-rubric-section">Interview Rubric</a></li>
+                <li><a href="#live-interview-email-reminder-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="live-interview-email-reminder-section">Live Interview Email Reminder</a></li>
+                <li><a href="#faq-library-section" class="nav-link block p-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors duration-150" data-target="faq-library-section">FAQ Library</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area (from setting2.html, with two sections replaced) -->
+        <main class="flex-1 bg-white rounded-lg shadow-md p-6">
+            <!-- Managed Service Provider Section (Original) -->
+            <section id="managed-service-provider-section" class="content-section mb-8">
+                 <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Managed Service Provider program authorization code</h2>
+                <div class="flex flex-col md:flex-row items-center gap-4">
+                    <input type="text" placeholder="Enter program authorization code" class="flex-1 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-150">
+                    <button class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-150 whitespace-nowrap">ADD PROGRAM</button>
+                </div>
+                <p class="text-sm text-gray-500 mt-2">Add and validate the program authorization code to join a Managed Service Provider program. Contact your Managed Service Provider admin for code to join a program.</p>
+            </section>
+
+            <!-- Company Branding Section (Original) -->
+            <section id="company-branding-section" class="content-section mb-8">
+                 <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Company Branding</h2>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div id="companyBrandingToggle" class="toggle-switch mr-3"></div>
+                        <span class="text-gray-700 font-medium">Enable company branding for all assessments</span>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 mt-2">Show company branding videos/images before assessments. Assets are managed by your company admin.</p>
+            </section>
+
+            <!-- Assessment Onboarding Settings Section (Original) -->
+            <section id="assessment-onboarding-section" class="content-section">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Assessment Onboarding Settings</h2>
+                <div class="candidate-instructions-section border border-gray-300 rounded-lg bg-white p-6 mb-6" style="font-family: 'Inter', sans-serif;"><div class="text-xl font-semibold mb-2">Candidate Instructions</div><div class="text-lg font-bold mb-3">General Instructions</div><div id="candidate-editor-container" class="mb-3"><div id="candidate-editor"></div></div><button class="edit-button" onclick="enableCandidateInstructionsEditing()">✎ <span>Edit</span></button><button class="cancel-button" onclick="cancelCandidateInstructionsEditing()">×<span>Cancel</span></button></div>
+                <div id="programming-instructions" class="instructions-box border border-gray-300 rounded-lg bg-white p-6 mb-6" style="font-family: 'Inter', sans-serif;"><div class="text-lg font-semibold mb-2">Programming Test Instructions</div><div id="programming-instructions-quill"></div><div class="flex gap-2 mt-4"><button class="edit-button" onclick="enableProgrammingEditing()">✎ <span>Edit</span></button><button class="cancel-button" onclick="cancelProgrammingEditing()">×<span>Cancel</span></button></div></div>
+                <div class="border border-gray-300 rounded-xl bg-white p-6 mb-8 shadow-sm"><div class="mb-2 font-medium text-gray-800">Candidate disclaimer</div><div class="mb-4"><div id="disclaimer-quill-toolbar"></div><div id="disclaimer-quill" style="height: 120px;"></div></div><div class="flex gap-2 justify-end mb-4"><button id="save-disclaimer-btn" class="bg-blue-600 text-white px-6 py-2 rounded-full font-semibold text-base hover:bg-blue-700 transition-colors duration-150">SAVE CONFIGURATION</button></div><div class="flex items-center mb-4"><label class="relative inline-flex items-center cursor-pointer mr-2"><input type="checkbox" class="sr-only peer" id="terms-toggle" onchange="toggleCardsEnabled()"><div id="terms-toggle-slider" class="w-11 h-6 bg-green-500 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div></label><span class="text-base font-medium text-gray-800">Enable the Terms of Use page during the candidate's attempt</span><a href="#" class="ml-auto text-blue-600 hover:underline flex items-center text-base"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0A9 9 0 11 3 12a9 0 0118 0z"></path></svg>Preview</a></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div id="relocation-card" class="border-2 border-green-500 rounded-lg p-4 flex items-start bg-green-50 transition-opacity duration-200"><svg class="w-6 h-6 text-green-600 mr-2 mt-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg><div><div class="font-semibold text-gray-800">Relocation Preference</div><div class="text-gray-600 text-sm">Candidates will have the option to indicate whether they are willing to relocate and then select their preferred location(s).</div></div></div><div id="workauth-card" class="border-2 border-green-500 rounded-lg p-4 flex items-start bg-green-50 transition-opacity duration-200"><svg class="w-6 h-6 text-green-600 mr-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg><div><div class="font-semibold text-gray-800">Work authorization in the US</div><div class="text-gray-600 text-sm">Candidates will have the option to indicate whether they are eligible to work in the US without sponsorship.</div></div></div></div></div>
+                <div class="border border-gray-300 rounded-xl bg-white p-6 mb-8 shadow-sm"><h3 class="text-lg font-semibold mb-2">Additional Instructions</h3><div class="mb-4"><div id="instructions-quill-toolbar"></div><div id="instructions-quill" style="height: 180px;"></div></div><div class="flex gap-2 mb-4"><button id="edit-instruction-btn" class="edit-button">✎ <span>Edit</span></button><button id="cancel-instruction-btn" class="cancel-button">×<span>Cancel</span></button></div><div class="flex justify-end"><button id="save-instruction-btn" class="bg-blue-600 text-white px-6 py-2 rounded-full font-semibold text-base hover:bg-blue-700 transition-colors duration-150">SAVE CONFIGURATION</button></div></div>
+                <div class="flex flex-col items-end"><button id="saveAssessmentConfigBtn" class="bg-blue-600 text-white px-2 py-2 rounded-full font-semibold text-lg hover:bg-blue-700 transition-colors duration-150 mb-2">SAVE CONFIGURATION</button></div>
+            </section>
+
+            <!-- Assessment Proctoring Section (Original) -->
+            <section id="assessment-proctoring-section" class="content-section">
+                 <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Assessment Proctoring Settings</h2>
+                <div class="mb-6 flex items-center gap-4"><label class="flex items-center cursor-pointer select-none"><input id="proctoring-toggle" type="checkbox" class="sr-only" onchange="toggleProctoringOptions()"><div id="proctoring-toggle-slider" class="w-14 h-8 bg-gray-300 rounded-full relative transition-colors duration-200"><div class="absolute left-1 top-1 w-6 h-6 bg-white rounded-full shadow transition-transform duration-200"></div></div><span id="proctoring-toggle-label" class="ml-3 text-lg font-medium text-gray-800">Enable default assessment proctoring configuration</span></label></div>
+                <p class="text-gray-500 mb-4 ml-1">The setting will apply to all assessments by default. Users will not be able to make changes in the options controlled at company level.</p>
+                <div id="proctoring-options" class="w-full max-w-3xl bg-white rounded-xl border border-gray-200 p-6">
+                    <div class="flex items-center mb-4">
+                        <input id="capture-picture" type="checkbox" class="mr-3 w-5 h-5" onchange="toggleFacialMatch()" disabled="">
+                        <span class="flex-1 text-gray-700 text-base">Capture candidate’s picture</span>
+                        <select id="capture-picture-select" class="ml-4 border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                            <option>Controlled at the company level</option>
+                            <option>Controlled at the assessment level</option>
+                        </select>
+                    </div>
+                    <div id="facial-match-row" class="flex items-center mb-4 ml-8 hidden">
+                        <label class="flex items-center cursor-pointer">
+                            <input id="facial-match-toggle" type="checkbox" class="sr-only" disabled="">
+                            <div class="w-10 h-6 bg-gray-300 rounded-full relative transition-colors duration-200">
+                                <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"></div>
+                            </div>
+                            <span class="ml-3 text-gray-700 text-base">Enable facial match</span>
+                        </label>
+                    </div>
+                    <div class="flex flex-col mb-4">
+                        <label class="flex items-center">
+                            <input id="capture-identity-proof" type="checkbox" class="mr-3 w-5 h-5" onchange="toggleIdentityProofOptions()" disabled="">
+                            <span class="flex-1 text-gray-700 text-base">Capture candidate’s identity proof</span>
+                            <select id="capture-identity-proof-select" class="ml-4 border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                                <option>Controlled at the company level</option>
+                                <option>Controlled at the assessment level</option>
+                            </select>
+                        </label>
+                        <div id="identity-proof-options" class="pl-8 pt-2" style="display:none;">
+                            <div class="flex flex-col gap-2">
+                                <label class="flex items-center">
+                                    <input type="radio" name="identity-proof-type" value="number" class="mr-2" checked="" disabled="">
+                                    <span>Capture only number of the identity proof</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="identity-proof-type" value="both" class="mr-2" disabled="">
+                                    <span>Capture both, picture and number of the identity proof</span>
+                                </label>
+                            </div>
+                            <div id="identity-proof-id-types" class="flex flex-wrap gap-4 mt-3">
+                                <label class="flex items-center">
+                                    <input type="radio" name="id-type" value="voterid" class="mr-2" disabled="">
+                                    <span>Voter ID</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="id-type" value="stateid" class="mr-2" disabled="">
+                                    <span>State ID</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="id-type" value="dl" class="mr-2" disabled="">
+                                    <span>Driver's license</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="id-type" value="passport" class="mr-2" disabled="">
+                                    <span>Passport</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col mb-4">
+                        <label class="flex items-center">
+                            <input id="require-webcam-access" type="checkbox" class="mr-3 w-5 h-5" onchange="toggleWebcamOptions()" disabled="">
+                            <span class="flex-1 text-gray-700 text-base">Require webcam access</span>
+                            <select id="require-webcam-access-select" class="ml-4 border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                                <option>Controlled at the company level</option>
+                                <option>Controlled at the assessment level</option>
+                            </select>
+                        </label>
+                        <div id="webcam-options" class="pl-8 pt-2" style="display:none;">
+                            <div class="flex flex-col gap-2">
+                                <label class="flex items-center bg-gray-100 rounded px-3 py-2 mb-2">
+                                    <input type="checkbox" id="enable-face-detection" class="mr-2" disabled="">
+                                    <span>Enable face detection</span>
+                                </label>
+                                <label class="flex items-center bg-gray-100 rounded px-3 py-2">
+                                    <input type="checkbox" id="enable-multi-face-detection" class="mr-2" disabled="">
+                                    <span>Enable multiple face detection</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <input id="require-screen-share-checkbox" type="checkbox" class="mr-3 w-5 h-5" onchange="toggleScreenShareOptions()" disabled="">
+                        <span class="flex-1 text-gray-700 text-base">Require screen share</span>
+                        <select id="require-screen-share-select" class="ml-4 border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                            <option>Controlled at the company level</option>
+                            <option>Controlled at the assessment level</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <input id="track-browser-tab-checkbox" type="checkbox" class="mr-3 w-5 h-5" onchange="toggleBrowserTabActivityOptions()" disabled="">
+                        <span class="flex-1 text-gray-700 text-base">Track browser tab activity</span>
+                        <select id="track-browser-tab-select" class="ml-4 border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                            <option>Controlled at the company level</option>
+                            <option>Controlled at the assessment level</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center mb-2">
+                        <input id="limit-leaving-tab-checkbox" type="checkbox" class="mr-3 w-5 h-5" onchange="toggleLimitLeavingTabOptions()" disabled="">
+                        <span class="flex-1 text-gray-700 text-base">Limit leaving assessment tab to
+                            <input type="number" id="limit-leaving-tab-input" min="1" class="ml-2 w-16 border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">times
+                        </span>
+                        <select id="limit-leaving-tab-select" class="ml-4 border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                            <option>Controlled at the company level</option>
+                            <option>Controlled at the assessment level</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-6"><button id="save-proctoring-btn" class="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-blue-700 transition-colors duration-150 disabled:opacity-50" disabled="">SAVE CONFIGURATION</button></div>
+            </section>
+
+            <!-- Connect Onboarding Section (Original) -->
+            <section id="connect-onboarding-section" class="content-section mb-8">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Connect Onboarding Settings</h2>
+                <div class="flex items-center gap-4 mb-2"><label class="flex items-center cursor-pointer select-none"><input id="connect-onboarding-toggle" type="checkbox" class="sr-only" onchange="toggleConnectOnboarding()"><div id="connect-onboarding-slider" class="w-14 h-8 bg-gray-300 rounded-full relative transition-colors duration-200"><div class="absolute left-1 top-1 w-6 h-6 bg-white rounded-full shadow transition-transform duration-200"></div></div><span class="ml-3 text-lg font-medium text-gray-800">Enable default connect onboarding settings</span></label></div>
+                <p class="text-gray-500 mb-4 ml-1">The setting will apply to all newly created connects by default.</p>
+                <div class="w-full max-w-3xl bg-white rounded-xl border border-gray-200 p-6"><div class="mb-2 text-base font-semibold text-gray-700">Connect terms of use</div><div id="connect-terms-quill"></div></div>
+                <div class="flex justify-end mt-6"><button id="save-connect-onboarding-btn" class="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-blue-700 transition-colors duration-150 disabled:opacity-50" disabled="">SAVE CONFIGURATION</button></div>
+            </section>
+
+            <!-- Connect Invite Phone Section (Original) -->
+            <!-- <section id="connect-invite-phone-section" class="content-section"> -->
+                 <!-- <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Connect Invite Phone Number Settings</h2> -->
+                <!-- <div class="flex items-center gap-4"><span class="text-gray-700 font-medium">Providers</span><select class="p-2 border border-gray-300 rounded-md"><option>Select</option><option>Provider A</option><option>Provider B</option></select></div> -->
+            <!-- </section> -->
+
+            <!-- REPLACED Live Interview Candidate Disclaimer Section -->
+            <section id="live-interview-disclaimer-section" class="content-section">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Live Interview Candidate Disclaimer</h2>
+                <button onclick="openDisclaimerModal()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-150 flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Add new template
+                </button>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm mt-6 overflow-x-auto">
+                    <table class="template-table" id="disclaimer-template-table">
+                        <thead>
+                            <tr>
+                                <th>Default</th>
+                                <th>Template title</th>
+                                <th>Created by</th>
+                                <th>Last modified</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           <!-- Disclaimer templates will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-gray-500 text-sm mt-4">Template to inform candidates about the company's terms and privacy policy applicable during the interview process.</p>
+            </section>
+            
+            <!-- Live Interview Onboarding Settings Section (Modified) -->
+            <section id="live-interview-onboarding-section" class="content-section mb-8">
+                 <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Live Interview Onboarding Settings</h2>
+                <div class="mb-6 flex items-center gap-4">
+                    <label class="flex items-center cursor-pointer select-none">
+                        <input id="live-onboarding-main-toggle" type="checkbox" class="sr-only" onchange="toggleLiveOnboardingSettings()">
+                        <div id="live-onboarding-main-slider" class="main-toggle-switch"></div>
+                        <span class="ml-3 text-lg font-medium text-gray-800">Enable default interview onboarding configuration</span>
+                    </label>
+                </div>
+                <p class="text-gray-500 mb-4 ml-1">The setting will apply to all live interviews by default. Users will not be able to make changes in the options controlled at company level.</p>
+                <div id="live-onboarding-options-container" class="w-full max-w-3xl bg-white rounded-xl border border-gray-200 p-6" style="display: none;">
+                    <div class="flex items-center mb-4">
+                        <input id="capture-picture-live" type="checkbox" class="mr-3 w-5 h-5" onchange="toggleCapturePictureLive()" disabled="">
+                        <span class="flex-1 text-gray-700 text-base">Capture Candidate's picture</span>
+                        <select id="capture-picture-select-live" class="ml-4 border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                            <option>Controlled at the company level</option>
+                            <option>Controlled at the assessment level</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col mb-4">
+                        <label class="flex items-center">
+                            <input id="capture-identity-live" type="checkbox" class="mr-3 w-5 h-5" onchange="toggleIdentityProofLiveOptions()" disabled="">
+                            <span class="flex-1 text-gray-700 text-base">Take Candidate's identity proof</span>
+                            <select id="capture-identity-select-live" class="ml-4 border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                                <option>Controlled at the company level</option>
+                                <option>Controlled at the assessment level</option>
+                            </select>
+                        </label>
+                        <div id="identity-proof-live-options" class="pl-8 pt-2 hidden">
+                            <div class="flex flex-col gap-2 mb-3">
+                                <label class="flex items-center">
+                                    <input type="radio" name="identity-proof-live-type" value="number" class="mr-2" disabled="">
+                                    <span>Capture only number of the identity proof</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="identity-proof-live-type" value="both" class="mr-2" disabled="">
+                                    <span>Capture both, picture and number of the identity proof</span>
+                                </label>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="id-type-voterid" class="mr-2 w-5 h-5" disabled="">
+                                    <span class="flex-1 text-gray-700">Voter ID</span>
+                                    <select class="border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                                        <option>Capture front only</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="id-type-stateid" class="mr-2 w-5 h-5" disabled="">
+                                    <span class="flex-1 text-gray-700">State ID</span>
+                                    <select class="border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                                        <option>Capture front only</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="id-type-dl" class="mr-2 w-5 h-5" disabled="">
+                                    <span class="flex-1 text-gray-700">Driver's license</span>
+                                    <select class="border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                                        <option>Capture front only</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="id-type-passport" class="mr-2 w-5 h-5" disabled="">
+                                    <span class="flex-1 text-gray-700">Passport</span>
+                                    <select class="border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                                        <option>Capture front only</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="id-type-aadhaar" class="mr-2 w-5 h-5" disabled="">
+                                    <span class="flex-1 text-gray-700">Aadhaar</span>
+                                    <select class="border border-gray-300 rounded px-2 py-1 text-gray-700" disabled="">
+                                        <option>Capture front only</option>
+                                    </select>
+                                    <label class="flex items-center cursor-pointer select-none ml-4">
+                                        <input type="checkbox" id="aadhaar-ekyc-toggle" class="sr-only" disabled="">
+                                        <div class="toggle-switch w-10 h-6 bg-gray-300 rounded-full relative transition-colors duration-200">
+                                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"></div>
+                                        </div>
+                                        <span class="ml-2 text-gray-700 text-sm">Enable eKYC</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <input id="resume-upload-live" type="checkbox" class="mr-3 w-5 h-5" onchange="toggleResumeUploadLive()" disabled="">
+                        <span class="flex-1 text-gray-700 text-base">Resume Upload</span>
+                        <label class="flex items-center cursor-pointer select-none ml-4">
+                            <input type="checkbox" id="resume-upload-required-toggle" class="sr-only" disabled="">
+                            <div class="toggle-switch w-10 h-6 bg-gray-300 rounded-full relative transition-colors duration-200">
+                                <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"></div>
+                            </div>
+                            <span class="ml-2 text-gray-700 text-base">Required</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-6">
+                    <button id="save-live-onboarding-btn" class="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-blue-700 transition-colors duration-150" disabled="">SAVE CONFIGURATION</button>
+                </div>
+            </section>
+
+            <!-- Email Template Invite Settings Section (Original) -->
+            <section id="email-template-invite-section" class="content-section mb-8">
+                 <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Email Template - Invite Settings</h2>
+                <p class="text-gray-600 mb-6">Configure default invite email template</p>
+                <p class="text-sm text-gray-500 mb-6">This setting will apply to all newly created connects/assessments/live interviews by default.</p>
+                <div class="email-template-box"><div class="flex items-center text-gray-700 font-semibold text-lg mb-4">Invite :</div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="flex flex-col gap-2"><span class="text-gray-700 font-medium text-base">Standard assessment:</span><div class="relative email-template-select-container"><select class="email-template-select" id="invite-standard-select"><option>Assessment Invite</option><option>Assessment with sections enabled</option></select><div class="email-template-select-arrow"><i class="fas fa-chevron-down"></i></div></div></div><div class="flex flex-col gap-2"><span class="text-gray-700 font-medium text-base">Sectional assessment:</span><div class="relative email-template-select-container"><select class="email-template-select" id="invite-sectional-select"><option>Assessment with sections enabled</option><option>Assessment Invite</option></select><div class="email-template-select-arrow"><i class="fas fa-chevron-down"></i></div></div></div></div></div>
+                <div class="email-template-box"><div class="flex items-center text-gray-700 font-semibold text-lg mb-4">Reminder :</div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="flex flex-col gap-2"><span class="text-gray-700 font-medium text-base">Standard assessment:</span><div class="relative email-template-select-container"><select class="email-template-select" id="reminder-standard-select"><option>Assessment reminder</option><option>Assessment reminder with sections enabled</option></select><div class="email-template-select-arrow"><i class="fas fa-chevron-down"></i></div></div></div><div class="flex flex-col gap-2"><span class="text-gray-700 font-medium text-base">Sectional assessment:</span><div class="relative email-template-select-container"><select class="email-template-select" id="reminder-sectional-select"><option>Assessment reminder with sections enabled</option><option>Assessment reminder</option></select><div class="email-template-select-arrow"><i class="fas fa-chevron-down"></i></div></div></div></div></div>
+                <div class="email-template-box"><div class="flex flex-col gap-4"><div class="flex flex-col gap-4"><div class="flex flex-col gap-2"><span class="text-gray-700 font-medium text-base">Standard assessment</span><div class="ml-4"><div class="flex flex-col gap-2 mb-2"><span class="text-gray-700 text-sm">Reset attempt:</span><div class="relative email-template-select-container"><select class="email-template-select" id="reinvite-standard-reset-select"><option>Assessment re-invite-reset attempt</option><option>Assessment re-invite-reset attempt with sections enabled</option></select><div class="email-template-select-arrow"><i class="fas fa-chevron-down"></i></div></div></div><div class="flex flex-col gap-2"><span class="text-gray-700 text-sm">Continue attempt:</span><div class="relative email-template-select-container"><select class="email-template-select" id="reinvite-standard-continue-select"><option>Assessment re-invite-continue attempt</option><option>Assessment re-invite-continue attempt with sections enabled</option></select><div class="email-template-select-arrow"><i class="fas fa-chevron-down"></i></div></div></div></div></div><div class="flex flex-col gap-2"><span class="text-gray-700 font-medium text-base">Sectional assessment</span><div class="ml-4"><div class="flex flex-col gap-2 mb-2"><span class="text-gray-700 text-sm">Reset attempt:</span><div class="relative email-template-select-container"><select class="email-template-select" id="reinvite-sectional-reset-select"><option>Assessment re-invite-reset attempt</option><option>Assessment re-invite-reset attempt with sections enabled</option></select><div class="email-template-select-arrow"><i class="fas fa-chevron-down"></i></div></div></div><div class="flex flex-col gap-2"><span class="text-gray-700 text-sm">Continue attempt:</span><div class="relative email-template-select-container"><select class="email-template-select" id="reinvite-sectional-continue-select"><option>Assessment re-invite-continue attempt</option><option>Assessment re-invite-continue attempt with sections enabled</option></select><div class="email-template-select-arrow"><i class="fas fa-chevron-down"></i></div></div></div></div></div></div></div></div>
+                <div class="email-template-box"><div class="flex flex-col md:flex-row md:items-center justify-between gap-4"><div class="flex flex-col flex-1"><div class="text-gray-700 font-semibold text-lg mb-2">Submission :</div><div class="relative email-template-select-container"><select class="email-template-select" id="submission-select"><option>Assessment submission</option></select><div class="email-template-select-arrow"><i class="fas fa-chevron-down"></i></div></div></div><div class="flex flex-col flex-1"><div class="text-gray-700 font-semibold text-lg mb-2">Disqualification :</div><div class="relative email-template-select-container"><select class="email-template-select" id="disqualification-select"><option>Assessment disqualification</option></select><div class="email-template-select-arrow"><i class="fas fa-chevron-down"></i></div></div></div></div></div>
+                <div class="flex justify-end mt-6"><button id="save-email-template-btn" class="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-blue-700 transition-colors duration-150">SAVE CONFIGURATION</button></div>
+            </section>
+
+            <!-- Flexible Groups Section (Original) -->
+            <section id="flexible-groups-section" class="content-section mb-8">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Flexible Groups</h2>
+                <div class="input-with-button-container"><input type="text" id="group-name-input" placeholder="Enter group name"><button id="create-group-btn">CREATE GROUP</button></div>
+                <p class="text-sm text-gray-500 mt-2">By creating groups, you can segregate the assessments based on these groups (geographies, business groups or clients, etc.)</p>
+                <div id="flexible-groups-container" class="mt-4 flex flex-wrap items-center"></div>
+            </section>
+
+            <!-- Allowed Identity Proofs Section (Original) -->
+            <section id="allowed-identity-proofs-section" class="content-section mb-8">
+                 <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Allowed Identity Proofs</h2>
+                <div class="input-with-button-container"><input type="text" id="id-proof-name-input" placeholder="Enter ID proof name (e.g. Voter ID, Driver's license number, etc.)"><button id="add-id-proof-btn">ADD ID PROOF</button></div>
+                <p class="text-sm text-gray-500 mt-2 mb-4">Your team members can use these identity proofs (photo or number identifier) to capture candidate details.</p>
+                <div id="allowed-id-proofs-container" class="flex flex-wrap items-center"><div class="chip" data-id="voterid"><span>Voter ID</span><svg class="remove-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" onclick="this.closest('.chip').remove()"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg></div><div class="chip" data-id="stateid"><span>State ID</span><svg class="remove-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" onclick="this.closest('.chip').remove()"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg></div><div class="chip" data-id="driverslicense"><span>Driver's license</span><svg class="remove-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" onclick="this.closest('.chip').remove()"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg></div><div class="chip" data-id="passport"><span>Passport</span><svg class="remove-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" onclick="this.closest('.chip').remove()"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg></div></div>
+            </section>
+
+            <!-- REPLACED Interview Rubric Section -->
+            <section id="interview-rubric-section" class="content-section">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Interview Rubric</h2>
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex space-x-2 bg-gray-100 rounded-md p-1">
+                        <button class="tab-button active" data-tab="all">All : <span id="all-rubric-count">0</span>/80</button>
+                        <button class="tab-button" data-tab="basic">Basic : <span id="basic-rubric-count">0</span>/60</button>
+                        <button class="tab-button" data-tab="advanced">Advanced : <span id="advanced-rubric-count">0</span>/20</button>
+                    </div>
+                    <div class="relative">
+                         <button id="add-new-template-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-150 flex items-center gap-2">
+                            <i class="fas fa-plus"></i> Add new template <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                        </button>
+                        <div id="add-template-dropdown" class="hidden">
+                            <div class="dropdown-item" onclick="openRubricModal('basic')">Basic Rubric</div>
+                            <div class="dropdown-item" onclick="openRubricModal('advanced')">Advanced Rubric</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm mt-6 overflow-x-auto">
+                    <table class="template-table" id="rubric-template-table">
+                        <thead>
+                            <tr>
+                                <th>Default</th>
+                                <th>Template Type</th>
+                                <th>Title</th>
+                                <th>Created by</th>
+                                <th>Last modified</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rubric templates will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-gray-500 text-sm mt-4">Template marked as default will be set as default for all interviews.</p>
+            </section>
+
+            <!-- Live Interview Email Reminder Section (Original) -->
+            <section id="live-interview-email-reminder-section" class="content-section mb-8">
+                 <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Live Interview Email Reminder</h2>
+                <div class="email-reminder-container"><label class="flex items-center cursor-pointer select-none"><input id="send-reminder-email-toggle" type="checkbox" class="sr-only" onchange="toggleEmailReminderSettings()"><div class="toggle-switch w-14 h-8 bg-gray-300 rounded-full relative transition-colors duration-200"><div class="absolute left-1 top-1 w-6 h-6 bg-white rounded-full shadow transition-transform duration-200"></div></div><span class="ml-3 text-lg font-medium text-gray-800">Send reminder email</span></label><input type="number" id="reminder-days-input" value="0" min="0" class="disabled:opacity-75" disabled=""><span class="text-gray-700">day(s) before invite expires</span><button id="save-email-reminder-btn" class="save-button" disabled="">Save</button></div>
+                <p class="text-gray-500 text-sm mt-2">Invited can be edited from live interview dashboard settings per candidate.</p>
+            </section>
+
+            <!-- FAQ Library Section (Original) -->
+            <section id="faq-library-section" class="content-section">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">FAQ Library</h2>
+                <div class="flex justify-end mb-4"><button id="add-question-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-150 flex items-center gap-2"><i class="fas fa-plus"></i> Add Question</button></div>
+                <div id="faq-list-container" class="space-y-4"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODALS FROM setting4.html (Added) -->
+    <div id="disclaimer-template-modal-overlay" class="modal-overlay">
+        <div class="modal-content"><div class="modal-header"><h3 id="disclaimer-modal-title" class="text-xl font-semibold">Add New Disclaimer Template</h3><button class="modal-close-btn" onclick="closeDisclaimerModal()">×</button></div><div class="modal-body flex-1 overflow-y-auto pr-4"><input type="hidden" id="editing-disclaimer-id"><div class="mb-4"><label for="disclaimer-template-title" class="block text-sm font-medium text-gray-700 mb-1">Template title *</label><input type="text" id="disclaimer-template-title" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter template title (Max. 100 characters)" maxlength="100"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Disclaimer Content</label><div id="disclaimer-template-editor" style="height: 250px;"></div><p class="text-sm text-gray-500 mt-1 text-right">Min 50 and max 5000 characters</p></div></div><div class="modal-footer"><button class="cancel-button" onclick="closeDisclaimerModal()">CANCEL</button><button class="save-button" onclick="saveDisclaimerTemplate()">SAVE TEMPLATE</button></div></div>
+    </div>
+    <div id="basic-rubric-modal-overlay" class="modal-overlay">
+        <div class="modal-content"><div class="modal-header"><h3 id="basic-rubric-modal-title" class="text-xl font-semibold">Basic Rubric - Add new template</h3><button class="modal-close-btn" onclick="closeBasicRubricModal()">×</button></div><div class="modal-body flex-1 overflow-y-auto pr-4"><input type="hidden" id="editing-basic-rubric-id"><div class="mb-4"><label for="basic-rubric-template-title" class="block text-sm font-medium text-gray-700 mb-1">Template title *</label><input type="text" id="basic-rubric-template-title" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter template title (Max. 100 characters)" maxlength="100"></div><div class="mb-4"><label class="block text-sm font-medium text-gray-700 mb-1">Traits (Maximum 60 traits can be added)</label><div class="flex items-center gap-2 mb-2"><input type="text" id="basic-rubric-trait-input" class="flex-1 p-2 border border-gray-300 rounded-md" placeholder="Enter trait (Max. 200 characters)" maxlength="200"><button class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition-colors duration-150" onclick="addBasicRubricTrait()">ADD</button></div><div id="basic-rubric-traits-list" class="space-y-2"></div><p class="text-blue-600 text-sm mt-2 cursor-pointer hover:underline" onclick="togglePrimarySkillsSection()">+ Add Primary Skills</p><div id="primary-skills-section" class="hidden mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">Primary Skills Content</label><div id="basic-rubric-primary-skills-editor" style="height: 150px;"></div></div></div></div><div class="modal-footer"><button class="cancel-button" onclick="closeBasicRubricModal()">CANCEL</button><button class="save-button" onclick="saveBasicRubricTemplate()">SAVE</button></div></div>
+    </div>
+    <div id="advanced-rubric-modal-overlay" class="modal-overlay">
+        <div class="modal-content"><div class="modal-header"><h3 id="advanced-rubric-modal-title" class="text-xl font-semibold">Advanced Rubric - Add new template</h3><button class="modal-close-btn" onclick="closeAdvancedRubricModal()">×</button></div><div class="modal-body flex-1 overflow-y-auto pr-4"><input type="hidden" id="editing-advanced-rubric-id"><div class="mb-4"><label for="advanced-rubric-template-title" class="block text-sm font-medium text-gray-700 mb-1">Template title *</label><input type="text" id="advanced-rubric-template-title" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter template title (Max. 100 characters)" maxlength="100"></div><div id="advanced-rubric-criteria-container"></div><button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-150 flex items-center gap-2" onclick="addAdvancedRubricCriteria()"><i class="fas fa-plus"></i> Add criteria (<span id="advanced-rubric-criteria-count">0</span>/20)</button></div><div class="modal-footer"><button class="cancel-button" onclick="closeAdvancedRubricModal()">CANCEL</button><button class="save-button" onclick="saveAdvancedRubricTemplate()">SAVE</button></div></div>
+    </div>
+    <div id="previewRubricModal" class="modal-overlay justify-center items-center">
+        <div class="modal-content"><div class="modal-header"><h3 id="preview-rubric-title" class="text-xl font-semibold">Rubric Preview</h3><button class="modal-close-btn" onclick="closePreviewRubricModal()">×</button></div><div id="preview-rubric-content" class="modal-body"></div></div>
+    </div>
+
+    <!-- ORIGINAL MODALS (PRESERVED) -->
+    <div id="cancel-confirmation-modal-overlay" class="hidden"></div>
+    
+    <!-- Quill Editor JS -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        // --- HEADER SCRIPT ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileMenuContainer = document.getElementById('profileMenuContainer');
+            const profileDropdown = document.getElementById('profileDropdown');
+            const helpIcon = document.getElementById('helpIcon'); // Get the new help icon by ID
+
+            // Toggle dropdown visibility on click, but not when the help icon is clicked
+            if (profileMenuContainer) {
+                profileMenuContainer.addEventListener('click', function(event) {
+                    // Check if the clicked element is the help icon or contains it
+                    if (event.target === helpIcon || helpIcon.contains(event.target)) {
+                        event.stopPropagation(); // Prevent click from propagating to the container
+                        // Add any specific action for the help icon here if needed
+                    } else {
+                        event.stopPropagation(); // Prevent click from propagating to document
+                        profileDropdown.classList.toggle('show');
+                    }
+                });
+            }
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (profileMenuContainer && !profileMenuContainer.contains(event.target)) {
+                    profileDropdown.classList.remove('show');
+                }
+            });
+        });
+
+        // --- ALL ORIGINAL JS FROM SETTINGS PAGE IS PRESERVED ---
+        var candidateQuill = new Quill('#candidate-editor', { theme: 'snow', readOnly: true, modules: { toolbar: [ [{'header': [1, 2, false]}], ['bold', 'italic', 'underline'], ['link'], [{'list': 'ordered'}, {'list': 'bullet'}], ['clean'] ] } });
+        setTimeout(function(){ candidateQuill.clipboard.dangerouslyPasteHTML(0, `<ul><li>This online test requires a stable internet connection. We <strong>recommend using Chrome or Firefox browsers</strong>.</li><li>Please <strong>close all other browsers</strong>, browser tabs, and applications with <strong>sensitive or personal information</strong>.</li><li>Please <strong>close all programs that upload or download files in the background</strong> (e.g., Dropbox, Google Drive, torrent, etc.).</li><li>Please ensure that <strong>no browser extension / ad blocker is installed</strong> on the browser while taking the test, as they may conflict with the test flow.</li><li>To avoid any distractions, you should <strong>close all chat windows, screen-savers etc.</strong> before starting the test.</li><li>You can answer questions in any order.</li><li>If you run out of time, all the attempted questions will be auto-submitted.</li><li>Attempted responses will be auto-saved if the test is disconnected for any reason. You can resume the test from the last attempted question.</li><li>Search will be tracked during the assessment duration. Please close all the tabs that are not relevant for the assessment.</li><li>Avoid switching tabs during the assessment as this may be considered suspicious by the employer.</li><li>Please do not wear earphones or headphones while attempting the test.</li><li>Please ensure that your ears are visible and that your hair is not covering your ears.</li><li>In case of any technical issues, you can reach out to FDI tech support on Live chat. Once on FDI, you will find the chat icon at the bottom right corner of your screen.</li></ul>`); }, 100);
+        function enableCandidateInstructionsEditing(){ candidateQuill.enable(true); candidateQuill.focus(); candidateQuill.setSelection(candidateQuill.getLength(), 0, 'silent'); }
+        function cancelCandidateInstructionsEditing(){ candidateQuill.enable(false); candidateQuill.blur(); }
+        var programmingQuill = new Quill('#programming-instructions-quill', { theme: 'snow', readOnly: true, modules: { toolbar: false } });
+        setTimeout(function(){ programmingQuill.clipboard.dangerouslyPasteHTML(0, `<ul><li>You can choose any programming language from the list for coding questions.</li><li>Some questions have pre-filled code. Complete the missing parts.</li><li>Use appropriate print statements to debug (e.g., <code>System.out.println</code> in Java, <code>cout</code> in C++).</li><li>For full projects, read the <strong>README.txt</strong> file carefully.</li></ul>`); }, 100);
+        function enableProgrammingEditing(){ programmingQuill.enable(true); programmingQuill.focus(); }
+        function cancelProgrammingEditing(){ programmingQuill.enable(false); programmingQuill.blur(); }
+        var disclaimerQuill = new Quill('#disclaimer-quill', { theme: 'snow', modules: { toolbar: '#disclaimer-quill-toolbar' }, readOnly: true });
+        disclaimerQuill.setText('I have closed all other browsers, browser tabs, and applications with sensitive or personal information.\n\nI agree not to copy or consult code from any external source including website, book or individual to complete the test. I will refer to only documentation or tools linked in this test flow.');
+        disclaimerQuill.enable(true);
+        document.getElementById('save-disclaimer-btn').onclick = function(){ disclaimerQuill.enable(false); disclaimerQuill.blur(); };
+        document.getElementById('disclaimer-quill').onclick = function(){ disclaimerQuill.enable(true); disclaimerQuill.focus(); };
+        function toggleCardsEnabled(){ const checked = document.getElementById('terms-toggle').checked; document.getElementById('relocation-card').style.opacity = checked ? '1' : '0.5'; document.getElementById('workauth-card').style.opacity = checked ? '1' : '0.5'; document.getElementById('relocation-card').style.pointerEvents = checked ? 'auto' : 'none'; document.getElementById('workauth-card').style.pointerEvents = checked ? 'auto' : 'none'; }
+        window.addEventListener('DOMContentLoaded', toggleCardsEnabled);
+        document.getElementById('saveAssessmentConfigBtn').onclick = function(){ console.log("Assessment configuration saved!"); console.log("Candidate Instructions:", candidateQuill.root.innerHTML); console.log("Programming Instructions:", programmingQuill.root.innerHTML); console.log("Candidate Disclaimer:", disclaimerQuill.root.innerHTML); console.log("Additional Instructions:", instructionsQuill.root.innerHTML); candidateQuill.enable(false); programmingQuill.enable(false); disclaimerQuill.enable(false); instructionsQuill.enable(false); };
+        document.querySelectorAll('.nav-link').forEach(link => { 
+            link.addEventListener('click', function(e){ 
+                e.preventDefault(); 
+                document.querySelectorAll('.nav-link').forEach(l => { 
+                    l.classList.remove('bg-blue-100', 'text-blue-700', 'font-medium'); 
+                    l.classList.add('text-gray-700'); 
+                }); 
+                this.classList.add('bg-blue-100', 'text-blue-700', 'font-medium'); 
+                this.classList.remove('text-gray-700'); 
+                const targetId = this.getAttribute('data-target'); 
+                document.querySelectorAll('main .content-section').forEach(section => { 
+                    if (section.id === targetId) { 
+                        section.classList.remove('hidden'); 
+                        // Ensure FAQs are rendered when the FAQ Library section becomes visible
+                        if (section.id === 'faq-library-section') {
+                            renderFAQs(); 
+                        }
+                    } else { 
+                        section.classList.add('hidden'); 
+                    } 
+                }); 
+                document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' }); 
+            }); 
+        });
+        window.addEventListener('DOMContentLoaded', function(){ const firstLink = document.querySelector('.nav-link'); if (firstLink) firstLink.click(); });
+        var instructionsQuill = new Quill('#instructions-quill', { theme: 'snow', modules: { toolbar: '#instructions-quill-toolbar' }, readOnly: true });
+        instructionsQuill.setText('• FDI  may seek video and audio permission if the hiring team mandates it as part of the proctoring setup or if an assessment requires a video response.\n• FDI may seek permission to install a proctoring extension from the browser webstore if the hiring team mandates it as part of the screenshare requirement.\n• If you are requested to install a browser extension, FDI stops tracking browser activity after the assessment is closed or submitted.\n• If you are requested to install a browser extension, at the end of the assessment you will see a link to remove the browser extension.\n• To understand more about FDI’s privacy policy, data capture, data processing, etc., please read FDI’s Privacy Policy and Terms and Service.');
+        document.getElementById('save-instruction-btn').onclick = function(){ instructionsQuill.enable(false); instructionsQuill.blur(); };
+        document.getElementById('edit-instruction-btn').onclick = function(){ instructionsQuill.enable(true); instructionsQuill.focus(); };
+        document.getElementById('cancel-instruction-btn').onclick = function(){ instructionsQuill.enable(false); instructionsQuill.blur(); };
+        
+        function toggleProctoringOptions(){ 
+            const enabled = document.getElementById('proctoring-toggle').checked; 
+            // Select all controllable elements except those handled by dedicated functions
+            const controllableElements = document.querySelectorAll('#proctoring-options input, #proctoring-options select'); 
+            
+            controllableElements.forEach(el => { 
+                // Skip elements explicitly handled by their own toggle functions
+                if ([
+                    'facial-match-toggle', 
+                    'capture-identity-proof', // Handled by toggleIdentityProofOptions
+                    'require-webcam-access',   // Handled by toggleWebcamOptions
+                    'require-screen-share-checkbox', // Handled by toggleScreenShareOptions
+                    'track-browser-tab-checkbox',    // Handled by toggleBrowserTabActivityOptions
+                    'limit-leaving-tab-checkbox',    // Handled by toggleLimitLeavingTabOptions
+                    'capture-picture',         // Handled by toggleFacialMatch
+                    'enable-face-detection',
+                    'enable-multi-face-detection'
+                ].includes(el.id) || ['identity-proof-type', 'id-type'].includes(el.name)) {
+                    return; 
+                }
+                el.disabled = !enabled; 
+                if (!enabled && el.type === 'checkbox') el.checked = false; 
+                if (!enabled && el.type === 'number') el.value = ''; 
+            }); 
+            
+            document.getElementById('save-proctoring-btn').disabled = !enabled; 
+            
+            // Call specific toggle functions to update their states based on main toggle
+            toggleFacialMatch();
+            toggleIdentityProofOptions();
+            toggleWebcamOptions();
+            toggleScreenShareOptions(); // New call
+            toggleBrowserTabActivityOptions(); // New call
+            toggleLimitLeavingTabOptions(); // New call
+
+            const mainSlider = document.getElementById('proctoring-toggle-slider'); 
+            if (enabled) { 
+                mainSlider.classList.add('bg-blue-600'); 
+                mainSlider.classList.remove('bg-gray-300'); 
+                mainSlider.querySelector('div').style.transform = 'translateX(24px)'; 
+            } else { 
+                mainSlider.classList.remove('bg-blue-600'); 
+                mainSlider.classList.add('bg-gray-300'); 
+                mainSlider.querySelector('div').style.transform = 'translateX(0)'; 
+            } 
+        }
+
+        function toggleFacialMatch(){ 
+            const mainEnabled = document.getElementById('proctoring-toggle').checked; 
+            const capturePictureChecked = document.getElementById('capture-picture').checked; 
+            const facialMatchRow = document.getElementById('facial-match-row'); 
+            const facialMatchToggle = document.getElementById('facial-match-toggle'); 
+            const facialMatchSlider = facialMatchToggle.nextElementSibling; 
+            const capturePictureSelect = document.getElementById('capture-picture-select'); 
+            
+            // Enable/disable capture picture checkbox based on main toggle
+            document.getElementById('capture-picture').disabled = !mainEnabled;
+
+            if (mainEnabled && capturePictureChecked) { 
+                facialMatchRow.classList.remove('hidden'); 
+                facialMatchToggle.disabled = false; 
+                if (capturePictureSelect) { 
+                    capturePictureSelect.disabled = false; 
+                } 
+            } else { 
+                facialMatchRow.classList.add('hidden'); 
+                facialMatchToggle.checked = false; 
+                facialMatchToggle.disabled = true; 
+                if (capturePictureSelect) { 
+                    capturePictureSelect.disabled = true; 
+                } 
+            } 
+            if (facialMatchToggle.checked) { 
+                facialMatchSlider.classList.add('bg-blue-600'); 
+                facialMatchSlider.classList.remove('bg-gray-300'); 
+                facialMatchSlider.querySelector('div').style.transform = 'translateX(16px)'; 
+            } else { 
+                facialMatchSlider.classList.remove('bg-blue-600'); 
+                facialMatchSlider.classList.add('bg-gray-300'); 
+                facialMatchSlider.querySelector('div').style.transform = 'translateX(0)'; 
+            } 
+        }
+
+        function toggleIdentityProofOptions(){ 
+            const mainEnabled = document.getElementById('proctoring-toggle').checked; 
+            const captureIdentityCheckbox = document.getElementById('capture-identity-proof');
+            const captureIdentityChecked = captureIdentityCheckbox.checked; 
+            const optionsDiv = document.getElementById('identity-proof-options'); 
+            const identityProofSelect = document.getElementById('capture-identity-proof-select'); 
+            
+            // Enable/disable identity proof checkbox based on main toggle
+            captureIdentityCheckbox.disabled = !mainEnabled;
+
+            if (mainEnabled && captureIdentityChecked) { 
+                optionsDiv.style.display = 'block'; 
+                optionsDiv.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => { 
+                    input.disabled = false; 
+                }); 
+                optionsDiv.querySelectorAll('select').forEach(select => { 
+                    select.disabled = false; 
+                }); 
+                identityProofSelect.disabled = false; 
+            } else { 
+                optionsDiv.style.display = 'none'; 
+                optionsDiv.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => { 
+                    input.disabled = true; 
+                    if (input.type === 'checkbox') input.checked = false; 
+                }); 
+                if (optionsDiv.querySelector('input[name="identity-proof-type"][value="number"]')) { 
+                    optionsDiv.querySelector('input[name="identity-proof-type"][value="number"]').checked = true; 
+                } 
+                optionsDiv.querySelectorAll('select').forEach(select => { 
+                    select.disabled = true; 
+                }); 
+                identityProofSelect.disabled = true; 
+            } 
+        }
+
+        function toggleWebcamOptions(){ 
+            const mainEnabled = document.getElementById('proctoring-toggle').checked; 
+            const requireWebcamCheckbox = document.getElementById('require-webcam-access');
+            const requireWebcamChecked = requireWebcamCheckbox.checked; 
+            const optionsDiv = document.getElementById('webcam-options'); 
+            const webcamSelect = document.getElementById('require-webcam-access-select'); 
+            
+            // Enable/disable webcam access checkbox based on main toggle
+            requireWebcamCheckbox.disabled = !mainEnabled;
+
+            if (mainEnabled && requireWebcamChecked) { 
+                optionsDiv.style.display = 'block'; 
+                optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => { 
+                    cb.disabled = false; 
+                }); 
+                webcamSelect.disabled = false; 
+            } else { 
+                optionsDiv.style.display = 'none'; 
+                optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => { 
+                    cb.disabled = true; 
+                    cb.checked = false; 
+                }); 
+                webcamSelect.disabled = true; 
+            } 
+        }
+
+        // New functions for additional proctoring options
+        function toggleScreenShareOptions() {
+            const mainEnabled = document.getElementById('proctoring-toggle').checked;
+            const screenShareCheckbox = document.getElementById('require-screen-share-checkbox');
+            const screenShareSelect = document.getElementById('require-screen-share-select');
+
+            screenShareCheckbox.disabled = !mainEnabled; // Control checkbox itself
+
+            if (mainEnabled && screenShareCheckbox.checked) {
+                screenShareSelect.disabled = false;
+            } else {
+                screenShareSelect.disabled = true;
+            }
+        }
+
+        function toggleBrowserTabActivityOptions() {
+            const mainEnabled = document.getElementById('proctoring-toggle').checked;
+            const browserTabCheckbox = document.getElementById('track-browser-tab-checkbox');
+            const browserTabSelect = document.getElementById('track-browser-tab-select');
+
+            browserTabCheckbox.disabled = !mainEnabled; // Control checkbox itself
+
+            if (mainEnabled && browserTabCheckbox.checked) {
+                browserTabSelect.disabled = false;
+            } else {
+                browserTabSelect.disabled = true;
+            }
+        }
+
+        function toggleLimitLeavingTabOptions() {
+            const mainEnabled = document.getElementById('proctoring-toggle').checked;
+            const limitTabCheckbox = document.getElementById('limit-leaving-tab-checkbox');
+            const limitTabInput = document.getElementById('limit-leaving-tab-input');
+            const limitTabSelect = document.getElementById('limit-leaving-tab-select');
+
+            limitTabCheckbox.disabled = !mainEnabled; // Control checkbox itself
+
+            if (mainEnabled && limitTabCheckbox.checked) {
+                limitTabInput.disabled = false;
+                limitTabSelect.disabled = false;
+            } else {
+                limitTabInput.disabled = true;
+                limitTabInput.value = ''; // Clear value if disabled
+                limitTabSelect.disabled = true;
+            }
+        }
+
+        // Connect Onboarding Settings functions (moved here to ensure definition before calls)
+        var connectQuill = new Quill('#connect-terms-quill', { theme: 'snow', readOnly: true, modules: { toolbar: [ ['undo', 'redo'], ['bold', 'italic', 'underline'], [{ 'header': [1, 2, false] }], [{ 'list': 'ordered'}, { 'list': 'bullet' }], ['blockquote', 'code-block'], ['link', 'image'] ] } });
+        setTimeout(function(){ connectQuill.clipboard.dangerouslyPasteHTML(0, `<ul><li>FDI requires some personally-identifiable information (name, email, etc.) in order to complete this assessment.</li><li>To understand more about our privacy policy, data capture, data processing, etc., you can read our <a href="#" style="color:#3b82f6;text-decoration:underline;">privacy policy</a> and <a href="#" style="color:#3b82f6;text-decoration:underline;">terms of service</a>.</li></ul>`); }, 100);
+        function toggleConnectOnboarding(){ const enabled = document.getElementById('connect-onboarding-toggle').checked; connectQuill.enable(enabled); document.getElementById('save-connect-onboarding-btn').disabled = !enabled; const mainSlider = document.getElementById('connect-onboarding-slider'); if (enabled) { mainSlider.classList.add('bg-blue-600'); mainSlider.classList.remove('bg-gray-300'); mainSlider.querySelector('div').style.transform = 'translateX(24px)'; } else { mainSlider.classList.remove('bg-blue-600'); mainSlider.classList.add('bg-gray-300'); mainSlider.querySelector('div').style.transform = 'translateX(0)'; } }
+        
+        window.addEventListener('DOMContentLoaded', function(){ 
+            toggleProctoringOptions(); 
+            toggleConnectOnboarding();
+            
+            // Original `setting2.html` initial calls
+            const firstLink = document.querySelector('.nav-link'); 
+            if (firstLink) firstLink.click(); 
+        });
+        
+        // Live Interview Onboarding Settings functions (moved here to ensure definition before calls)
+        function toggleLiveOnboardingSettings(){
+            const mainEnabled = document.getElementById('live-onboarding-main-toggle').checked;
+            const optionsContainer = document.getElementById('live-onboarding-options-container');
+            const saveButton = document.getElementById('save-live-onboarding-btn');
+            const mainSlider = document.getElementById('live-onboarding-main-slider');
+
+            if (mainEnabled) {
+                optionsContainer.style.display = ''; // Show container
+                mainSlider.classList.add('active'); // Activate main toggle visual
+            } else {
+                optionsContainer.style.display = 'none'; // Hide container
+                mainSlider.classList.remove('active'); // Deactivate main toggle visual
+            }
+
+            // Disable/enable all direct children inputs/selects in the options container
+            optionsContainer.querySelectorAll('input, select').forEach(el => {
+                el.disabled = !mainEnabled;
+                // Uncheck checkboxes and radio buttons when main toggle is OFF
+                if (!mainEnabled && el.type === 'checkbox') {
+                    el.checked = false;
+                }
+                // For radio buttons, uncheck them explicitly when main toggle is OFF
+                if (!mainEnabled && el.type === 'radio') {
+                    el.checked = false;
+                }
+            });
+
+            // Specific handling for nested elements and visual toggles
+            // Call sub-toggles to correctly set their nested elements based on their *own* (now potentially unchecked) state
+            toggleCapturePictureLive();
+            toggleIdentityProofLiveOptions();
+            toggleResumeUploadLive(); 
+            toggleAadhaarEKycVisual(); // Update Aadhaar eKYC visual based on its checkbox state
+            document.getElementById('resume-upload-required-toggle').dispatchEvent(new Event('change')); // Update resume required visual
+
+            saveButton.disabled = !mainEnabled;
+        }
+
+        function toggleCapturePictureLive(){
+            const mainEnabled = document.getElementById('live-onboarding-main-toggle').checked;
+            const capturePictureCheckbox = document.getElementById('capture-picture-live');
+            const capturePictureSelect = document.getElementById('capture-picture-select-live');
+            
+            // Only set disabled if main toggle is off, otherwise it's handled by main toggle
+            capturePictureCheckbox.disabled = !mainEnabled;
+            capturePictureSelect.disabled = !(mainEnabled && capturePictureCheckbox.checked);
+        }
+
+        function toggleIdentityProofLiveOptions(){
+            const mainEnabled = document.getElementById('live-onboarding-main-toggle').checked;
+            const captureIdentityCheckbox = document.getElementById('capture-identity-live');
+            const captureIdentitySelect = document.getElementById('capture-identity-select-live');
+            const identityProofOptionsDiv = document.getElementById('identity-proof-live-options');
+            
+            // Disable/enable the main identity proof checkbox and its select based on the main toggle
+            captureIdentityCheckbox.disabled = !mainEnabled;
+            captureIdentitySelect.disabled = !(mainEnabled && captureIdentityCheckbox.checked);
+
+            if (mainEnabled && captureIdentityCheckbox.checked) {
+                identityProofOptionsDiv.classList.remove('hidden');
+                // Enable all inputs/selects within this section
+                identityProofOptionsDiv.querySelectorAll('input, select').forEach(el => {
+                    el.disabled = false;
+                });
+                // If no identity proof type radio is selected, select 'Capture only number'
+                const checkedRadio = identityProofOptionsDiv.querySelector('input[name="identity-proof-live-type"]:checked');
+                if (!checkedRadio) {
+                    const defaultRadio = identityProofOptionsDiv.querySelector('input[name="identity-proof-live-type"][value="number"]');
+                    if (defaultRadio) defaultRadio.checked = true;
+                }
+
+            } else {
+                identityProofOptionsDiv.classList.add('hidden');
+                // Disable and uncheck all inputs/selects within this section
+                identityProofOptionsDiv.querySelectorAll('input, select').forEach(el => {
+                    el.disabled = true;
+                    if (el.type === 'checkbox' || el.type === 'radio') {
+                        el.checked = false;
+                    }
+                });
+
+                // Explicitly handle Aadhaar eKYC toggle state when disabled
+                const aadhaarEKycToggle = document.getElementById('aadhaar-ekyc-toggle');
+                if (aadhaarEKycToggle) {
+                    aadhaarEKycToggle.checked = false;
+                    aadhaarEKycToggle.disabled = true;
+                    toggleAadhaarEKycVisual();
+                }
+            }
+
+            // Trigger change event for each ID type checkbox to update its corresponding select dropdown
+            // This needs to happen regardless of whether the identity proof section is enabled or disabled
+            identityProofOptionsDiv.querySelectorAll('#identity-proof-live-options input[type="checkbox"]').forEach(checkbox => {
+                const selectElement = checkbox.parentElement.querySelector('select');
+                if (selectElement) {
+                    // Apply the disabled state based on both checkbox's checked state AND its own disabled state
+                    // which is set by the parent `captureIdentityCheckbox` and `mainEnabled` conditions.
+                    selectElement.disabled = !checkbox.checked || checkbox.disabled;
+                }
+
+                // Also ensure Aadhaar eKYC toggle state is correct based on the Aadhaar checkbox's state
+                if (checkbox.id === 'id-type-aadhaar') {
+                    const aadhaarEKycToggle = document.getElementById('aadhaar-ekyc-toggle');
+                    if (aadhaarEKycToggle) {
+                        // eKYC toggle should be enabled only if main toggle ON, identity proof checkbox ON, AND Aadhaar checkbox ON.
+                        aadhaarEKycToggle.disabled = !(this.checked && identityProofChecked && mainEnabled);
+
+                        if (!this.checked) {
+                            aadhaarEKycToggle.checked = false;
+                            toggleAadhaarEKycVisual();
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to handle Resume Upload Live settings
+        function toggleResumeUploadLive() {
+            const mainEnabled = document.getElementById('live-onboarding-main-toggle').checked;
+            const resumeUploadCheckbox = document.getElementById('resume-upload-live');
+            const resumeUploadRequiredToggle = document.getElementById('resume-upload-required-toggle');
+
+            resumeUploadCheckbox.disabled = !mainEnabled;
+
+            // Enable/disable the "Required" toggle based on the main toggle and resume upload checkbox
+            resumeUploadRequiredToggle.disabled = !(mainEnabled && resumeUploadCheckbox.checked);
+
+            // If resume upload checkbox is unchecked, ensure "Required" toggle is also unchecked
+            if (!resumeUploadCheckbox.checked) {
+                resumeUploadRequiredToggle.checked = false;
+            }
+
+            // Update the visual state of the "Required" toggle
+            const slider = resumeUploadRequiredToggle.nextElementSibling;
+            if (resumeUploadRequiredToggle.checked) {
+                slider.classList.add('active');
+            } else {
+                slider.classList.remove('active');
+            }
+        }
+
+        // Function to update Aadhaar eKYC visual (remains largely same)
+        function toggleAadhaarEKycVisual(){
+            const aadhaarEKycToggle = document.getElementById('aadhaar-ekyc-toggle');
+            const slider = aadhaarEKycToggle.nextElementSibling;
+            if (aadhaarEKycToggle.checked) {
+                slider.classList.add('active');
+            } else {
+                slider.classList.remove('active');
+            }
+        }
+
+        // Event listener for Aadhaar eKYC toggle (remains same)
+        document.getElementById('aadhaar-ekyc-toggle').addEventListener('change', toggleAadhaarEKycVisual);
+
+        // Event listener for Resume Upload Required toggle (remains same, but now is triggered by toggleResumeUploadLive)
+        document.getElementById('resume-upload-required-toggle').addEventListener('change', function(){
+            const toggle = this;
+            const slider = toggle.nextElementSibling;
+            if (toggle.checked) {
+                slider.classList.add('active');
+            } else {
+                slider.classList.remove('active');
+            }
+        });
+        
+        // Event listener for ID type checkboxes to enable/disable their dropdowns
+        document.querySelectorAll('#identity-proof-live-options input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function(){
+                const selectElement = this.parentElement.querySelector('select');
+                if (selectElement) {
+                    selectElement.disabled = !this.checked;
+                }
+                if (this.id === 'id-type-aadhaar') {
+                    const aadhaarEKycToggle = document.getElementById('aadhaar-ekyc-toggle');
+                    // Enable eKYC only if the Aadhaar checkbox is checked AND the parent identity proof checkbox is enabled AND the main toggle is enabled.
+                    const mainToggleEnabled = document.getElementById('live-onboarding-main-toggle').checked;
+                    const identityProofChecked = document.getElementById('capture-identity-live').checked;
+                    aadhaarEKycToggle.disabled = !(this.checked && identityProofChecked && mainToggleEnabled);
+
+                    if (!this.checked) {
+                        aadhaarEKycToggle.checked = false;
+                        toggleAadhaarEKycVisual(); // Update visual state immediately
+                    }
+                }
+            });
+        });
+
+        // Event listener for identity proof type radio buttons (remains same)
+        document.querySelectorAll('input[name="identity-proof-live-type"]').forEach(radio => {
+            radio.addEventListener('change', function(){
+                console.log(`Identity proof type changed to: ${this.value}`);
+            });
+        });
+
+
+        const companyBrandingToggle = document.getElementById('companyBrandingToggle'); companyBrandingToggle.addEventListener('click', () => { companyBrandingToggle.classList.toggle('active'); });
+        document.getElementById('create-group-btn').addEventListener('click', function(){ const input = document.getElementById('group-name-input'); const groupName = input.value.trim(); if (groupName) { addGroupChip(groupName); input.value = ''; } });
+        function addGroupChip(name){ const container = document.getElementById('flexible-groups-container'); const chip = document.createElement('div'); chip.className = 'chip'; chip.innerHTML = `<span>${name}</span><svg class="remove-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" onclick="this.closest('.chip').remove()"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`; container.appendChild(chip); }
+        document.getElementById('add-id-proof-btn').addEventListener('click', function(){ const input = document.getElementById('id-proof-name-input'); const idProofName = input.value.trim(); if (idProofName) { addIdProofChip(idProofName); input.value = ''; } });
+        function addIdProofChip(name){ const container = document.getElementById('allowed-id-proofs-container'); const chip = document.createElement('div'); chip.className = 'chip'; chip.innerHTML = `<span>${name}</span><svg class="remove-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" onclick="this.closest('.chip').remove()"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`; container.appendChild(chip); }
+        function removeIdProof(element){ element.closest('.chip').remove(); }
+        function toggleEmailReminderSettings(){ const isEnabled = document.getElementById('send-reminder-email-toggle').checked; const reminderDaysInput = document.getElementById('reminder-days-input'); const saveButton = document.getElementById('save-email-reminder-btn'); reminderDaysInput.disabled = !isEnabled; saveButton.disabled = !isEnabled; const toggle = document.getElementById('send-reminder-email-toggle'); const slider = toggle.nextElementSibling; if (isEnabled) { slider.classList.add('active'); } else { slider.classList.remove('active'); } }
+        document.getElementById('save-email-reminder-btn').addEventListener('click', function(){ const days = document.getElementById('reminder-days-input').value; console.log(`Email reminder set to ${days} day(s) before invite expires.`); });
+        let faqs = [ { id: 'faq-example-1', question: 'How do I submit my assessment?', answer: '<p>You can submit your assessment by clicking the <strong>"Submit"</strong> button at the bottom of the test page. Ensure all sections are completed before submission.</p>', isEditing: false }, { id: 'faq-example-2', question: 'What if my internet connection drops during the test?', answer: '<p>If your internet connection drops, your progress will be auto-saved. You can resume the test from where you left off once your connection is restored. We recommend a stable internet connection throughout the assessment.</p>', isEditing: false }, { id: 'faq-example-3', question: 'Can I retake the assessment?', answer: '<p>Retaking the assessment is not allowed once submitted. If you have concerns about your submission, please contact support.</p>', isEditing: false }, { id: 'faq-example-4', question: 'How long do I have to complete the assessment?', answer: '<p>You have a total of 60 minutes to complete the assessment. Please manage your time effectively.</p>', isEditing: false }, { id: 'faq-example-5', question: 'Where can I find the assessment guidelines?', answer: '<p>The assessment guidelines are available on the test instructions page. Please read them carefully before starting the assessment.</p>', isEditing: false } ];
+        function renderFAQs(){ const faqListContainer = document.getElementById('faq-list-container'); faqListContainer.innerHTML = ''; faqs.forEach(faq => { const faqItem = document.createElement('div'); faqItem.className = 'faq-item'; faqItem.setAttribute('data-faq-id', faq.id); if (faq.isEditing) { faqItem.innerHTML = `<div class="faq-header expanded"><input type="text" class="faq-header-text-input" placeholder="Enter your question" value="${faq.question || ''}"><i class="fas fa-chevron-down faq-toggle-icon expanded"></i></div><div class="faq-body show"><div id="faq-editor-${faq.id}" class="faq-quill-container"></div><div class="faq-action-buttons"><button class="cancel-button" onclick="cancelEditFAQ('${faq.id}')">Cancel</button><button class="edit-button" onclick="saveFAQ('${faq.id}')">Save</button></div></div>`; faqListContainer.appendChild(faqItem); const quillEditor = new Quill(`#faq-editor-${faq.id}`, { theme: 'snow', modules: { toolbar: [ [{'header': [1, 2, false]}], ['bold', 'italic', 'underline'], ['link'], [{'list': 'ordered'}, {'list': 'bullet'}], ['clean'] ] } }); quillEditor.clipboard.dangerouslyPasteHTML(0, faq.answer || ''); quillEditor.focus(); } else { faqItem.innerHTML = `<div class="faq-header" onclick="toggleFAQBody('${faq.id}')"><span class="faq-header-text">${faq.question || 'New FAQ Question'}</span><i class="fas fa-chevron-down faq-toggle-icon"></i></div><div class="faq-body"><div class="ql-snow ql-editor faq-answer-content">${faq.answer || '<p>No answer provided.</p>'}</div><div class="faq-action-buttons mt-4"><button class="edit-button" onclick="toggleFAQEditMode('${faq.id}')">Edit</button><button class="cancel-button" onclick="deleteFAQ('${faq.id}')">Delete</button></div></div>`; faqListContainer.appendChild(faqItem); } }); }
+        function addQuestion(){ const newFAQId = 'faq-' + Date.now(); faqs.push({ id: newFAQId, question: '', answer: '', isEditing: true }); renderFAQs(); const newFaqElement = document.querySelector(`[data-faq-id="${newFAQId}"]`); if (newFaqElement) { newFaqElement.scrollIntoView({ behavior: 'smooth', block: 'center' }); } }
+        function toggleFAQBody(id){ const faqItem = document.querySelector(`[data-faq-id="${id}"]`); if (!faqItem) return; const faqBody = faqItem.querySelector('.faq-body'); const faqHeader = faqItem.querySelector('.faq-header'); const faqToggleIcon = faqItem.querySelector('.faq-toggle-icon'); if (faqBody.classList.contains('show')) { faqBody.classList.remove('show'); faqHeader.classList.remove('expanded'); faqToggleIcon.classList.remove('expanded'); } else { faqBody.classList.add('show'); faqHeader.classList.add('expanded'); faqToggleIcon.classList.add('expanded'); } }
+        function toggleFAQEditMode(id){ const faq = faqs.find(f => f.id === id); if (faq) { faq.isEditing = true; renderFAQs(); } }
+        function saveFAQ(id){ const faqItem = document.querySelector(`[data-faq-id="${id}"]`); if (!faqItem) return; const questionInput = faqItem.querySelector('.faq-header-text-input'); const quillEditorContainerId = `faq-editor-${id}`; const quillEditorInstance = Quill.find(document.getElementById(quillEditorContainerId)); if (questionInput && quillEditorInstance) { const faq = faqs.find(f => f.id === id); if (faq) { const newQuestion = questionInput.value.trim(); const newAnswer = quillEditorInstance.root.innerHTML; if (!newQuestion) { showCustomAlert('FAQ question cannot be empty.'); return; } faq.question = newQuestion; faq.answer = newAnswer; faq.isEditing = false; renderFAQs(); } } else { console.error('Could not find question input or Quill editor for saving FAQ:', id); } }
+        function cancelEditFAQ(id){ const faq = faqs.find(f => f.id === id); if (faq) { if (faq.question === '' && faq.answer === '<p><br></p>') { faqs = faqs.filter(f => f.id !== id); } else { faq.isEditing = false; } renderFAQs(); } }
+        function deleteFAQ(id){ showCustomConfirm('Are you sure you want to delete this FAQ?', () => { faqs = faqs.filter(faq => faq.id !== id); renderFAQs(); }); }
+        document.getElementById('add-question-btn').addEventListener('click', addQuestion);
+        // The original DOMContentLoaded listener was moved and combined at the end to ensure proper execution order.
+        
+        // --- ADDED JS LOGIC FROM setting4.html (merged and refined) ---
+        let disclaimerTemplates = [{ id: 'disclaimer-default-1', title: 'FDI Default', createdBy: 'FDI', lastModified: '-', isDefault: true, content: `<p>I have closed all other browsers, browser tabs, and applications with sensitive or personal information.</p><p>I agree not to copy or consult code from any external source including website, book or individual to complete the test. I will refer to only documentation or tools linked in the interview.</p><p>To understand more about our privacy policy, data capture, data processing, etc., you can read our privacy policy and terms and service.</p>` }];
+        let rubricTemplates = [{ id: 'rubric-default-1', type: 'Basic', title: 'FDI - Default', createdBy: 'FDI', lastModified: '14 Feb, 2023', isDefault: true, traits: ["Solution approach", "Coding language", "Code completeness", "Use case coverage", "Code efficiency", "Code organization", "Algorithm", "Code security", "Code comments", "Communication", "Workex", "Data analytics"], primarySkillsContent: "" }, { id: 'rubric-advanced-default-1', type: 'Advanced', title: 'Advanced Default Rubric', createdBy: 'FDI', lastModified: '17 Jun, 2025', isDefault: false, criteria: [ { name: "Problem Solving", description: "Ability to analyze complex problems and propose effective solutions.", ratings: [ { name: "Beginner", description: "Struggles to identify core problems." }, { name: "Intermediate", description: "Identifies problems but solutions are basic." }, { name: "Expert", description: "Quickly identifies problems and proposes innovative solutions." } ] }, { name: "Technical Skills", description: "Proficiency in relevant technologies and programming languages.", ratings: [ { name: "Novice", description: "Limited knowledge of core technologies." }, { name: "Proficient", description: "Good grasp of essential technologies." }, { name: "Master", description: "Deep expertise in multiple technologies." } ] } ] }];
+        let disclaimerEditor;
+        let basicRubricPrimarySkillsEditor; 
+        let currentBasicRubricTraits = []; 
+        let currentAdvancedRubricCriteria = []; 
+        let disclaimerModal;
+        let basicRubricModal;
+        let advancedRubricModal;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            disclaimerModal = document.getElementById('disclaimer-template-modal-overlay');
+            basicRubricModal = document.getElementById('basic-rubric-modal-overlay');
+            advancedRubricModal = document.getElementById('advanced-rubric-modal-overlay');
+            initializeDisclaimerEditor();
+            initializeBasicRubricEditors(); 
+            renderAllDisclaimerRows();
+            renderAllRubricRows();
+            updateRubricCounts();
+            initializeDropdowns();
+            toggleLiveOnboardingSettings(); // Initial call for Live Onboarding
+        });
+        
+        function initializeDropdowns() {
+             window.addEventListener('click', function(event) {
+                document.querySelectorAll('.dropdown-menu.show-dropdown').forEach(menu => { if (!menu.parentElement.contains(event.target)) { menu.classList.remove('show-dropdown'); } });
+                const addTemplateDropdown = document.getElementById('add-template-dropdown');
+                const addTemplateButton = document.getElementById('add-new-template-btn');
+                if (addTemplateButton && !addTemplateButton.contains(event.target) && !addTemplateDropdown.contains(event.target)) { addTemplateDropdown.classList.add('hidden'); }
+            });
+            const addNewBtn = document.getElementById('add-new-template-btn');
+            if (addNewBtn) { addNewBtn.addEventListener('click', function(event) { event.stopPropagation(); document.getElementById('add-template-dropdown').classList.toggle('hidden'); }); }
+        }
+
+        window.openDisclaimerModal = (id = null) => {
+            const modalTitle = disclaimerModal.querySelector('#disclaimer-modal-title');
+            const titleInput = disclaimerModal.querySelector('#disclaimer-template-title');
+            const idInput = disclaimerModal.querySelector('#editing-disclaimer-id');
+            if (id) {
+                const template = disclaimerTemplates.find(t => t.id === id);
+                if (template) { modalTitle.textContent = 'Edit Disclaimer Template'; titleInput.value = template.title; disclaimerEditor.root.innerHTML = template.content; idInput.value = id; }
+            } else { modalTitle.textContent = 'Add New Disclaimer Template'; titleInput.value = ''; disclaimerEditor.setText(''); idInput.value = ''; }
+            disclaimerModal.classList.add('active');
+        };
+        window.closeDisclaimerModal = () => { disclaimerModal.classList.remove('active'); };
+        function initializeDisclaimerEditor() { disclaimerEditor = new Quill('#disclaimer-template-editor', { theme: 'snow', modules: { toolbar: [ ['bold', 'italic', 'underline'], [{'list': 'ordered'}, {'list': 'bullet'}], ['link'] ] } }); }
+        window.saveDisclaimerTemplate = () => { const id = document.getElementById('editing-disclaimer-id').value; const title = document.getElementById('disclaimer-template-title').value.trim(); const content = disclaimerEditor.root.innerHTML; const plainText = disclaimerEditor.getText().trim(); if (!title) { showCustomAlert('Template title is required.'); return; } if (plainText.length < 50 || plainText.length > 5000) { showCustomAlert('Content must be between 50 and 5000 characters.'); return; } if (id) { const index = disclaimerTemplates.findIndex(t => t.id === id); if (index !== -1) { disclaimerTemplates[index].title = title; disclaimerTemplates[index].content = content; disclaimerTemplates[index].lastModified = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); } } else { const newTemplate = { id: 'disclaimer-' + Date.now(), title: title, createdBy: 'Sri', lastModified: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }), isDefault: false, content: content }; disclaimerTemplates.push(newTemplate); } renderAllDisclaimerRows(); closeDisclaimerModal(); };
+        window.deleteDisclaimer = (id) => { showCustomConfirm('Are you sure you want to delete this template?', () => { disclaimerTemplates = disclaimerTemplates.filter(t => t.id !== id); renderAllDisclaimerRows(); }); };
+        window.toggleDisclaimerDefault = (id) => { disclaimerTemplates.forEach(t => { t.isDefault = (t.id === id); }); renderAllDisclaimerRows(); };
+        window.toggleDisclaimerRow = (button) => { const icon = button.querySelector('i'); const row = button.closest('tr'); const contentRow = document.getElementById('expanded-' + row.dataset.id); if (contentRow) { const isHidden = contentRow.classList.contains('hidden'); contentRow.classList.toggle('hidden'); icon.classList.toggle('fa-chevron-down', !isHidden); icon.classList.toggle('fa-chevron-up', isHidden); } };
+        function renderAllDisclaimerRows() { const tableBody = document.getElementById('disclaimer-template-table').querySelector('tbody'); tableBody.innerHTML = ''; disclaimerTemplates.forEach(template => { const row = document.createElement('tr'); row.dataset.id = template.id; const isFDIDefault = template.createdBy === 'FDI'; let actionButtonsHtml = `<button onclick="toggleDisclaimerRow(this)" class="p-1 hover:bg-gray-200 rounded-full w-7 h-7 flex items-center justify-center"><i class="fas fa-chevron-down"></i></button>`; if (!isFDIDefault) { actionButtonsHtml = `<button onclick="openDisclaimerModal('${template.id}')" class="p-1 hover:bg-gray-200 rounded-full w-7 h-7 flex items-center justify-center"><i class="fas fa-pencil-alt text-blue-600"></i></button><button onclick="deleteDisclaimer('${template.id}')" class="p-1 hover:bg-gray-200 rounded-full w-7 h-7 flex items-center justify-center"><i class="fas fa-trash-alt text-red-600"></i></button>` + actionButtonsHtml; } row.innerHTML = `<td><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" class="sr-only peer" ${template.isDefault ? 'checked' : ''} onchange="toggleDisclaimerDefault('${template.id}')"><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div></label></td><td class="font-medium text-gray-900">${template.title}</td><td>${template.createdBy}</td><td>${template.lastModified}</td><td><div class="flex items-center gap-2">${actionButtonsHtml}</div></td>`; const contentRow = document.createElement('tr'); contentRow.id = 'expanded-' + template.id; contentRow.className = 'hidden expanded-content-row'; contentRow.innerHTML = `<td colspan="5"><div class="ql-snow"><div class="ql-editor">${template.content}</div></div></td>`; tableBody.appendChild(row); tableBody.appendChild(contentRow); }); }
+        window.openRubricModal = (type, id = null) => { document.getElementById('add-template-dropdown').classList.add('hidden'); if (type === 'basic') { const modalTitle = basicRubricModal.querySelector('#basic-rubric-modal-title'); const titleInput = basicRubricModal.querySelector('#basic-rubric-template-title'); const idInput = basicRubricModal.querySelector('#editing-basic-rubric-id'); const primarySkillsSection = document.getElementById('primary-skills-section'); if (id) { const template = rubricTemplates.find(t => t.id === id && t.type === 'Basic'); if (template) { modalTitle.textContent = 'Basic Rubric - Edit template'; titleInput.value = template.title; idInput.value = id; currentBasicRubricTraits = [...template.traits]; basicRubricPrimarySkillsEditor.root.innerHTML = template.primarySkillsContent || ''; if (template.primarySkillsContent) { primarySkillsSection.classList.remove('hidden'); } else { primarySkillsSection.classList.add('hidden'); } } } else { modalTitle.textContent = 'Basic Rubric - Add new template'; titleInput.value = ''; idInput.value = ''; currentBasicRubricTraits = []; basicRubricPrimarySkillsEditor.setText(''); primarySkillsSection.classList.add('hidden'); } renderBasicRubricTraits(); basicRubricModal.classList.add('active'); } else if (type === 'advanced') { const modalTitle = advancedRubricModal.querySelector('#advanced-rubric-modal-title'); const titleInput = advancedRubricModal.querySelector('#advanced-rubric-template-title'); const idInput = advancedRubricModal.querySelector('#editing-advanced-rubric-id'); if (id) { const template = rubricTemplates.find(t => t.id === id && t.type === 'Advanced'); if (template) { modalTitle.textContent = 'Advanced Rubric - Edit template'; titleInput.value = template.title; idInput.value = id; currentAdvancedRubricCriteria = JSON.parse(JSON.stringify(template.criteria || [])); } } else { modalTitle.textContent = 'Advanced Rubric - Add new template'; titleInput.value = ''; idInput.value = ''; currentAdvancedRubricCriteria = []; } renderAdvancedRubricCriteria(); advancedRubricModal.classList.add('active'); } };
+        window.closeBasicRubricModal = () => { basicRubricModal.classList.remove('active'); document.getElementById('basic-rubric-trait-input').value = ''; };
+        window.closeAdvancedRubricModal = () => { advancedRubricModal.classList.remove('active'); };
+        function initializeBasicRubricEditors() { basicRubricPrimarySkillsEditor = new Quill('#basic-rubric-primary-skills-editor', { theme: 'snow', modules: { toolbar: [ ['bold', 'italic', 'underline'], [{'list': 'ordered'}, {'list': 'bullet'}], ['link'] ] } }); }
+        window.togglePrimarySkillsSection = () => { document.getElementById('primary-skills-section').classList.toggle('hidden'); };
+        window.addBasicRubricTrait = () => { const traitInput = document.getElementById('basic-rubric-trait-input'); const traitText = traitInput.value.trim(); if (traitText && currentBasicRubricTraits.length < 60) { currentBasicRubricTraits.push(traitText); traitInput.value = ''; renderBasicRubricTraits(); } else if (currentBasicRubricTraits.length >= 60) { showCustomAlert('Maximum 60 traits can be added.'); } else { showCustomAlert('Trait cannot be empty.'); } };
+        window.removeBasicRubricTrait = (index) => { currentBasicRubricTraits.splice(index, 1); renderBasicRubricTraits(); };
+        function renderBasicRubricTraits() { const traitsListDiv = document.getElementById('basic-rubric-traits-list'); traitsListDiv.innerHTML = ''; if (currentBasicRubricTraits.length === 0) { const noTraitMessage = document.createElement('p'); noTraitMessage.className = 'text-gray-500 text-sm italic'; noTraitMessage.textContent = 'No trait added!'; traitsListDiv.appendChild(noTraitMessage); } else { currentBasicRubricTraits.forEach((trait, index) => { const traitDiv = document.createElement('div'); traitDiv.className = 'flex items-center justify-between bg-gray-100 p-2 rounded-md'; traitDiv.innerHTML = `<span>${trait}</span><button class="text-red-500 hover:text-red-700 p-1" onclick="removeBasicRubricTrait(${index})"><i class="fas fa-times"></i></button>`; traitsListDiv.appendChild(traitDiv); }); } }
+        window.saveBasicRubricTemplate = () => { const id = document.getElementById('editing-basic-rubric-id').value; const title = document.getElementById('basic-rubric-template-title').value.trim(); const primarySkillsContent = basicRubricPrimarySkillsEditor.root.innerHTML; if (!title) { showCustomAlert('Template title is required.'); return; } if (currentBasicRubricTraits.length === 0) { showCustomAlert('At least one trait is required.'); return; } if (id) { const index = rubricTemplates.findIndex(t => t.id === id && t.type === 'Basic'); if (index !== -1) { rubricTemplates[index].title = title; rubricTemplates[index].traits = [...currentBasicRubricTraits]; rubricTemplates[index].primarySkillsContent = primarySkillsContent; rubricTemplates[index].lastModified = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); } } else { const newTemplate = { id: 'rubric-basic-' + Date.now(), type: 'Basic', title: title, createdBy: 'Sri', lastModified: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }), isDefault: false, traits: [...currentBasicRubricTraits], primarySkillsContent: primarySkillsContent }; rubricTemplates.push(newTemplate); } renderAllRubricRows(); updateRubricCounts(); closeBasicRubricModal(); };
+        window.addAdvancedRubricCriteria = () => { if (currentAdvancedRubricCriteria.length < 20) { currentAdvancedRubricCriteria.push({ name: "", description: "", ratings: [ { name: "Rating 1", description: "" }, { name: "Rating 2", description: "" } ] }); renderAdvancedRubricCriteria(); } else { showCustomAlert('Maximum 20 criteria can be added.'); } };
+        window.removeAdvancedRubricCriteria = (index) => { showCustomConfirm('Are you sure you want to remove this criteria?', () => { currentAdvancedRubricCriteria.splice(index, 1); renderAdvancedRubricCriteria(); }); };
+        window.addAdvancedRubricRating = (criteriaIndex) => { const ratings = currentAdvancedRubricCriteria[criteriaIndex].ratings; if (ratings.length < 5) { ratings.push({ name: `Rating ${ratings.length + 1}`, description: "" }); renderAdvancedRubricCriteria(); } else { showCustomAlert('Maximum 5 ratings can be added per criteria.'); } };
+        window.removeAdvancedRubricRating = (criteriaIndex, ratingIndex) => { const ratings = currentAdvancedRubricCriteria[criteriaIndex].ratings; if (ratings.length > 1) { showCustomConfirm('Are you sure you want to remove this rating?', () => { ratings.splice(ratingIndex, 1); renderAdvancedRubricCriteria(); }); } else { showCustomAlert('Each criteria must have at least one rating.'); } };
+        function renderAdvancedRubricCriteria() { const container = document.getElementById('advanced-rubric-criteria-container'); container.innerHTML = ''; const criteriaCountSpan = document.getElementById('advanced-rubric-criteria-count'); criteriaCountSpan.textContent = currentAdvancedRubricCriteria.length; if (currentAdvancedRubricCriteria.length === 0) { const noCriteriaMessage = document.createElement('p'); noCriteriaMessage.className = 'text-gray-500 text-sm italic mb-4'; noCriteriaMessage.textContent = 'No criteria added!'; container.appendChild(noCriteriaMessage); } else { currentAdvancedRubricCriteria.forEach((criteria, cIndex) => { const criteriaDiv = document.createElement('div'); criteriaDiv.className = 'criteria-item mb-4'; criteriaDiv.innerHTML = `<div class="flex items-center justify-between mb-2"><label for="criteria-name-${cIndex}" class="block text-sm font-medium text-gray-700">Criteria name</label><button class="text-gray-500 hover:text-gray-700 p-1" onclick="removeAdvancedRubricCriteria(${cIndex})"><i class="fas fa-trash"></i></button></div><input type="text" id="criteria-name-${cIndex}" class="w-full p-2 border border-gray-300 rounded-md mb-2" placeholder="Enter criteria name" value="${criteria.name}" maxlength="100"><textarea id="criteria-description-${cIndex}" class="w-full p-2 border border-gray-300 rounded-md mb-4 resize-y" rows="2" placeholder="Description (Max 300 characters)" maxlength="300">${criteria.description}</textarea><div class="flex flex-wrap -mx-2 mb-2" id="ratings-container-${cIndex}"></div><button class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition-colors duration-150 flex items-center gap-2 text-sm" onclick="addAdvancedRubricRating(${cIndex})"><i class="fas fa-plus"></i> Add Rating (${criteria.ratings.length}/5)</button>`; container.appendChild(criteriaDiv); criteriaDiv.querySelector(`#criteria-name-${cIndex}`).addEventListener('input', function() { currentAdvancedRubricCriteria[cIndex].name = this.value; }); criteriaDiv.querySelector(`#criteria-description-${cIndex}`).addEventListener('input', function() { currentAdvancedRubricCriteria[cIndex].description = this.value; }); const ratingsContainer = criteriaDiv.querySelector(`#ratings-container-${cIndex}`); criteria.ratings.forEach((rating, rIndex) => { const ratingDiv = document.createElement('div'); ratingDiv.className = 'w-full md:w-1/2 px-2 mb-4'; ratingDiv.innerHTML = `<div class="rating-item"><div class="flex items-center justify-between mb-2"><label for="rating-name-${cIndex}-${rIndex}" class="block text-sm font-medium text-gray-700">Rating name ${rIndex + 1}</label><button class="text-gray-500 hover:text-gray-700 p-1" onclick="removeAdvancedRubricRating(${cIndex}, ${rIndex})"><i class="fas fa-times"></i></button></div><input type="text" id="rating-name-${cIndex}-${rIndex}" class="w-full p-2 border border-gray-300 rounded-md mb-2" placeholder="Rating name" value="${rating.name}" maxlength="100"><textarea id="rating-description-${cIndex}-${rIndex}" class="w-full p-2 border border-gray-300 rounded-md resize-y" rows="2" placeholder="Description (Max 300 characters)" maxlength="300">${rating.description}</textarea></div>`; ratingsContainer.appendChild(ratingDiv); ratingDiv.querySelector(`#rating-name-${cIndex}-${rIndex}`).addEventListener('input', function() { currentAdvancedRubricCriteria[cIndex].ratings[rIndex].name = this.value; }); ratingDiv.querySelector(`#rating-description-${cIndex}-${rIndex}`).addEventListener('input', function() { currentAdvancedRubricCriteria[cIndex].ratings[rIndex].description = this.value; }); }); }); } }
+        window.saveAdvancedRubricTemplate = () => { const id = document.getElementById('editing-advanced-rubric-id').value; const title = document.getElementById('advanced-rubric-template-title').value.trim(); if (!title) { showCustomAlert('Template title is required.'); return; } if (currentAdvancedRubricCriteria.length === 0) { showCustomAlert('At least one criteria is required.'); return; } for (const criteria of currentAdvancedRubricCriteria) { if (!criteria.name.trim()) { showCustomAlert(`Criteria name is required for criteria "${criteria.name || 'Unnamed Criteria'}".`); return; } if (!criteria.description.trim()) { showCustomAlert(`Description is required for criteria "${criteria.name}".`); return; } if (criteria.ratings.length === 0) { showCustomAlert(`Each criteria ("${criteria.name}") must have at least one rating.`); return; } for (const rating of criteria.ratings) { if (!rating.name.trim()) { showCustomAlert(`Rating name is required for rating "${rating.name || 'Unnamed Rating'}" in criteria "${criteria.name}".`); return; } if (!rating.description.trim()) { showCustomAlert(`Rating description is required for rating "${rating.name}" in criteria "${criteria.name}".`); return; } } } if (id) { const index = rubricTemplates.findIndex(t => t.id === id && t.type === 'Advanced'); if (index !== -1) { rubricTemplates[index].title = title; rubricTemplates[index].criteria = JSON.parse(JSON.stringify(currentAdvancedRubricCriteria)); rubricTemplates[index].lastModified = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); } } else { const newTemplate = { id: 'rubric-advanced-' + Date.now(), type: 'Advanced', title: title, createdBy: 'Sri', lastModified: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }), isDefault: false, criteria: JSON.parse(JSON.stringify(currentAdvancedRubricCriteria)) }; rubricTemplates.push(newTemplate); } renderAllRubricRows(); updateRubricCounts(); closeAdvancedRubricModal(); };
+        window.previewRubric = (id) => { const template = rubricTemplates.find(t => t.id === id); if(!template) return; const modal = document.getElementById('previewRubricModal'); const titleEl = modal.querySelector('#preview-rubric-title'); const contentEl = modal.querySelector('#preview-rubric-content'); titleEl.textContent = `${template.type} Rubric - ${template.title}`; let htmlContent = ''; if (template.type === 'Basic') { htmlContent += `<p class="text-sm text-gray-600 mb-4">Each trait will be rated on a 5 pointer scale</p><ul class="space-y-2">`; template.traits.forEach(trait => { htmlContent += `<li class="border-b pb-2 flex justify-between items-center"><span>${trait}</span><span class="text-gray-400 text-lg">☆☆☆☆☆</span></li>`; }); htmlContent += '</ul>'; if (template.primarySkillsContent) { htmlContent += `<div class="mt-4 pt-4 border-t border-gray-200"><h4 class="text-md font-semibold mb-2">Primary Skills:</h4><div class="ql-snow"><div class="ql-editor">${template.primarySkillsContent}</div></div></div>`; } } else if (template.type === 'Advanced') { template.criteria.forEach((criteria, cIndex) => { htmlContent += `<div class="mb-6 p-4 border border-gray-200 rounded-md bg-gray-50"><h4 class="text-lg font-semibold mb-2">${criteria.name}</h4><p class="text-gray-700 mb-4">${criteria.description}</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4">`; criteria.ratings.forEach((rating, rIndex) => { htmlContent += `<div class="bg-white p-3 rounded-md border border-gray-200"><h5 class="font-medium text-gray-800">${rating.name}</h5><p class="text-sm text-gray-600">${rating.description}</p></div>`; }); htmlContent += `</div></div>`; }); } contentEl.innerHTML = htmlContent; modal.classList.add('active'); };
+        window.closePreviewRubricModal = () => { document.getElementById('previewRubricModal').classList.remove('active'); };
+        window.editRubric = (id) => { const template = rubricTemplates.find(t => t.id === id); if (template) { openRubricModal(template.type.toLowerCase(), id); } };
+        window.duplicateRubric = (id) => { const templateToDuplicate = rubricTemplates.find(t => t.id === id); if (templateToDuplicate) { const duplicatedTemplate = JSON.parse(JSON.stringify(templateToDuplicate)); duplicatedTemplate.id = (templateToDuplicate.type === 'Basic' ? 'rubric-basic-' : 'rubric-advanced-') + Date.now(); duplicatedTemplate.title = `Copy of ${duplicatedTemplate.title}`; duplicatedTemplate.createdBy = 'Sri'; duplicatedTemplate.lastModified = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); duplicatedTemplate.isDefault = false; rubricTemplates.push(duplicatedTemplate); renderAllRubricRows(); updateRubricCounts(); showCustomAlert('Template duplicated successfully!'); } };
+        window.deleteRubric = (id) => { showCustomConfirm('Are you sure you want to delete this rubric template?', () => { rubricTemplates = rubricTemplates.filter(t => t.id !== id); renderAllRubricRows(); updateRubricCounts(); }); };
+        window.toggleRubricDefault = (id) => { rubricTemplates.forEach(t => { t.isDefault = (t.id === id); }); renderAllRubricRows(); };
+        function renderAllRubricRows() { const tableBody = document.getElementById('rubric-template-table').querySelector('tbody'); tableBody.innerHTML = ''; const currentTab = document.querySelector('.tab-button.active').dataset.tab; const filteredTemplates = rubricTemplates.filter(template => { if (currentTab === 'all') return true; return template.type.toLowerCase() === currentTab; }); filteredTemplates.forEach(template => { const row = document.createElement('tr'); row.dataset.id = template.id; row.dataset.type = template.type; let actionMenuHtml = ''; if (template.createdBy === 'FDI') { actionMenuHtml = `<a href="#" class="dropdown-item" onclick="event.preventDefault(); previewRubric('${template.id}')"><i class="fas fa-eye"></i>Preview</a>`; } else { actionMenuHtml = `<a href="#" class="dropdown-item" onclick="event.preventDefault(); previewRubric('${template.id}')"><i class="fas fa-eye"></i>Preview</a><a href="#" class="dropdown-item" onclick="event.preventDefault(); editRubric('${template.id}')"><i class="fas fa-pencil-alt"></i>Edit</a><a href="#" class="dropdown-item" onclick="event.preventDefault(); duplicateRubric('${template.id}')"><i class="fas fa-copy"></i>Duplicate</a><a href="#" class="dropdown-item text-red-600" onclick="event.preventDefault(); deleteRubric('${template.id}')"><i class="fas fa-trash"></i>Delete</a>`; } row.innerHTML = `<td><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" class="sr-only peer" ${template.isDefault ? 'checked' : ''} onchange="toggleRubricDefault('${template.id}')"><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div></label></td><td>${template.type}</td><td class="font-medium text-gray-900">${template.title}</td><td>${template.createdBy}</td><td>${template.lastModified}</td><td class="action-buttons"><div class="dropdown-container"><button class="dropdown-toggle" onclick="event.stopPropagation(); this.nextElementSibling.classList.toggle('show-dropdown');"><i class="fas fa-ellipsis-h"></i></button><div class="dropdown-menu">${actionMenuHtml}</div></div></td>`; tableBody.appendChild(row); }); }
+        function updateRubricCounts() { document.getElementById('all-rubric-count').textContent = rubricTemplates.length; document.getElementById('basic-rubric-count').textContent = rubricTemplates.filter(t => t.type === 'Basic').length; document.getElementById('advanced-rubric-count').textContent = rubricTemplates.filter(t => t.type === 'Advanced').length; }
+        document.querySelectorAll('.tab-button').forEach(button => { button.addEventListener('click', function() { document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active')); this.classList.add('active'); renderAllRubricRows(); }); });
+        function showCustomAlert(message) { const alertModalHtml = `<div id="custom-alert-overlay" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"><div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4"><h3 class="text-lg font-semibold text-gray-900 mb-4">Alert</h3><p class="text-gray-700 mb-6">${message}</p><div class="flex justify-end"><button id="custom-alert-ok-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">OK</button></div></div></div>`; document.body.insertAdjacentHTML('beforeend', alertModalHtml); document.getElementById('custom-alert-ok-btn').addEventListener('click', () => { document.getElementById('custom-alert-overlay').remove(); }); }
+        function showCustomConfirm(message, onConfirm) { const confirmModalHtml = `<div id="custom-confirm-overlay" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"><div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4"><h3 class="text-lg font-semibold text-gray-900 mb-4">Confirm Action</h3><p class="text-gray-700 mb-6">${message}</p><div class="flex justify-end gap-3"><button id="custom-confirm-cancel-btn" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">Cancel</button><button id="custom-confirm-ok-btn" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">Confirm</button></div></div></div>`; document.body.insertAdjacentHTML('beforeend', confirmModalHtml); document.getElementById('custom-confirm-ok-btn').addEventListener('click', () => { onConfirm(); document.getElementById('custom-confirm-overlay').remove(); }); document.getElementById('custom-confirm-cancel-btn').addEventListener('click', () => { document.getElementById('custom-confirm-overlay').remove(); }); }
+    </script>
+</body>
+</html>

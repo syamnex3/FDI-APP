@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceDInterview - Secure Online Assessments</title>
+   
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- AOS (Animate On Scroll) Library for animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fdfdff; 
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #6e45e2 0%, #88d3ce 100%);
+        }
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+
+    <!-- Header / Navigation -->
+    <header class="bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-40">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-3xl font-bold text-indigo-600">
+                FaceDInterview
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#features" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Features</a>
+                <a href="#how-it-works" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">How It Works</a>
+                <a href="#about" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">About</a>
+            </div>
+            <!-- === LOGIN BUTTON UPDATED === -->
+            <!-- This is now a link. Change the href attribute to your login page URL. -->
+            <a href="{% url 'employer_login' %}" class="bg-indigo-600 text-white font-semibold px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition duration-300 shadow-lg hover:shadow-indigo-400/50 transform hover:-translate-y-0.5">
+                Login
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-gradient text-white py-24 md:py-40 relative overflow-hidden">
+            <div id="particles-js"></div>
+            <div class="container mx-auto px-6 text-center hero-content">
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight" data-aos="fade-down">Authentic Talent, Verified.</h1>
+                <p class="text-lg md:text-xl text-indigo-100 max-w-3xl mx-auto mb-10" data-aos="fade-up" data-aos-delay="200">
+                    Our platform ensures integrity in online assessments, helping you recruit genuine talent with confidence by eliminating proxy interviews and monitoring candidate activity.
+                </p>
+                <a href="#features" class="bg-white text-indigo-600 font-bold py-4 px-10 rounded-full hover:bg-gray-100 transition duration-300 transform hover:scale-105 shadow-xl text-lg" data-aos="zoom-in" data-aos-delay="400">
+                    Explore Platform
+                </a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">The Ultimate Recruitment Shield</h2>
+                    <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Everything you need to conduct secure, fair, and insightful online examinations.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    <!-- Feature 1: Anti-Proxy Security -->
+                    <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-2xl bg-indigo-100 text-indigo-600 mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Anti-Proxy Proctoring</h3>
+                        <p class="text-gray-600 leading-relaxed">Our core mission. We leverage advanced monitoring to detect and prevent fraudulent activities, ensuring the candidate taking the test is the one you invited.</p>
+                    </div>
+                    <!-- Feature 2: Dynamic Question Bank -->
+                    <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-2xl bg-indigo-100 text-indigo-600 mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Custom Exam Builder</h3>
+                        <p class="text-gray-600 leading-relaxed">Organizations have full control to create tailored assessments. Build your own question banks to evaluate the specific skills you need for fast growth.</p>
+                    </div>
+                    <!-- Feature 3: Full Activity Recording -->
+                    <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-2xl bg-indigo-100 text-indigo-600 mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">End-to-End Session Records</h3>
+                        <p class="text-gray-600 leading-relaxed">Gain unparalleled insight. Our portal securely stores a complete record of the candidate's activity during the exam, from first click to final submission.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="py-24 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800">A Simple Path to Quality Hires</h2>
+                    <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Recruit talent in four easy steps.</p>
+                </div>
+                <div class="relative">
+                    <div class="hidden md:block absolute top-12 left-0 w-full h-1 bg-indigo-100 rounded-full"></div>
+                    <div class="hidden md:block absolute top-12 left-0 w-full h-1 bg-indigo-500 rounded-full transition-all duration-500" id="progress-line"></div>
+                    <div class="grid md:grid-cols-4 gap-12 relative">
+                        <!-- Step 1 -->
+                        <div class="text-center" data-aos="fade-right" data-aos-delay="100">
+                            <div class="mx-auto h-24 w-24 flex items-center justify-center bg-white border-4 border-indigo-500 rounded-full text-3xl font-bold text-indigo-600 shadow-lg">1</div>
+                            <h3 class="font-bold text-xl mt-6 mb-2">Create Exam</h3>
+                            <p class="text-gray-600">Use our intuitive builder to design your assessment and add questions.</p>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="text-center" data-aos="fade-right" data-aos-delay="200">
+                            <div class="mx-auto h-24 w-24 flex items-center justify-center bg-white border-4 border-indigo-500 rounded-full text-3xl font-bold text-indigo-600 shadow-lg">2</div>
+                            <h3 class="font-bold text-xl mt-6 mb-2">Invite Candidates</h3>
+                            <p class="text-gray-600">Send secure, unique invitations to your list of potential hires.</p>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="text-center" data-aos="fade-left" data-aos-delay="300">
+                             <div class="mx-auto h-24 w-24 flex items-center justify-center bg-white border-4 border-indigo-500 rounded-full text-3xl font-bold text-indigo-600 shadow-lg">3</div>
+                            <h3 class="font-bold text-xl mt-6 mb-2">Monitor & Record</h3>
+                            <p class="text-gray-600">Let our system monitor the session while you focus on other tasks.</p>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="text-center" data-aos="fade-left" data-aos-delay="400">
+                             <div class="mx-auto h-24 w-24 flex items-center justify-center bg-white border-4 border-indigo-500 rounded-full text-3xl font-bold text-indigo-600 shadow-lg">4</div>
+                            <h3 class="font-bold text-xl mt-6 mb-2">Review & Recruit</h3>
+                            <p class="text-gray-600">Analyze the activity reports and hire the most talented candidates with confidence.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-24">
+            <div class="container mx-auto px-6 text-center max-w-4xl" data-aos="fade-up">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Our Mission</h2>
+                <p class="text-lg text-gray-700 mt-6 leading-relaxed">
+                    At FaceDInterview, we believe true talent deserves a fair chance. In a world of remote work, ensuring candidate authenticity is the biggest challenge for growing organizations. Our mission is to bridge this gap, providing a secure, reliable platform that empowers companies to identify and recruit the best minds, fostering growth and innovation built on a foundation of trust.
+                </p>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="container mx-auto px-6 py-10">
+            <div class="text-center">
+                <a href="#" class="text-3xl font-bold">FaceDInterview</a>
+                <p class="mt-4 max-w-md mx-auto text-gray-400">
+                    Building the future of recruitment with integrity and technology.
+                </p>
+                <div class="mt-6 text-gray-500">
+                    &copy; 2025 FaceDInterview. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-800 text-white p-5 md:flex items-center justify-between shadow-2xl z-50 transform translate-y-full transition-transform duration-500 ease-in-out">
+        <p class="mb-4 md:mb-0 text-gray-300">We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.</p>
+        <div class="flex space-x-4">
+            <button id="accept-cookies" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">Accept</button>
+            <button id="decline-cookies" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">Decline</button>
+        </div>
+    </div>
+
+
+    <!-- Particle.js for hero animation -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- AOS (Animate On Scroll) Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 50,
+        });
+
+        // Particle.js configuration
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000000" }, "polygon": { "nb_sides": 5 } },
+                "opacity": { "value": 0.5, "random": false, "anim": { "enable": false, "speed": 1, "opacity_min": 0.1, "sync": false } },
+                "size": { "value": 3, "random": true, "anim": { "enable": false, "speed": 40, "size_min": 0.1, "sync": false } },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 6, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false, "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 } }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                "modes": { "grab": { "distance": 400, "line_linked": { "opacity": 1 } }, "bubble": { "distance": 400, "size": 40, "duration": 2, "opacity": 8, "speed": 3 }, "repulse": { "distance": 200, "duration": 0.4 }, "push": { "particles_nb": 4 }, "remove": { "particles_nb": 2 } }
+            },
+            "retina_detect": true
+        });
+
+        // --- Cookie Banner Logic ---
+        const cookieBanner = document.getElementById('cookie-banner');
+        const acceptCookiesBtn = document.getElementById('accept-cookies');
+        const declineCookiesBtn = document.getElementById('decline-cookies');
+
+        // Check if cookie consent has been given
+        if (!localStorage.getItem('cookie_consent')) {
+             setTimeout(() => {
+                cookieBanner.classList.remove('translate-y-full');
+            }, 2000); // Show banner after 2 seconds
+        }
+
+        const handleCookieConsent = (consent) => {
+            localStorage.setItem('cookie_consent', consent);
+            cookieBanner.classList.add('translate-y-full');
+        };
+
+        acceptCookiesBtn.addEventListener('click', () => handleCookieConsent('accepted'));
+        declineCookiesBtn.addEventListener('click', () => handleCookieConsent('declined'));
+    </script>
+
+</body>
+</html>

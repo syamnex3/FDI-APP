@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment Configurations</title>
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <!-- Added from header file for icons and font -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* --- Styles from header.html --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+ 
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafc;
+      font-size: 14px; 
+    }
+ 
+    .top-header {
+      position: fixed;
+      width: 100%;
+      z-index: 10;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+ 
+    .brand-title {
+      background-color: #1d2686;
+      color: #fff;
+      font-size: 20px; 
+      padding: 10px 12px; 
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-title-text {
+        color: #fff;
+        font-size: 20px; 
+        font-weight: bold;
+    }
+ 
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px; 
+      border-bottom: 1px solid #eee;
+    }
+ 
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-size: 12px; 
+      color: #999;
+    }
+ 
+    .breadcrumb-link {
+      padding: 5px 10px; 
+      cursor: pointer;
+      color: #1d2686;
+      font-size: 12px; 
+      transition: 0.2s ease;
+      margin-right: 8px;
+      margin-left: -4px;
+    }
+ 
+    .breadcrumb-heading {
+      color: #999;
+      text-decoration: none;
+      transition: color 0.2s;
+      font-size: 12px; 
+    }
+ 
+    .breadcrumb-heading:hover {
+      color: #1d2686;
+    }
+ 
+    .breadcrumb-separator {
+      font-size: 16px; 
+      color: #ccc;
+      margin-left: 4px; 
+      margin-right: 4px; 
+      font-weight: normal;
+    }
+ 
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 15px; 
+      font-size: 13px; 
+    }
+ 
+    .status .active-dot {
+      width: 8px; 
+      height: 8px; 
+      background-color: #28a745;
+      border-radius: 50%;
+      display: inline-block;
+    }
+ 
+    .invite-btn {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      padding: 6px 12px; 
+      font-weight: 600;
+      font-size: 13px; 
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+ 
+    .profile-menu-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px; 
+      cursor: pointer;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .profile-avatar {
+      width: 28px; 
+      height: 28px; 
+      border-radius: 50%;
+      background-color: #e0e0e0;
+      color: #1d2686;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px; 
+      text-transform: uppercase;
+    }
+
+    .profile-help-icon {
+        color: #fff; 
+        font-size: 20px; 
+        width: 28px; 
+        height: 28px; 
+        border-radius: 6px; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        margin-left: 10px; 
+        cursor: pointer; 
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      overflow: hidden;
+      min-width: 200px; 
+      display: none;
+      z-index: 100;
+      margin-top: 8px; 
+      font-family: 'Inter', sans-serif;
+    }
+
+    .profile-dropdown.show {
+      display: block;
+    }
+
+    .profile-dropdown-header {
+        padding: 8px 12px; 
+        background-color: #f0f2f5;
+        border-bottom: 1px solid #eee;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .profile-dropdown-header span {
+        font-size: 14px; 
+    }
+
+    .profile-dropdown-header small {
+        color: #666;
+        font-weight: 400;
+        font-size: 11px; 
+    }
+
+    .profile-dropdown-item {
+      padding: 8px 12px; 
+      display: flex;
+      align-items: center;
+      gap: 8px; 
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      font-size: 12px; 
+      transition: background-color 0.2s;
+    }
+
+    .profile-dropdown-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .profile-dropdown-item i {
+        color: #1d2686;
+    }
+
+    /* --- Styles from configuration.html --- */
+    .section-header {
+      background-color: #ffffff;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 8px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 48px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .section-header h2 {
+      font-size: 20px;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .save-btn {
+      height: 32px !important;
+      padding: 4px 12px;
+      font-size: 12px;
+      line-height: 1;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .save-btn:hover {
+      background-color: #0056b3;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 25px;
+      color: #1e2e3e;
+    }
+
+    .toggle-group,
+    .toggle-group-plain {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      margin-bottom: 25px;
+    }
+
+    .toggle-group h3 {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: #1e2e3e;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .toggle-label {
+      max-width: 85%;
+    }
+
+    .toggle-label strong {
+      font-size: 14px;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .toggle-label small {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 42px;
+      height: 22px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    .switch input:checked + .slider {
+      background-color: #4caf50;
+    }
+
+    .switch input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      flex: 1;
+      min-width: 350px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .note {
+      font-size: 12px;
+      color: #d35400;
+      margin-bottom: 10px;
+    }
+
+    .screenLimit {
+      width: 60px;
+    }
+    
+    .cutoff-score-section {
+      margin: 30px 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .cutoff-label {
+      font-size: 18px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .cutoff-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .cutoff-input {
+      width: 80px;
+      padding: 6px 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .cutoff-percent {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .cutoff-description {
+      font-size: 14px;
+      color: #555;
+      max-width: 600px;
+      line-height: 1.5;
+    }
+    .dei-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 40px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding-bottom: 30px;
+    }
+
+    .dei-title {
+      font-size: 18px;
+    }
+
+    .terms-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 30px 0;
+    }
+
+    .terms-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .terms-content {
+      margin-top: 15px;
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f9f9f9;
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 14px;
+    }
+
+    .terms-content ul {
+      padding-left: 20px;
+    }
+    #terms-content ul li {
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .editable {
+      border: 1px dashed #007bff;
+      padding: 4px;
+    }
+
+    .edit-button {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      font-size: 14px;
+      color: black;
+      background-color: white;
+      border: 2px solid #007bff;
+      border-radius: 999px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.2s, color 0.2s;
+      margin-top: 15px;
+    }
+
+    .edit-button:hover {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .edit-button span {
+      margin-left: 5px;
+    }
+    .instructions-box {
+        border: 1px solid #ccc;
+        padding: 16px;
+        margin-top: 20px;
+        background-color: #f9f9f9;
+        border-radius: 6px;
+    }
+
+    .instructions-box h3 {
+      margin-top: 0;
+      font-size: 1.25em;
+    }
+
+    .instructions-box h4 {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+
+    .instructions-box ul {
+      padding-left: 20px;
+    }
+
+    .instructions-box li {
+      margin-bottom: 8px;
+    }
+    
+    .editable {
+      outline: none;
+      border: none;
+    }
+
+    .editable:focus {
+      outline: none;
+      border: none;
+    }
+
+    .placeholder {
+      color: #888;
+      font-style: italic;
+    }
+    
+    .setting {
+      background-color: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .setting-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .setting label {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    
+    .setting-description {
+      font-size: 14px;
+      color: #555;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    
+    .notification-box {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 20px;
+      width: 1155px;
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .notification-box h3 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .notification-option {
+      margin-bottom: 12px;
+    }
+
+    .notification-option input {
+      margin-right: 8px;
+    }
+    
+    .identity-options {
+      display: none;
+      margin-left: 10px;
+      margin-top: 10px;
+      padding: 15px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .identity-options label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .id-types {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      margin-top: 10px;
+      background-color: #fefefe;
+    }
+
+    .id-types label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .cancel-button {
+      background-color: #dc3545;
+      color: white;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .cancel-button span {
+      margin-left: 5px;
+    }
+
+    .screen-share-options {
+      display: none;
+    }
+    .webcam-options {
+      display: none;
+    }
+    
+    .nav-link.active {
+      color: #000 !important;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    .nav-link {
+      color: #000;
+      text-decoration: none;
+    }
+    
+    #programming-instructions:focus,
+    #programming-instructions li:focus {
+      outline: none;
+      box-shadow: none;
+      border: none;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; 
+    }
+
+    .main-content {
+      position: absolute;
+      top: 135px; /* Adjust depending on combined height of top-header */
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-y: auto;
+      padding: 30px;
+      box-sizing: border-box;
+    }
+    .breadcrumb-heading.active {
+      font-weight: bold;
+      color: #1d2686; 
+      text-decoration: underline;
+      cursor: default; 
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- This is the new header from header.html -->
+  <div class="top-header">
+    <!-- Top bar with FDI and Profile -->
+    <div class="brand-title">
+        <span class="brand-title-text">FDI</span>
+        <div class="profile-menu-container" id="profileMenuContainer">
+            <div class="profile-avatar">S</div>
+            <i class="fas fa-question-circle profile-help-icon" id="helpIcon"></i>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="profile-dropdown-header">
+                    <span>Sri</span><br>
+                    <small>srharshak@nexnoratech.onmicros....</small><br>
+                    <small>Nexnoratech</small>
+                </div>
+                <a href="#" class="profile-dropdown-item"><i class="fas fa-building"></i> Company Profile</a>
+                <a href="#" class="profile-dropdown-item"><i class="fas fa-users"></i> Team Members</a>
+                <a href="#" class="profile-dropdown-item"><i class="fas fa-envelope"></i> Email Templates</a>
+                <a href="#" class="profile-dropdown-item"><i class="fas fa-question-circle"></i> Connect Question Library</a>
+                <a href="#" class="profile-dropdown-item"><i class="fas fa-chart-bar"></i> Plan Usage</a>
+                <a href="#" class="profile-dropdown-item"><i class="fas fa-cog"></i> Setting Options</a>
+                <a href="#" class="profile-dropdown-item"><i class="fas fa-user-circle"></i> My Account</a>
+                <a href="#" class="profile-dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main header content below the top bar -->
+    <div class="header">
+      <div class="breadcrumb">
+        <span class="breadcrumb-link" onclick="history.back()">Back</span>
+        <!-- MODIFICATION: SUMMARY is now a regular link -->
+        <a href="/assessment-summary/" class="breadcrumb-heading">SUMMARY</a>
+        <i class="fa-solid fa-greater-than breadcrumb-separator"></i> 
+        <a href="/question-library/" class="breadcrumb-heading">QUESTION</a>
+        <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+        <!-- MODIFICATION: CONFIGURE is now highlighted -->
+        <span style="font-weight: bold; color: #1d2686;">CONFIGURE</span>
+        <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+        <a href="/invite-options/" class="breadcrumb-heading">INVITE OPTIONS</a>
+      </div>
+ 
+      <div class="status">
+        <span><span class="active-dot"></span> Active</span>
+        <a href="#" style="cursor:pointer; text-decoration: none; color: inherit;"><i class="fa-solid fa-users"></i> CANDIDATE</a>
+        <a href="#" class="invite-btn">+ INVITE</a>
+      </div>
+    </div>
+
+    <!-- Section Header (Attached to breadcrumb header) -->
+    <div class="section-header">
+      <h2>Assessment Configurations</h2>
+      <button class="save-btn" onclick="saveAssessment()" >SAVE CHANGES</button>
+    </div>
+  </div>
+  
+  <!-- This is the original content of the configuration page -->
+  <div class="main-content">
+    <h2 style="font-size: 15px;">Talent Quality Shield(TM) / Proctoring</h2>
+    <div class="toggle-group">
+      <div class="toggle">
+        <div class="toggle-label">
+          <strong>Capture candidate’s picture</strong>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="capture-picture-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle facial-match-toggle">
+        <div class="toggle-label">
+          <strong>Enable facial match</strong>
+          <small>Analyzes all the candidate submissions for the assessment to find duplicate submissions through facial matching.</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle">
+        <div class="toggle-label">
+          <strong>Capture candidate’s identity proof </strong>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="identity-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+    
+      <div class="identity-options" id="identity-options">
+        <label>
+          <input type="radio" name="identity-capture-mode" value="number-only">
+          Capture only number of the identity proof 
+        </label>
+        <label>
+          <input type="radio" name="identity-capture-mode" value="picture-and-number">
+          Capture both, picture and number of the identity proof 
+        </label>
+    
+        <div class="id-types" id="id-types">
+          <!-- Will be dynamically inserted here -->
+        </div>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div class="toggle">
+            <div class="toggle-label">
+              <h3>Require screen share</h3>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="requireScreenShareToggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+      
+          <p class="note">Note: The below features including full screen and dual screen detection will not work in Firefox and we recommend using Chrome browsers.</p>
+      
+          <div class="screen-share-options">
+            <div class="toggle">
+              <div class="toggle-label">
+                <strong>Enable full screen share</strong>
+                <small>Track if candidate is using full screen share during assessment.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+      
+            <div class="toggle">
+              <div class="toggle-label">
+                <strong>Enable dual screen detection</strong>
+                <small>Track if candidate is using second screen during assessment.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      
+        <div class="card">
+          <div class="toggle">
+            <div class="toggle-label">
+              <h3>Require webcam access</h3>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="requireWebcamToggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+      
+          <div class="webcam-options">
+            <div class="toggle">
+              <div class="toggle-label">
+                <strong>Enable multiple face detection</strong>
+                <small>Tracks if multiple faces are detected during the test.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+      
+            <div class="toggle">
+              <div class="toggle-label">
+                <strong>Enable face detection</strong>
+                <small>Tracks if candidate is either looking away or face is not visible in the assessment area.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+      
+            <div class="toggle">
+              <div class="toggle-label">
+                <strong>Enable audio tracking</strong>
+                <small>Presence of voice is analyzed through the assessment to improve proctoring.</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toggle-group-plain">
+      <div class="toggle">
+        <div class="toggle-label">
+          <strong>Track browser tab activity </strong>
+          <strong><input type="checkbox"> Limit leaving assessment tab to <input class="screenLimit" type="text"></strong>
+        </div>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+   <div class="toggle-group">
+      <div class="toggle" style="align-items: center;">
+        <h3 style="margin-bottom: 0;">Timed assessment</h3>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle" style="flex-direction: column; align-items: flex-start;">
+        <div class="toggle-label" style="width: 100%;">
+          <label style="display: flex; align-items: center;">
+            <input type="checkbox" checked style="margin-right: 10px;">
+            Set time limit at the assessment level to 
+            <input type="number" value="45" style="width: 60px; margin: 0 10px;"> Mins
+          </label>
+          <label style="display: block; margin-top: 10px;">
+            <input type="checkbox"> Don’t allow candidate to go to previous questions
+          </label>
+          <label style="display: block; margin-top: 6px;">
+            <input type="checkbox"> Set time limit at the question level (on QUESTIONS tab)
+          </label>
+          <p>Decide on the duration of this assessment and the timer will go off accordingly when candidates attempt the test.</p>
+        </div>
+      </div>
+    </div>
+   <div class="toggle-group">
+   <div class="toggle">
+    <div class="toggle-label">
+      <strong>Shuffle questions</strong>
+      <small>Use this option to deliver questions in random order to candidates.</small>
+    </div>
+    <label class="switch">
+      <input type="checkbox">
+      <span class="slider"></span>
+    </label>
+   </div>
+   <div class="toggle">
+    <div class="toggle-label">
+      <strong>Video response transcription</strong>
+      <small>Use this option to transcribe video to text.</small>
+    </div>
+    <label class="switch">
+      <input type="checkbox">
+      <span class="slider"></span>
+    </label>
+    </div>
+   </div>
+   <!--
+    <div class="toggle-group">
+   <div class="toggle" style="flex-direction: column; align-items: flex-start;">
+    <div class="toggle-label" style="width: 100%;">
+      <strong>Auto pick questions from the bank</strong>
+      <div style="margin-top: 10px;">
+        <label style="display: flex; align-items: center; margin-bottom: 8px;">
+          <input type="radio" name="questionBank" checked style="margin-right: 10px;">
+          Deliver all questions in this assessment
+        </label>
+        <label style="display: flex; align-items: center; margin-bottom: 8px;">
+          <input type="radio" name="questionBank" style="margin-right: 10px;">
+          Deliver a total of 
+          <input type="number" min="1" style="width: 60px; margin: 0 10px;"> 
+          questions out of 9 questions in this assessment
+        </label>
+        <label style="display: flex; align-items: center;">
+          <input type="radio" name="questionBank" style="margin-right: 10px;">
+          Deliver a fixed number of questions per group
+        </label><br>
+        <p> Use this option to deliver a specified number of randomly picked questions per group. The sequence of groups will
+          be maintained while delivering questions.</p>
+      </div>
+    </div>
+   </div>
+   </div>
+  -->
+   <div class="cutoff-score-section">
+   <label class="cutoff-label">Cutoff score</label>
+   <div class="cutoff-input-wrapper">
+    <input type="number" class="cutoff-input" min="0" max="100" />
+    <span class="cutoff-percent">%</span>
+    </div>
+   <p class="cutoff-description">
+    Decide on a minimum score to qualify a candidate on this assessment.
+    Candidates with less than the cutoff score will be auto disqualified.
+   </p>
+   </div>
+   <div class="dei-section">
+   <label class="dei-title"><strong>Diversity Hiring and Inclusion (DE&I)</strong>
+    <p>Hide personal details of candidates.</p>
+   </label>
+
+   <label class="switch">
+    <input type="checkbox" id="dei-toggle">
+    <span class="slider round"></span>
+   </label>
+  
+   </div>
+   <div class="terms-section">
+   <label class="terms-title">Terms of Use</label>
+   <label class="switch">
+    <input type="checkbox" id="terms-toggle" onchange="toggleTermsContent()">
+    <span class="slider round"></span>
+   </label>
+   </div>
+   <div id="terms-content" class="terms-content" style="display: none;">
+   <h3>Show or hide the Terms of Use page during the candidate's attempt.</h3>
+   <div id="editor">
+    <ul id="terms-list">
+      <li>FDI will seek video and audio permission only if the hiring team mandates it as part of the proctoring setup or requires a video response.</li>
+      <li>FDI will seek permission to install proctoring extension from browser webstore only if the hiring team requires screen sharing during the assessment.</li>
+      <li>You are expected to attempt this assessment in a quiet environment that is free from distractions.</li>
+      <li>FDI stops capturing any information or tracking browser activity after an assessment is closed or submitted.</li>
+      <li>You will see an explicit option/link to remove the browser extension for proctoring at the end of the assessment if you are requested to install it during the assessment.</li>
+      <li>To understand more about FDI privacy policy, data capture, data processing, etc., you can read FDI privacy policy and terms and service.</li>
+    </ul>
+</div>
+<button class="edit-button" onclick="enableTermsEditing()">✎ <span>Edit</span></button>
+<button class="cancel-button" onclick="cancelTermsEditing()">×<span>Cancel</span></button>
+</div>
+<div class="candidate-instructions-section" style="display: none; border: 1px solid #ccc; padding: 20px; border-radius: 4px; background-color: #fff; font-family: sans-serif;">
+  <div class="header" style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">
+    Candidate Instructions
+  </div>
+  <div class="sub-header" style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">
+    General Instructions
+  </div>
+<div id="candidate-editor-container" style="margin-top: 10px;">
+  <div id="candidate-editor"></div>
+</div>
+<button class="edit-button" onclick="enableCandidateInstructionsEditing()">✎ <span>Edit</span></button>
+<button class="cancel-button" onclick="cancelCandidateInstructionsEditing()">×<span>Cancel</span></button>
+</div>
+<div id="programming-instructions" class="instructions-box" style="display: none; border: 1px solid #ccc; padding: 16px; margin-top: 20px; border-radius: 6px;" contenteditable="false">
+  <h3>Programming Test Instructions</h3>
+  <ul>
+    <li>You can choose any programming language from the list for coding questions.</li>
+    <li>Some questions have pre-filled code. Complete the missing parts.</li>
+    <li>Use appropriate print statements to debug (e.g., <code>System.out.println</code> in Java, <code>cout</code> in C++).</li>
+    <li>For full projects, read the <strong>README.txt</strong> file carefully.</li>
+  </ul>
+  <button class="edit-button" onclick="enableProgrammingEditing()">✎ <span>Edit</span></button>
+  <button class="cancel-button" onclick="cancelProgrammingEditing()">×<span>Cancel</span></button>
+</div>
+<div class="disclaimer-section" style="display: none; border: 1px solid #ccc; padding: 20px; margin-top: 20px; border-radius: 4px; background-color: #fff; font-family: sans-serif;">
+  <div class="header" style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">
+    Disclaimer
+  </div>
+  <div id="disclaimer-editor-container" style="margin-top: 10px;">
+    <div id="disclaimer-editor"></div>
+  </div>
+  <button class="edit-button" onclick="enableDisclaimerEditing()">✎ <span>Edit</span></button>
+  <button class="cancel-button" onclick="cancelDisclaimerEditing()">×<span>Cancel</span></button>
+</div>
+<div class="end-message-section" style="display: none; border: 1px solid #ccc; padding: 20px; margin-top: 20px; border-radius: 4px; background-color: #fff; font-family: sans-serif;">
+  <div class="header" style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">
+    End of the Assessment Message
+  </div>
+ <div id="end-message-editor-container" style="margin-top: 10px;">
+    <div id="end-message-editor"></div>
+  </div>
+</div>
+<div class="setting">
+  <div class="setting-header">
+    <label>Company Branding</label>
+    <div class="switch-container">
+      <label class="switch">
+        <input type="checkbox" class="toggle-btn" data-target="branding-desc">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+  <div class="setting-description" id="branding-desc" style="display: none;">
+    <p>Show company branding (Company logo)</p>
+    <p>Add a custom logo if required, the uploaded logo will be applicable only to this assessment.</p>
+  </div>
+  </div>
+<div class="setting">
+  <div class="setting-header">
+    <label>Company Message</label>
+    <div class="switch-container">
+      <label class="switch">
+        <input type="checkbox" class="toggle-btn" data-target="message-desc">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+  <div class="setting-description" id="message-desc" style="display: none;">
+    <p>Show company branding videos/images before assessment</p>
+    <p>Add a custom image/video if required; the uploaded media will be applicable only to this assessment.</p>
+  </div>
+  </div>
+  <div class="notification-box">
+    <h3>Send notifications to</h3>
+   <div class="notification-option">
+      <label><input type="radio" name="notifications" value="inviter"> Send all notifications to inviter</label>
+    </div>
+   <div class="notification-option">
+      <label><input type="radio" name="notifications" value="team"> Share notifications with other team members</label>
+    </div>
+   <div class="notification-option">
+      <label><input type="radio" name="notifications" value="none"> Do not send notifications</label>
+    </div>
+   <div class="note">
+      Specify who should receive email notifications related to this assessment.
+    </div>
+  </div>
+  </div>
+
+
+  <!-- Quill library -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+
+  // --- Scripts from header.html ---
+
+  document.querySelector('.save-btn').addEventListener('click',() => {
+       window.location.href = "/invite-options/";
+  });
+  document.addEventListener('DOMContentLoaded', function() {
+      const profileMenuContainer = document.getElementById('profileMenuContainer');
+      const profileDropdown = document.getElementById('profileDropdown');
+      const helpIcon = document.getElementById('helpIcon');
+
+      profileMenuContainer.addEventListener('click', function(event) {
+          if (event.target === helpIcon || helpIcon.contains(event.target)) {
+              event.stopPropagation();
+          } else {
+              event.stopPropagation();
+              profileDropdown.classList.toggle('show');
+          }
+      });
+
+      document.addEventListener('click', function(event) {
+          if (!profileMenuContainer.contains(event.target)) {
+              profileDropdown.classList.remove('show');
+          }
+      });
+  });
+
+  // --- Scripts from configuration.html ---
+  function toggleTermsContent() {
+    const content = document.getElementById("terms-content");
+    const candidateInstructions = document.querySelector(".candidate-instructions-section");
+    const programmingInstructions = document.getElementById("programming-instructions");
+    const disclaimerSection = document.querySelector(".disclaimer-section"); 
+    const endMessageSection = document.querySelector('.end-message-section');
+    const isChecked = document.getElementById("terms-toggle").checked;
+    content.style.display = isChecked ? "block" : "none";
+    candidateInstructions.style.display = isChecked ? "block" : "none";
+    programmingInstructions.style.display = isChecked ? "block" : "none";
+    disclaimerSection.style.display = isChecked ? "block" : "none"; 
+    endMessageSection.style.display = isChecked ? "block" : "none" ;
+  }
+  
+  // --- FIX START: Corrected editing functions ---
+
+  function enableTermsEditing() {
+    quill.enable(true);
+    // Move cursor to the end to prevent page jump and set correct cursor position
+    const length = quill.getLength();
+    quill.setSelection(length, 0);
+    quill.focus();
+  }
+
+  function cancelTermsEditing() {
+    quill.enable(false);
+  }
+
+  function enableCandidateInstructionsEditing() {
+    candidateQuill.enable(true);
+    // Move cursor to the end
+    const length = candidateQuill.getLength();
+    candidateQuill.setSelection(length, 0);
+    candidateQuill.focus();
+  }
+
+  function cancelCandidateInstructionsEditing() {
+    candidateQuill.enable(false);
+  }
+
+  function enableProgrammingEditing() {
+    const programmingInstructions = document.getElementById("programming-instructions");
+    programmingInstructions.contentEditable = true;
+    programmingInstructions.focus({ preventScroll: true }); // Focus without scrolling
+
+    // Use a timeout to ensure the focus has been set before manipulating the selection
+    setTimeout(() => {
+        const selection = window.getSelection();
+        if (selection) {
+            const range = document.createRange();
+            // The content to edit is the UL element before the buttons
+            const lastContentNode = programmingInstructions.querySelector('ul');
+            if (lastContentNode) {
+                // Select the content of the list and collapse the range to its end
+                range.selectNodeContents(lastContentNode);
+                range.collapse(false); // 'false' collapses to the end point
+                selection.removeAllRanges(); // Remove any previous selections
+                selection.addRange(range); // Add our new range
+            }
+        }
+    }, 0);
+  }
+
+  function cancelProgrammingEditing() {
+    const programmingInstructions = document.getElementById("programming-instructions");
+    programmingInstructions.contentEditable = false;
+  }
+
+  function enableDisclaimerEditing() {
+    disclaimerQuill.enable(true);
+    // Move cursor to the end
+    const length = disclaimerQuill.getLength();
+    disclaimerQuill.setSelection(length, 0);
+    disclaimerQuill.focus();
+  }
+
+  function cancelDisclaimerEditing() {
+    disclaimerQuill.enable(false);
+  }
+
+  // --- FIX END ---
+
+
+  var quill = new Quill('#editor', {
+    theme: 'snow',
+    readOnly: true 
+  });
+  var candidateQuill = new Quill('#candidate-editor', {
+    theme: 'snow',
+    readOnly: true, 
+    modules: {
+      toolbar: [
+        [{ 'header': [1, 2, false] }],
+        ['bold', 'italic', 'underline'],
+        ['link'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        ['clean']
+      ]
+    }
+  });
+  candidateQuill.clipboard.dangerouslyPasteHTML(0, `
+      <ul>
+        <li>This online test requires a stable internet connection. We <strong>recommend using Chrome or Firefox browsers</strong>.</li>
+        <li>Please <strong>close all other browsers</strong>, browser tabs, and applications with <strong>sensitive or personal information</strong>.</li>
+        <li>Please <strong>close all programs that upload or download files in the background</strong> (e.g., Dropbox, Google Drive, torrent, etc.).</li>
+        <li>Please ensure that <strong>no browser extension / ad blocker is installed</strong> on the browser while taking the test, as they may conflict with the test flow.</li>
+        <li>To avoid any distractions, you should <strong>close all chat windows, screen-savers etc.</strong> before starting the test.</li>
+        <li>You can answer questions in any order.</li>
+        <li>If you run out of time, all the attempted questions will be auto-submitted.</li>
+        <li>Attempted responses will be auto-saved if the test is disconnected for any reason. You can resume the test from the last attempted question.</li>
+        <li>Search will be tracked during the assessment duration. Please close all the tabs that are not relevant for the assessment.</li>
+        <li>Avoid switching tabs during the assessment as this may be considered suspicious by the employer.</li>
+        <li>Please do not wear earphones or headphones while attempting the test.</li>
+        <li>Please ensure that your ears are visible and that your hair is not covering your ears.</li>
+        <li>In case of any technical issues, you can reach out to Glider tech support on Live chat. Once on FDI, you will find the chat icon at the bottom right corner of your screen.</li>
+      </ul>
+      `);
+  
+  var disclaimerQuill = new Quill('#disclaimer-editor', {
+    theme: 'snow',
+    readOnly: true,
+    modules: {
+      toolbar: [
+        [{ 'header': [1, 2, false] }],
+        ['bold', 'italic', 'underline'],
+        ['link'],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        ['clean']
+      ]
+    }
+  });
+  
+  disclaimerQuill.clipboard.dangerouslyPasteHTML(0, `
+  <ul>
+      <li>I have closed all other browsers, browser tabs, and applications with sensitive or personal information.</li>
+      <li>I agree not to copy or consult code from any external source including website, book or individual to complete the test. I will refer to only documentation or tools linked in this test flow.</li>
+    </ul>
+  `);
+  
+  var endMessageQuill = new Quill('#end-message-editor', {
+    theme: 'snow',
+    readOnly: true,
+    modules: {
+      toolbar: [
+        [{ 'header': [1, 2, false] }],
+        ['bold', 'italic', 'underline'],
+        ['link'],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        ['clean']
+      ]
+    }
+  });
+  
+  endMessageQuill.clipboard.dangerouslyPasteHTML(0, `
+    <p>We will contact you after your submission has been reviewed.</p>
+    `);
+  
+  const capturePictureToggle = document.getElementById('capture-picture-toggle');
+  const facialMatchToggle = document.querySelector('.facial-match-toggle');
+  facialMatchToggle.style.display = capturePictureToggle.checked ? 'flex' : 'none';
+  capturePictureToggle.addEventListener('change', () => {
+    facialMatchToggle.style.display = capturePictureToggle.checked ? 'flex' : 'none';
+  });
+
+  const identityToggle = document.getElementById('identity-toggle');
+  const identityOptions = document.getElementById('identity-options');
+  const idTypesContainer = document.getElementById('id-types');
+  const idTypes = ['Aadhaar', 'Voter ID', 'Driver\'s License', 'Passport','PAN'];
+  
+  function renderIdOptions(mode) {
+    idTypesContainer.innerHTML = '';
+    idTypes.forEach((type, i) => {
+      const label = document.createElement('label');
+      const input = document.createElement('input');
+
+      if (mode === 'number-only') {
+        input.type = 'radio';
+        input.name = 'id-type';
+        if (type === 'PAN') {
+          input.checked = true;
+        } else {
+          input.addEventListener('click', function (e) {
+            e.preventDefault();
+          });
+        }
+      } else {
+        input.type = 'checkbox';
+        input.name = `id-type-${i}`;
+        if (type === 'PAN') {
+          input.checked = true;
+          input.disabled = true;
+        }
+      }
+
+      input.value = type.toLowerCase().replace(/\s+/g, '-');
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(type));
+      idTypesContainer.appendChild(label);
+    });
+  }
+
+  identityToggle.addEventListener('change', () => {
+    identityOptions.style.display = identityToggle.checked ? 'block' : 'none';
+  });
+  
+  document.querySelectorAll('input[name="identity-capture-mode"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      renderIdOptions(e.target.value);
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const mainToggle = document.getElementById('requireScreenShareToggle');
+    const optionsGroup = document.querySelector('.screen-share-options');
+    if(mainToggle) {
+        optionsGroup.style.display = mainToggle.checked ? 'block' : 'none';
+        mainToggle.addEventListener('change', function () {
+          optionsGroup.style.display = this.checked ? 'block' : 'none';
+        });
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const webcamToggle = document.getElementById('requireWebcamToggle');
+    const webcamOptions = document.querySelector('.webcam-options');
+    if(webcamToggle) {
+        webcamOptions.style.display = webcamToggle.checked ? 'block' : 'none';
+        webcamToggle.addEventListener('change', function () {
+          webcamOptions.style.display = this.checked ? 'block' : 'none';
+        });
+    }
+  });
+  
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggles = document.querySelectorAll(".toggle-btn");
+    toggles.forEach(function(toggle) {
+      toggle.addEventListener("change", function() {
+        const targetId = toggle.getAttribute("data-target");
+        const target = document.getElementById(targetId);
+        if (target) {
+          target.style.display = toggle.checked ? "block" : "none";
+        }
+      });
+    });
+  });
+
+</script>
+</body>
+</html>

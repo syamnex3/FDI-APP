@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Library</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts for Inter (used in new header) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Universal box-sizing for consistent layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* --- Consistent CSS Variables --- */
+        :root {
+            --font-family-sans: 'Calibri', 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --primary-color: #1d2686; /* Dark Blue */
+            --primary-color-light: #3b4cdc; /* Lighter Blue */
+            --text-color-light: #fff;
+            --text-color-dark: #333;
+            --text-color-muted: #999;
+            --success-color: #28a745; /* Green for success */
+            --danger-color: #dc3545; /* Red for danger */
+            --warning-color: #ffc107; /* Orange for restore */
+            --bg-color-page: #f9fafc;
+            --border-color-light: #eee;
+            --border-color-medium: #ddd;
+            --border-radius-md: 6px;
+            --border-radius-sm: 4px; /* Added for new tag */
+            /* Header height from other pages */
+            --total-header-height: 80px; 
+        }
+
+        /* --- Header Styles (Copied for consistency) --- */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand-title {
+            background-color: #1d2686;
+            color: #fff;
+            font-size: 20px;
+            padding: 10px 20px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-title-text {
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .header-top-icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Added gap between Back button and title */
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* Updated breadcrumb-link for "Back" button */
+        .breadcrumb-link {
+            padding: 5px 10px;
+            cursor: pointer;
+            color: #1d2686;
+            font-size: 14px; /* Slightly larger for better clickability */
+            font-weight: 600;
+            transition: 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .breadcrumb-link:hover {
+            opacity: 0.8;
+        }
+        
+        /* New class for the static page title */
+        .breadcrumb-page-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-color-dark);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 13px;
+            margin-left: auto;
+        }
+
+        .status .active-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .invite-btn {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            font-weight: 600;
+            font-size: 13px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .profile-menu-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .profile-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #1d2686;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .profile-help-icon {
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* UPDATED: Profile Dropdown Styles */
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            min-width: 220px; /* Increased width */
+            display: none;
+            z-index: 100;
+            margin-top: 8px;
+            font-family: 'Inter', sans-serif; /* Use Inter font */
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        /* NEW: Styles for dropdown header and items */
+        .profile-dropdown-header {
+            padding: 10px 15px; /* Increased padding */
+            background-color: #f0f2f5;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .profile-dropdown-header span {
+            font-size: 14px;
+        }
+
+        .profile-dropdown-header small {
+            color: #666;
+            font-weight: 400;
+            font-size: 11px;
+            display: block; /* Make small tags take new lines */
+            line-height: 1.4;
+        }
+
+        .profile-dropdown-item {
+            padding: 10px 15px; /* Increased padding */
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Increased gap */
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 13px; /* Slightly larger font */
+            transition: background-color 0.2s;
+        }
+
+        .profile-dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .profile-dropdown-item i {
+            color: var(--primary-color);
+            width: 16px; /* Align icons */
+            text-align: center;
+        }
+        
+        .recycle-bin-icon-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .recycle-bin-icon-container .fa-trash-can {
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .recycle-bin-item-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        /* --- Page Specific Styles --- */
+        body {
+            font-family: var(--font-family-sans);
+            background-color: var(--bg-color-page);
+            padding-top: var(--total-header-height);
+        }
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .library-container {
+            width: 100%;
+            margin: 10px 0 0 0;
+            padding: 20px;
+        }
+
+        .library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color-light);
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 15px; /* Add gap for wrapped items */
+        }
+
+        .library-header h1 {
+            font-size: 24px;
+            color: var(--text-color-dark);
+            flex-shrink: 0; /* Prevent h1 from shrinking */
+        }
+
+        /* NEW: Date and Search Filter Styles */
+        .filter-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-grow: 1;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .date-filter-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .date-filter-container label {
+            font-size: 14px;
+            color: var(--text-color-muted);
+            font-weight: 600;
+        }
+        .date-filter-container input[type="date"] {
+            padding: 6px 10px;
+            border: 1px solid var(--border-color-medium);
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-family: var(--font-family-sans);
+        }
+        .date-filter-container input[type="date"]:disabled {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+        .date-filter-container .clear-dates-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            color: var(--text-color-muted);
+        }
+        #library-search-input {
+            width: 300px;
+            padding: 8px 40px; /* Increased right padding for clear button */
+            border: 1px solid var(--border-color-medium);
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-family: var(--font-family-sans);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        #library-search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(29, 38, 134, 0.2);
+        }
+        
+        /* NEW: Style for the clear search button */
+        .clear-search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--text-color-muted);
+            cursor: pointer;
+            padding: 0 5px;
+            line-height: 1;
+        }
+        .clear-search-btn:hover {
+            color: var(--text-color-dark);
+        }
+        
+        .assessment-library-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Each card takes a full row */
+            gap: 15px;
+        }
+        
+        .assessment-card {
+            background-color: #fff;
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 80px;
+            padding: 0 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .assessment-card:hover {
+             transform: translateY(-4px);
+             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-main-content {
+             display: flex;
+             align-items: center;
+             flex-grow: 1;
+             gap: 15px;
+             overflow: hidden;
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .card-title-section {
+            display: flex; 
+            align-items: center; 
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex; /* For vertical alignment of duplicate tag */
+            align-items: center; /* For vertical alignment of duplicate tag */
+        }
+        
+        /* UPDATED: Duplicate tag styling */
+        .duplicate-tag {
+            color: var(--danger-color);
+            font-size: 15px;
+            font-weight: normal;
+            margin-left: 10px;
+        }
+        
+        .card-date {
+            font-size: 12px;
+            color: var(--text-color-muted);
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            margin: 0 30px;
+            flex-shrink: 0;
+        }
+
+        .stat-item {
+            font-size: 14px;
+            color: var(--text-color-dark);
+            text-align: center;
+        }
+
+        .stat-item .stat-value {
+            display: block;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .card-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        
+        .card-action-btn {
+            background: none;
+            border: 1px solid var(--text-color-muted);
+            color: var(--text-color-dark);
+            padding: 5px 12px;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .card-action-btn:hover {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+        }
+        .card-action-btn.delete:hover {
+            border-color: var(--danger-color);
+            background-color: var(--danger-color);
+            color: var(--text-color-light);
+        }
+        .card-action-btn.restore:hover {
+            border-color: var(--warning-color);
+            background-color: var(--warning-color);
+            color: var(--text-color-dark);
+        }
+
+        .empty-library-message {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #fff;
+            border-radius: var(--border-radius-md);
+            color: var(--text-color-muted);
+        }
+        .empty-library-message h2 {
+            font-size: 22px;
+            color: var(--text-color-dark);
+            margin-bottom: 10px;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            padding: 10px 0;
+        }
+        .pagination-btn {
+            background-color: #fff;
+            border: 1px solid var(--border-color-medium);
+            color: var(--primary-color);
+            padding: 8px 14px;
+            margin: 0 4px;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .pagination-btn:hover {
+            background-color: var(--primary-color-light);
+            color: var(--text-color-light);
+            border-color: var(--primary-color-light);
+        }
+        .pagination-btn.active {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            border-color: var(--primary-color);
+            cursor: default;
+        }
+        .pagination-btn:disabled {
+            background-color: #f0f0f0;
+            color: var(--text-color-muted);
+            cursor: not-allowed;
+            border-color: var(--border-color-light);
+        }
+
+        
+        /* --- MODAL STYLES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: var(--border-radius-md);
+            width: 95%;
+            height: 90vh;
+            max-width: 1400px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--border-color-light);
+            background-color: #f7f7f7;
+            flex-shrink: 0;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-color-muted);
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        .modal-close-btn:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-body {
+            padding: 25px;
+            overflow-y: auto;
+            flex-grow: 1;
+            background-color: #fcfcfc;
+        }
+
+        .modal-question-item {
+            background-color: #fff;
+            border: 1px solid var(--border-color-medium);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .modal-question-item h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .modal-options-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        .modal-options-list li {
+            padding: 8px 0;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .modal-options-list li input[type="radio"],
+        .modal-options-list li input[type="checkbox"] {
+            margin-right: 10px;
+            accent-color: var(--primary-color);
+        }
+
+        .modal-options-list li .fa-check-circle {
+            color: var(--correct-answer-color);
+            margin-left: 10px;
+        }
+        .modal-options-list pre {
+            background-color: #f0f0f0; 
+            padding: 10px; 
+            border-radius: 5px; 
+            margin-top: 5px; 
+            overflow-x: auto; 
+            white-space: pre-wrap; 
+            word-break: break-all;
+        }
+
+        /* --- NEW: Styles for Recycle Bin Bulk Actions --- */
+        .recycle-bin-actions {
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color-medium);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .bulk-action-btn {
+            background-color: #fff;
+            border: 1px solid var(--border-color-medium);
+            padding: 8px 15px;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .bulk-action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .bulk-action-btn.restore {
+            color: var(--warning-color);
+            border-color: var(--warning-color);
+        }
+        .bulk-action-btn.restore:not(:disabled):hover {
+            background-color: var(--warning-color);
+            color: var(--text-color-dark);
+        }
+        .bulk-action-btn.delete {
+            color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        .bulk-action-btn.delete:not(:disabled):hover {
+            background-color: var(--danger-color);
+            color: var(--text-color-light);
+        }
+        .selection-count {
+            font-size: 14px;
+            color: var(--text-color-muted);
+            font-weight: 500;
+        }
+
+
+        /* Styles for Recycle Bin Table */
+        .recycle-bin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .recycle-bin-table th, .recycle-bin-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color-light);
+            text-align: left;
+            vertical-align: middle;
+        }
+        .recycle-bin-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--text-color-dark);
+        }
+        .recycle-bin-table td {
+            color: var(--text-color-dark);
+        }
+        .recycle-bin-table .actions-cell {
+            display: flex;
+            gap: 10px;
+        }
+        /* NEW: Styles for checkbox column */
+        .recycle-bin-table .checkbox-cell {
+            width: 40px;
+            text-align: center;
+        }
+        .recycle-bin-table input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-color);
+        }
+        
+        @media (max-width: 1200px) {
+            .filter-controls {
+                justify-content: flex-start;
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .card-stats { display: none; }
+        }
+
+        @media (max-width: 768px) {
+             .header { flex-direction: column; align-items: flex-start; height: auto; padding-bottom: 10px; }
+             .breadcrumb { margin-bottom: 10px; flex-wrap: wrap; }
+             .status { width: 100%; justify-content: space-between; margin-top:10px; }
+             .library-header { flex-direction: column; align-items: flex-start; gap: 10px;}
+             .filter-controls { flex-direction: column; align-items: stretch; }
+             .search-container, #library-search-input { width: 100%; }
+             .assessment-card { height: auto; flex-direction: column; align-items: flex-start; padding: 15px; }
+             .card-main-content { width: 100%; }
+             .card-footer { width: 100%; justify-content: flex-start; margin-top: 15px; }
+             .card-stats { display: flex; width: 100%; justify-content: space-between; margin: 15px 0 0 0; padding-top: 15px; border-top: 1px solid var(--border-color-light);}
+        }
+    </style>
+</head>
+<body>
+    <!-- Consistent Header -->
+    <div class="top-header">
+        <div class="brand-title">
+            <span class="brand-title-text">FDI</span>
+            <div class="header-top-icons">
+                <!-- UPDATED: Profile Menu Container -->
+                <div class="profile-menu-container" id="profileMenuContainer">
+                    <div class="profile-avatar">S</div>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-dropdown-header">
+                            <span>Sri</span>
+                            <small>srharshak@nexnoratech.onmicros....</small>
+                            <small>Nexnoratech</small>
+                        </div>
+                        <a href="/company-profile/" class="profile-dropdown-item"><i class="fas fa-building"></i> Company Profile</a>
+                        <a href="/team-members/" class="profile-dropdown-item"><i class="fas fa-users"></i> Team Members</a>
+                        <a href="/email-templates/" class="profile-dropdown-item"><i class="fas fa-envelope"></i> Email Templates</a>
+                        <a href="/question-library/" class="profile-dropdown-item"><i class="fas fa-question-circle"></i> Connect Question Library</a>
+                        <a href="/plan-usage/" class="profile-dropdown-item"><i class="fas fa-chart-bar"></i> Plan Usage</a>
+                        <a href="/setting/" class="profile-dropdown-item"><i class="fas fa-cog"></i> Setting Options</a>
+                        <a href="/my-account/" class="profile-dropdown-item"><i class="fas fa-user-circle"></i> My Account</a>
+                        <a href="/logout/" class="profile-dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+                <div class="recycle-bin-icon-container" id="recycleBinContainer">
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span class="recycle-bin-item-count" id="recycle-bin-item-count-display">0</span>
+                </div>
+                <i class="fas fa-question-circle profile-help-icon" id="helpIcon"></i>
+            </div>
+        </div>
+
+        <div class="header">
+          <!-- UPDATED: Breadcrumb with Back button -->
+          <div class="breadcrumb">
+            <span class="breadcrumb-link" onclick="history.back()">
+                <i class="fas fa-arrow-left"></i> Back
+            </span>
+            <span class="breadcrumb-page-title">Assessment Library</span>
+          </div>
+          <div class="status">
+            <span><span class="active-dot"></span> Active</span>
+            <a href="#" style="cursor:pointer; text-decoration: none; color: inherit;"><i class="fa-solid fa-users"></i> CANDIDATE</a>
+            <a href="#" class="invite-btn">+ INVITE</a>
+          </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="library-container">
+        <div class="library-header">
+            <h1>My Assessment Library</h1>
+            <div class="filter-controls">
+                <!-- Date Filter Section -->
+                <div class="date-filter-container">
+                    <label for="from-date">From:</label>
+                    <input type="date" id="from-date">
+                    <label for="to-date">To:</label>
+                    <input type="date" id="to-date">
+                    <button class="clear-dates-btn" id="clear-dates-btn">Clear</button>
+                </div>
+                <!-- Search Bar Section -->
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="library-search-input" placeholder="Search by assessment name...">
+                    <!-- NEW: Clear search button -->
+                    <button class="clear-search-btn" id="clear-search-btn" style="display: none;">&times;</button>
+                </div>
+            </div>
+        </div>
+        <div class="assessment-library-grid" id="assessment-library-grid">
+            <!-- Assessment cards will be injected here -->
+        </div>
+        <div class="pagination-container" id="pagination-container">
+            <!-- Pagination buttons will be injected here -->
+        </div>
+    </main>
+
+    <!-- Assessment Details Modal -->
+    <div class="modal-overlay" id="detailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalAssessmentTitle">Assessment Details</h2>
+                <button class="modal-close-btn" data-modal-id="detailsModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBodyContent"></div>
+        </div>
+    </div>
+
+    <!-- Recycle Bin Modal -->
+    <div class="modal-overlay" id="recycleBinModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Recycle Bin</h2>
+                <button class="modal-close-btn" data-modal-id="recycleBinModal">&times;</button>
+            </div>
+            <div class="modal-body" id="recycleBinBodyContent">
+                <!-- Recycled items will be injected here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- DOM Elements ---
+        const profileMenuContainer = document.getElementById('profileMenuContainer');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const recycleBinContainer = document.getElementById('recycleBinContainer');
+        const grid = document.getElementById('assessment-library-grid');
+        const paginationContainer = document.getElementById('pagination-container');
+        const searchInput = document.getElementById('library-search-input');
+        const fromDateInput = document.getElementById('from-date');
+        const toDateInput = document.getElementById('to-date');
+        const clearDatesBtn = document.getElementById('clear-dates-btn');
+        const clearSearchBtn = document.getElementById('clear-search-btn'); // NEW: Clear search button
+
+        // --- Local Storage Keys and Constants ---
+        const LIBRARY_STORAGE_KEY = 'assessmentLibrary';
+        const RECYCLE_BIN_STORAGE_KEY = 'assessmentRecycleBin';
+        const DELETION_PERIOD_DAYS = 30;
+
+        // --- Data & State Holders ---
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // --- Event Listeners ---
+        if (profileMenuContainer) {
+            profileMenuContainer.addEventListener('click', (event) => {
+                event.stopPropagation();
+                profileDropdown.classList.toggle('show');
+            });
+        }
+        document.addEventListener('click', (event) => {
+             if(profileDropdown && profileDropdown.classList.contains('show') && !profileMenuContainer.contains(event.target)) {
+                 profileDropdown.classList.remove('show');
+             }
+        });
+        
+        // Listen for changes on any filter control
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            // NEW: Show or hide the clear button based on input value
+            clearSearchBtn.style.display = searchInput.value.length > 0 ? 'block' : 'none';
+            renderPage();
+        });
+
+        // NEW: Event listener for the clear search button
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = ''; // Clear input
+            clearSearchBtn.style.display = 'none'; // Hide button
+            currentPage = 1;
+            renderPage(); // Refresh the view
+        });
+
+        fromDateInput.addEventListener('input', () => {
+            if (fromDateInput.value) {
+                toDateInput.disabled = false;
+                toDateInput.min = fromDateInput.value;
+                if (toDateInput.value && toDateInput.value < fromDateInput.value) {
+                    toDateInput.value = '';
+                }
+            } else {
+                toDateInput.disabled = true;
+                toDateInput.value = '';
+                toDateInput.min = '';
+            }
+            currentPage = 1;
+            renderPage();
+        });
+
+        toDateInput.addEventListener('input', () => {
+             currentPage = 1;
+             renderPage();
+        });
+
+        clearDatesBtn.addEventListener('click', () => {
+            fromDateInput.value = '';
+            toDateInput.value = '';
+            toDateInput.min = ''; 
+            toDateInput.disabled = true; // Disable 'To' date
+            currentPage = 1;
+            renderPage();
+        });
+
+
+        // --- Generic Modal Control ---
+        document.querySelectorAll('.modal-close-btn').forEach(btn => {
+            btn.addEventListener('click', () => closeModal(btn.dataset.modalId));
+        });
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeModal(overlay.id);
+                }
+            });
+        });
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('visible');
+                document.body.classList.add('modal-open');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('visible');
+                document.body.classList.remove('modal-open');
+            }
+        }
+
+        /**
+         * Formats total seconds into a readable string (e.g., 1h 30m 15s).
+         * @param {number} totalSeconds - The total time in seconds.
+         * @returns {string} The formatted time string.
+         */
+        function formatTime(totalSeconds) {
+            if (isNaN(totalSeconds) || totalSeconds < 0) {
+                return "0s";
+            }
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            let parts = [];
+            if (hours > 0) parts.push(`${hours}h`);
+            if (minutes > 0) parts.push(`${minutes}m`);
+            if (seconds > 0 || (hours === 0 && minutes === 0)) parts.push(`${seconds}s`);
+            
+            return parts.length > 0 ? parts.join(' ') : '0s';
+        }
+        
+        /**
+         * Loads and displays a specific page of assessments.
+         */
+        function renderPage() {
+            let fullLibraryData = getFromStorage(LIBRARY_STORAGE_KEY, []);
+            
+            // Get filter values
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const fromDateStr = fromDateInput.value;
+            const toDateStr = toDateInput.value;
+
+            // 1. Filter data based on search and date
+            let filteredData = fullLibraryData.filter(item => {
+                const matchesSearch = item.assessmentName.toLowerCase().includes(searchTerm);
+                
+                let matchesDate = true;
+                if (fromDateStr || toDateStr) {
+                    const itemDate = new Date(item.createdAt);
+                    itemDate.setHours(0, 0, 0, 0); 
+
+                    if(fromDateStr){
+                        const startDate = new Date(fromDateStr);
+                        startDate.setMinutes(startDate.getMinutes() + startDate.getTimezoneOffset());
+                         if(itemDate < startDate) matchesDate = false;
+                    }
+                    if(toDateStr){
+                        const endDate = new Date(toDateStr);
+                        endDate.setMinutes(endDate.getMinutes() + endDate.getTimezoneOffset());
+                        if(itemDate > endDate) matchesDate = false;
+                    }
+                }
+
+                return matchesSearch && matchesDate;
+            });
+
+            // 2. CORRECTED: Determine duplicates based on date
+            const duplicateStatusMap = new Map();
+            const sortedByDate = [...fullLibraryData].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            const seenNames = new Set();
+            sortedByDate.forEach(item => {
+                const name = item.assessmentName.toLowerCase();
+                if (seenNames.has(name)) {
+                    duplicateStatusMap.set(item.assessmentId, true);
+                } else {
+                    seenNames.add(name);
+                    duplicateStatusMap.set(item.assessmentId, false);
+                }
+            });
+
+            // 3. Render the grid and pagination
+            grid.innerHTML = ''; 
+            paginationContainer.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                const message = (searchTerm || fromDateStr || toDateStr)
+                    ? `<h2>No results found</h2><p>Try adjusting your search or date filters.</p>`
+                    : `<h2>Your Assessment Library is Empty</h2><p>Create a new assessment to see it here.</p>`;
+                grid.innerHTML = `<div class="empty-library-message">${message}</div>`;
+            } else {
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedItems = filteredData.slice(startIndex, endIndex);
+                
+                paginatedItems.forEach(assessment => {
+                    grid.appendChild(createAssessmentCard(assessment, duplicateStatusMap));
+                });
+
+                setupPagination(filteredData);
+            }
+            updateRecycleBinCount();
+        }
+        
+        /**
+         * Sets up the pagination controls based on the filtered data.
+         */
+        function setupPagination(dataForPagination) {
+            const totalPages = Math.ceil(dataForPagination.length / itemsPerPage);
+
+            if (totalPages <= 1) return; 
+
+            const prevButton = document.createElement('button');
+            prevButton.innerHTML = '&lt;';
+            prevButton.className = 'pagination-btn';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPage();
+                }
+            });
+            paginationContainer.appendChild(prevButton);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.innerText = i;
+                pageButton.className = 'pagination-btn';
+                if (i === currentPage) {
+                    pageButton.classList.add('active');
+                }
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    renderPage();
+                });
+                paginationContainer.appendChild(pageButton);
+            }
+
+            const nextButton = document.createElement('button');
+            nextButton.innerHTML = '&gt;';
+            nextButton.className = 'pagination-btn';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderPage();
+                }
+            });
+            paginationContainer.appendChild(nextButton);
+        }
+
+        /**
+         * Creates an HTML element for a single assessment card.
+         */
+        function createAssessmentCard(assessment, duplicateStatusMap) {
+            const card = document.createElement('div');
+            card.className = 'assessment-card';
+            card.dataset.id = assessment.assessmentId;
+
+            const createdDate = new Date(assessment.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            const totalTimeFormatted = formatTime(assessment.totalTime);
+            const iconText = assessment.assessmentName.split(' ').map(word => word[0]).slice(0, 2).join('').toUpperCase() || 'AS';
+            
+            const isDuplicate = duplicateStatusMap.get(assessment.assessmentId);
+            const duplicateTagHTML = isDuplicate ? '<span class="duplicate-tag">(Duplicate)</span>' : '';
+
+            card.innerHTML = `
+                <div class="card-main-content">
+                    <div class="card-icon">${iconText}</div>
+                    <div class="card-title-section">
+                        <div>
+                            <h2 class="card-title" title="${assessment.assessmentName}">
+                                <span>${assessment.assessmentName}</span>
+                                ${duplicateTagHTML}
+                            </h2>
+                            <p class="card-date">Created on: ${createdDate}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-stats">
+                    <div class="stat-item"><span class="stat-value">${assessment.totalQuestions}</span> Questions</div>
+                    <div class="stat-item"><span class="stat-value">${totalTimeFormatted}</span> Total Time</div>
+                    <div class="stat-item"><span class="stat-value">${assessment.totalPoints}</span> Total Points</div>
+                </div>
+                <div class="card-footer">
+                    <button class="card-action-btn view">View Details</button>
+                    <button class="card-action-btn delete"><i class="fas fa-trash-alt"></i></button>
+                </div>`;
+            
+            card.querySelector('.view').addEventListener('click', (e) => { e.stopPropagation(); showAssessmentDetails(assessment.assessmentId); });
+            card.querySelector('.delete').addEventListener('click', (e) => { e.stopPropagation(); deleteAssessment(assessment.assessmentId); });
+
+            return card;
+        }
+
+        /**
+         * Moves an assessment from the main library to the recycle bin.
+         */
+        function deleteAssessment(assessmentId) {
+            if (!confirm('Are you sure you want to move this assessment to the recycle bin?')) return;
+            
+            let library = getFromStorage(LIBRARY_STORAGE_KEY);
+            let bin = getFromStorage(RECYCLE_BIN_STORAGE_KEY, []);
+            
+            const assessmentToMove = library.find(item => item.assessmentId === assessmentId);
+            if (!assessmentToMove) return;
+
+            assessmentToMove.deletedAt = new Date().toISOString();
+            
+            const updatedLibrary = library.filter(item => item.assessmentId !== assessmentId);
+
+            bin.unshift(assessmentToMove);
+            
+            setToStorage(LIBRARY_STORAGE_KEY, updatedLibrary);
+            setToStorage(RECYCLE_BIN_STORAGE_KEY, bin);
+            
+            const totalPages = Math.ceil(updatedLibrary.length / itemsPerPage);
+            if (currentPage > totalPages && totalPages > 0) {
+                currentPage = totalPages;
+            }
+            
+            renderPage();
+        }
+
+        function showAssessmentDetails(assessmentId) {
+            const library = getFromStorage(LIBRARY_STORAGE_KEY, []);
+            const assessment = library.find(item => item.assessmentId === assessmentId);
+            if (!assessment) return;
+
+            document.getElementById('modalAssessmentTitle').textContent = assessment.assessmentName;
+            const body = document.getElementById('modalBodyContent');
+            body.innerHTML = '';
+
+            if (assessment.questions && assessment.questions.length > 0) {
+                assessment.questions.forEach((q, index) => {
+                    const questionData = q;
+                    const questionFullText = questionData.questionTextFull || questionData.questionText || '';
+                    const questionType = questionData.questionType || 'N/A';
+                    let optionsHTML = '';
+                    if (questionData.options && questionData.options.length > 0) {
+                        optionsHTML = '<ul class="modal-options-list">';
+                        const options = questionData.options;
+                        const correctAnswers = questionData.correctAnswers || [];
+
+                        if (["Multiple Choice", "Multiple Selection"].includes(questionType)) {
+                            options.forEach((option, optIndex) => {
+                                const inputType = (questionType === "Multiple Choice") ? "radio" : "checkbox";
+                                const isCorrect = correctAnswers.includes(optIndex);
+                                optionsHTML += `<li><input type="${inputType}" ${isCorrect ? 'checked' : ''} disabled><label>${option}</label>${isCorrect ? '<i class="fas fa-check-circle"></i>' : ''}</li>`;
+                            });
+                        } else if (["Text Entry", "Pseudo Code", "Coding", "File Upload"].includes(questionType)) {
+                             options.forEach((option) => {
+                                let label = "Content";
+                                if (questionType === -"Text Entry") label = "Expected Answer";
+                                else if (questionType === "Pseudo Code") label = "Sample Output";
+                                else if (questionType === "Coding") label = "Example Code";
+                                else if (questionType === "File Upload") label = "File Upload Instruction";
+                                optionsHTML += `<li><strong>${label}:</strong><pre>${option}</pre></li>`;
+                            });
+                        }
+                        optionsHTML += '</ul>';
+                    } else {
+                        optionsHTML = '<p>No options defined for this question type.</p>';
+                    }
+
+                    const questionItemDiv = document.createElement('div');
+                    questionItemDiv.className = 'modal-question-item';
+                    questionItemDiv.innerHTML = `<h4>Q${index + 1}: ${questionFullText}</h4>${optionsHTML}`;
+                    body.appendChild(questionItemDiv);
+                });
+            } else {
+                body.innerHTML = '<p>This assessment has no questions.</p>';
+            }
+            openModal('detailsModal');
+        }
+
+        // --- Recycle Bin Functions ---
+        function openRecycleBin() {
+            let bin = getFromStorage(RECYCLE_BIN_STORAGE_KEY, []);
+            const body = document.getElementById('recycleBinBodyContent');
+            
+            const now = new Date();
+            const cleanedBin = bin.filter(item => {
+                const deletedDate = new Date(item.deletedAt);
+                const daysDiff = (now - deletedDate) / (1000 * 60 * 60 * 24);
+                return daysDiff <= DELETION_PERIOD_DAYS;
+            });
+
+            if (cleanedBin.length !== bin.length) {
+                setToStorage(RECYCLE_BIN_STORAGE_KEY, cleanedBin);
+            }
+
+            body.innerHTML = '';
+            if (cleanedBin.length === 0) {
+                body.innerHTML = `<div class="empty-library-message"><h2>Recycle Bin is Empty</h2><p>Items deleted in the last ${DELETION_PERIOD_DAYS} days will appear here.</p></div>`;
+            } else {
+                // NEW: Add bulk action buttons
+                body.innerHTML = `
+                    <div class="recycle-bin-actions">
+                        <button class="bulk-action-btn restore" id="bulkRestoreBtn" disabled><i class="fas fa-undo"></i> Restore Selected</button>
+                        <button class="bulk-action-btn delete" id="bulkDeleteBtn" disabled><i class="fas fa-trash-alt"></i> Delete Selected</button>
+                        <span class="selection-count" id="selectionCount">0 selected</span>
+                    </div>
+                `;
+
+                const table = document.createElement('table');
+                table.className = 'recycle-bin-table';
+                // NEW: Add checkbox to header
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th class="checkbox-cell"><input type="checkbox" id="selectAllCheckbox"></th>
+                            <th>Assessment Name</th>
+                            <th>Date Deleted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>`;
+                const tbody = document.createElement('tbody');
+                
+                cleanedBin.forEach(item => {
+                    const row = document.createElement('tr');
+                    const deletedDate = new Date(item.deletedAt).toLocaleString('en-US');
+                    // NEW: Add checkbox to each row
+                    row.innerHTML = `
+                        <td class="checkbox-cell"><input type="checkbox" class="row-checkbox" data-id="${item.assessmentId}"></td>
+                        <td>${item.assessmentName}</td>
+                        <td>${deletedDate}</td>
+                        <td class="actions-cell">
+                            <button class="card-action-btn restore" data-id="${item.assessmentId}"><i class="fas fa-undo"></i> Restore</button>
+                            <button class="card-action-btn delete" data-id="${item.assessmentId}"><i class="fas fa-trash-alt"></i> Delete Permanently</button>
+                        </td>`;
+                    tbody.appendChild(row);
+                });
+
+                table.appendChild(tbody);
+                body.appendChild(table);
+
+                // --- NEW: Event listeners for bulk actions ---
+                const selectAllCheckbox = body.querySelector('#selectAllCheckbox');
+                const rowCheckboxes = body.querySelectorAll('.row-checkbox');
+                const bulkRestoreBtn = body.querySelector('#bulkRestoreBtn');
+                const bulkDeleteBtn = body.querySelector('#bulkDeleteBtn');
+                const selectionCountSpan = body.querySelector('#selectionCount');
+
+                function updateBulkButtonsState() {
+                    const selectedCount = body.querySelectorAll('.row-checkbox:checked').length;
+                    selectionCountSpan.textContent = `${selectedCount} selected`;
+                    
+                    const anySelected = selectedCount > 0;
+                    bulkRestoreBtn.disabled = !anySelected;
+                    bulkDeleteBtn.disabled = !anySelected;
+                    
+                    selectAllCheckbox.checked = selectedCount === rowCheckboxes.length && rowCheckboxes.length > 0;
+                }
+
+                selectAllCheckbox.addEventListener('change', () => {
+                    rowCheckboxes.forEach(checkbox => {
+                        checkbox.checked = selectAllCheckbox.checked;
+                    });
+                    updateBulkButtonsState();
+                });
+
+                rowCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', updateBulkButtonsState);
+                });
+
+                bulkRestoreBtn.addEventListener('click', restoreSelectedAssessments);
+                bulkDeleteBtn.addEventListener('click', permanentlyDeleteSelectedAssessments);
+                
+                // Event listeners for single-item actions
+                body.querySelectorAll('.actions-cell .restore').forEach(btn => btn.addEventListener('click', () => restoreAssessment(btn.dataset.id)));
+                body.querySelectorAll('.actions-cell .delete').forEach(btn => btn.addEventListener('click', () => permanentlyDeleteAssessment(btn.dataset.id)));
+            }
+            openModal('recycleBinModal');
+        }
+
+        if (recycleBinContainer) {
+            recycleBinContainer.addEventListener('click', openRecycleBin);
+        }
+
+        function restoreAssessment(assessmentId) {
+            let library = getFromStorage(LIBRARY_STORAGE_KEY, []);
+            let bin = getFromStorage(RECYCLE_BIN_STORAGE_KEY, []);
+            
+            const assessmentToRestore = bin.find(item => item.assessmentId === assessmentId);
+            if (!assessmentToRestore) return;
+            
+            delete assessmentToRestore.deletedAt;
+            const updatedBin = bin.filter(item => item.assessmentId !== assessmentId);
+            
+            library.unshift(assessmentToRestore);
+            
+            setToStorage(LIBRARY_STORAGE_KEY, library);
+            setToStorage(RECYCLE_BIN_STORAGE_KEY, updatedBin);
+            
+            renderPage();
+            closeModal('recycleBinModal');
+        }
+        
+        function permanentlyDeleteAssessment(assessmentId) {
+            if (!confirm('This action is irreversible. Are you sure you want to permanently delete this assessment?')) return;
+
+            let bin = getFromStorage(RECYCLE_BIN_STORAGE_KEY, []);
+            const updatedBin = bin.filter(item => item.assessmentId !== assessmentId);
+            setToStorage(RECYCLE_BIN_STORAGE_KEY, updatedBin);
+
+            openRecycleBin(); // Re-opens to show updated list
+            updateRecycleBinCount();
+        }
+
+        // --- NEW: Bulk action functions ---
+        function getSelectedIds() {
+            const selectedCheckboxes = document.querySelectorAll('#recycleBinBodyContent .row-checkbox:checked');
+            return Array.from(selectedCheckboxes).map(cb => cb.dataset.id);
+        }
+
+        function restoreSelectedAssessments() {
+            const idsToRestore = getSelectedIds();
+            if (idsToRestore.length === 0) return;
+
+            if (!confirm(`Are you sure you want to restore ${idsToRestore.length} assessment(s)?`)) return;
+
+            let library = getFromStorage(LIBRARY_STORAGE_KEY, []);
+            let bin = getFromStorage(RECYCLE_BIN_STORAGE_KEY, []);
+
+            const assessmentsToRestore = bin.filter(item => idsToRestore.includes(item.assessmentId));
+            const remainingInBin = bin.filter(item => !idsToRestore.includes(item.assessmentId));
+
+            assessmentsToRestore.forEach(item => delete item.deletedAt);
+            const updatedLibrary = [...assessmentsToRestore, ...library];
+
+            setToStorage(LIBRARY_STORAGE_KEY, updatedLibrary);
+            setToStorage(RECYCLE_BIN_STORAGE_KEY, remainingInBin);
+
+            renderPage();
+            openRecycleBin(); // Re-render the bin
+        }
+
+        function permanentlyDeleteSelectedAssessments() {
+            const idsToDelete = getSelectedIds();
+            if (idsToDelete.length === 0) return;
+
+            if (!confirm(`This action is irreversible. Are you sure you want to permanently delete ${idsToDelete.length} assessment(s)?`)) return;
+
+            let bin = getFromStorage(RECYCLE_BIN_STORAGE_KEY, []);
+            const updatedBin = bin.filter(item => !idsToDelete.includes(item.assessmentId));
+            
+            setToStorage(RECYCLE_BIN_STORAGE_KEY, updatedBin);
+
+            openRecycleBin(); // Re-render the bin
+            updateRecycleBinCount();
+        }
+
+
+        function updateRecycleBinCount() {
+            const bin = getFromStorage(RECYCLE_BIN_STORAGE_KEY, []);
+            const countDisplay = document.getElementById('recycle-bin-item-count-display');
+            if (countDisplay) {
+                countDisplay.textContent = bin.length;
+                countDisplay.style.display = bin.length > 0 ? 'block' : 'none';
+            }
+        }
+
+        // --- Utility Functions ---
+        function getFromStorage(key, defaultValue = []) {
+            const storedValue = localStorage.getItem(key);
+            if (storedValue) {
+                try {
+                    const parsed = JSON.parse(storedValue);
+                    return Array.isArray(parsed) ? parsed : defaultValue;
+                } catch(e) { console.error(`Error parsing JSON from ${key}:`, e); }
+            }
+            return defaultValue;
+        }
+
+        function setToStorage(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+        }
+
+        // --- Initial Call ---
+        // Disable 'To' date initially
+        toDateInput.disabled = true;
+        renderPage();
+    });
+    </script>
+</body>
+</html>

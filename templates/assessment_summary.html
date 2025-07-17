@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment Summary</title>
+  <!-- Icons and Fonts from header.html -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Universal box-sizing for consistent layout */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Combined Body Styles */
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafc;
+      font-size: 14px;
+      color: #333;
+      height: 100vh;
+      display: flex; /* Use flexbox for overall layout */
+      flex-direction: column; /* Stack header, main, and footer vertically */
+      overflow: hidden; /* Prevent body scroll, main content will scroll */
+    }
+
+    /* --- Styles from header.html --- */
+    .top-header {
+      position: sticky; /* Changed to sticky to keep it at top during scroll if needed, but main content scrolls */
+      top: 0;
+      width: 100%;
+      z-index: 10;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .brand-title {
+      background-color: #1d2686;
+      color: #fff;
+      font-size: 20px;
+      padding: 10px 12px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-title-text {
+        color: #fff;
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px;
+      border-bottom: 1px solid #eee;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-size: 12px;
+      color: #999;
+    }
+    .breadcrumb-link {
+      padding: 5px 10px;
+      cursor: pointer;
+      color: #1d2686;
+      font-size: 12px;
+      transition: 0.2s ease;
+      margin-right: 8px;
+      margin-left: -4px;
+    }
+    .breadcrumb-heading {
+      color: #999;
+      text-decoration: none;
+      transition: color 0.2s;
+      font-size: 12px;
+    }
+    .breadcrumb-heading:hover {
+      color: #1d2686;
+    }
+    .breadcrumb-separator {
+      font-size: 16px;
+      color: #ccc;
+      margin-left: 4px;
+      margin-right: 4px;
+      font-weight: normal;
+    }
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 13px;
+    }
+    .status .active-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #28a745;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .invite-btn {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      font-weight: 600;
+      font-size: 13px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .profile-menu-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: bold;
+    }
+    .profile-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: #e0e0e0;
+      color: #1d2686;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    .profile-help-icon {
+        color: #fff;
+        font-size: 20px;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+    .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      overflow: hidden;
+      min-width: 200px;
+      display: none;
+      z-index: 100;
+      margin-top: 8px;
+      font-family: 'Inter', sans-serif;
+    }
+    .profile-dropdown.show {
+      display: block;
+    }
+    .profile-dropdown-header {
+        padding: 8px 12px;
+        background-color: #f0f2f5;
+        border-bottom: 1px solid #eee;
+        font-weight: 600;
+        color: #333;
+    }
+    .profile-dropdown-header span {
+        font-size: 14px;
+    }
+    .profile-dropdown-header small {
+        color: #666;
+        font-weight: 400;
+        font-size: 11px;
+    }
+    .profile-dropdown-item {
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      font-size: 12px;
+      transition: background-color 0.2s;
+    }
+    .profile-dropdown-item:hover {
+      background-color: #f5f5f5;
+    }
+    .profile-dropdown-item i {
+        color: #1d2686;
+    }
+
+    /* --- Styles for Main Content Area --- */
+    .main {
+      display: flex;
+      flex: 1; /* Allows main content to take remaining vertical space */
+      overflow: hidden; /* Ensures container manages its own scroll */
+    }
+
+    .container {
+      flex: 1; /* Allows container to take full width of its parent (.main) */
+      padding: 24px 40px; /* Keep existing padding for content */
+      overflow-y: auto; /* Allows main content to scroll */
+    }
+    h2 {
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    .nextStep {
+      float: right;
+      font-size: 14px;
+      font-weight: bold;
+      color: #666;
+    }
+    .name-group-row {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 24px;
+    }
+    .field-block {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .field-block label {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .field-block input,
+    .field-block select {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    .options-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 10px 0 20px;
+    }
+    /* Unified .option-button styling for Assessment Type, Builder, and Section Options */
+    .option-button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background-color: #fff;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.3s;
+      /* Removed position: relative and user-select: none as they are not needed for default radio buttons */
+    }
+
+    /* Reverted to default browser radio button appearance for .option-button */
+    .option-button input[type="radio"] {
+      /* Removed appearance: none; -webkit-appearance: none; */
+      width: 16px; /* Retain original size if needed */
+      height: 16px;
+      /* Removed custom border, border-radius, outline, flex-shrink */
+      cursor: pointer;
+      /* Removed custom checked styles and ::before pseudo-element */
+    }
+    /* Removed .option-button input[type="radio"]:checked styles and ::before pseudo-element */
+
+
+    .option-button.active {
+      border-color: #1d2686;
+      background-color: #f0f3ff;
+    }
+    .option-button.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .section {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+    .builder-two-column {
+      display: flex;
+      gap: 20px;
+      margin-top: 12px;
+    }
+    .builder-column {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 10px;
+      margin-top: 20px;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 5px;
+    }
+    .save-btn {
+      margin-top: 35px;
+      background-color: #1d2686;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      float: right;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 6px;
+    }
+    .summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .next-btn {
+      background-color: #1d2686;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .next-btn:hover {
+      background-color: #151c6d;
+    }
+    .option-description {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+    /* Adjusted .option-button for privacy options (now .privacy-option-button) */
+    .privacy-option-button {
+      display: flex;
+      align-items: center; /* Align icon and text vertically */
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      transition: border 0.3s, background 0.3s;
+      /* Removed position: relative and user-select: none as they are not needed for default radio buttons */
+      flex: 1; /* Allow them to take equal width */
+      justify-content: center; /* Center content within the box */
+      min-width: 180px; /* Ensure a minimum width */
+    }
+
+    .privacy-option-button:hover {
+      background-color: #f5f5f5;
+      border-color: #888;
+    }
+
+    /* Reverted to default browser radio button appearance for .privacy-option-button */
+    .privacy-option-button input[type="radio"] {
+      /* Removed appearance: none; -webkit-appearance: none; */
+      width: 16px; /* Retain original size if needed */
+      height: 16px;
+      /* Removed custom border, border-radius, outline, flex-shrink */
+      cursor: pointer;
+      /* Removed custom checked styles and ::before pseudo-element */
+    }
+    /* Removed .privacy-option-button input[type="radio"]:checked styles and ::before pseudo-element */
+
+
+    .privacy-option-button.active {
+      border-color: #1d2686;
+      background-color: #f0f3ff;
+    }
+
+    .privacy-option-button.disabled {
+      opacity: 0.5;
+      pointer-events: none; /* Prevent clicks when disabled */
+      cursor: not-allowed;
+    }
+
+    .lock-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .lock-label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 24px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #4caf50;
+    }
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    .field-label {
+      font-weight: 600;
+      font-size: 14px;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .optional {
+      font-weight: normal;
+      font-style: italic;
+      color: #666;
+    }
+    .field-input,
+    .field-textarea {
+      width: 100%;
+      max-width: 500px;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+      box-sizing: border-box;
+    }
+    .form-section {
+      margin-bottom: 20px; /* Standard margin for form sections */
+    }
+    .form-label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    .option-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-around; /* Distribute items evenly */
+    }
+ 
+    #sectionOptions .option-button .option-text {
+        flex: 1; /* Allow text to take remaining space */
+    }
+
+    .lock-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px; /* Adjusted margin to create a gap */
+      justify-content: flex-end; /* Align lock switch to the right */
+    }
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+      box-sizing: border-box;
+    }
+    .radio-group input[type="radio"] {
+      display: none;
+    }
+    .radio-group label {
+      display: inline-block;
+      padding: 6px 16px;
+      margin-right: 8px;
+      background-color: #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      transition: background-color 0.2s ease;
+    }
+    .radio-group input[type="radio"]:checked + label {
+      background-color: #0056b3;
+      color: white;
+      border-color: #0056b3;
+    }
+    .privacy-option {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .privacy-option i {
+      margin-right: 8px;
+      font-size: 20px;
+    }
+    .privacy-option label {
+      font-size: 16px;
+    }
+
+    /* New Footer Styles */
+    .app-footer {
+      background-color: #1d2686; /* Match header brand title background */
+      color: #fff;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 13px;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0; /* Prevent footer from shrinking */
+    }
+
+    .footer-content {
+      display: flex;
+      gap: 30px; /* Space out the items in the footer */
+    }
+
+    .footer-item {
+      font-weight: 500;
+    }
+
+    /* Adjust main content area to account for fixed header and footer */
+    body {
+        min-height: 100vh; /* Ensure body takes full viewport height */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .top-header {
+        flex-shrink: 0; /* Prevent header from shrinking */
+    }
+
+    .main {
+        flex-grow: 1; /* Allow main content to grow and take available space */
+        display: flex;
+        overflow: hidden; /* Control scrolling within main */
+    }
+
+    .container {
+        overflow-y: auto; /* Ensure the main content area is scrollable */
+        padding-bottom: 20px; /* Add some padding at the bottom for content above footer */
+    }
+
+    /* Styles for the new group input and clear button */
+    .new-group-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 5px; /* Space between input and button */
+        /* Ensure it takes the same space as the select */
+        width: 100%;
+    }
+    .clear-new-group-btn {
+        background: none;
+        border: none;
+        font-size: 18px;
+        color: #999;
+        cursor: pointer;
+        padding: 0 5px;
+        transition: color 0.2s ease;
+    }
+    .clear-new-group-btn:hover {
+        color: #333;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- This is the new header from header.html -->
+  <div class="top-header">
+    <div class="brand-title">
+        <span class="brand-title-text">FDI</span>
+        <div class="profile-menu-container" id="profileMenuContainer">
+            <div class="profile-avatar">S</div>
+            <i class="fas fa-question-circle profile-help-icon" id="helpIcon"></i>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="profile-dropdown-header">
+                    <span>Sri</span><br>
+                    <small>srharshak@nexnoratech.onmicros....</small><br>
+                    <small>Nexnoratech</small>
+                </div>
+                <a href="/company-profile/" class="profile-dropdown-item"><i class="fas fa-building"></i> Company Profile</a>
+                <a href="/team-members/" class="profile-dropdown-item"><i class="fas fa-users"></i> Team Members</a>
+                <a href="#" class="profile-dropdown-item"><i class="fas fa-envelope"></i> Email Templates</a>
+                <a href="/question-library/" class="profile-dropdown-item"><i class="fas fa-question-circle"></i> Connect Question Library</a>
+                <a href="#" class="profile-dropdown-item"><i class="fas fa-chart-bar"></i> Plan Usage</a>
+                <a href="/setting/" class="profile-dropdown-item"><i class="fas fa-cog"></i> Setting Options</a>
+                <a href="#" class="profile-dropdown-item"><i class="fas fa-user-circle"></i> My Account</a>
+                <a href="/logout/" class="profile-dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+    <div class="header">
+      <div class="breadcrumb">
+        <span class="breadcrumb-link" onclick="history.back()">Back</span>
+        <span style="font-weight: bold; color: #1d2686;">SUMMARY</span>
+        <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+        <a href="/question-library/" class="breadcrumb-heading">QUESTION</a>
+        <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+        <a href="/configuration/" class="breadcrumb-heading">CONFIGURE</a>
+        <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+        <a href="#" class="breadcrumb-heading">INVITE OPTIONS</a>
+      </div>
+      <div class="status">
+        <span><span class="active-dot"></span> Active</span>
+        <a href="your_candidate_page.html" style="cursor:pointer; text-decoration: none; color: inherit;"><i class="fa-solid fa-users"></i> CANDIDATE</a>
+        <a href="invite_page.html" class="invite-btn">+ INVITE</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- This is the original content from AssessmentPage.html -->
+  <div class="main">
+    <div class="container">
+      <div class="summary-header">
+        <h2>Assessment Summary</h2>
+        <button class="next-btn" id="next-step-button">NEXT STEP</button> </div>
+      <div class="name-group-row">
+        <div class="field-block">
+          <label class="section-title">Assessment Name <span style="color: red;">*</span></label>
+          <input type="text" id="assessment-name-input" placeholder="Enter assessment name" />
+        </div>
+        <div class="field-block">
+          <label class="section-title">Associate to Group</label>
+          <select id="associateToGroupSelect"> <!-- Added ID here -->
+            <option>CSE</option>
+            <option>ECE</option>
+            <option>Sales</option>
+            <option>EEE</option>
+            <option>MECH</option>
+            <option>BIO-TECH</option>
+            <option>CIVIL</option>
+            <option>Marketing</option>
+            <!-- Removed + New Group option -->
+            <option value="+ Others">+ Others</option> <!-- Added +Others option -->
+          </select>
+          <!-- Wrapper for new group input and clear button -->
+          <div id="newGroupInputWrapper" class="new-group-input-wrapper" style="display: none;">
+            <input type="text" id="newGroupInput" placeholder="Enter new group name" class="field-input" style="flex-grow: 1;" />
+            <button type="button" id="clearNewGroupBtn" class="clear-new-group-btn" title="Clear and select existing group">
+                <i class="fas fa-times-circle"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <label class="section-title">Assessment type<span style="color: red;"> *</span></label>
+      <div class="options-group" id="assessmentTypes">
+        <!-- Changed div.option-button to label.option-button -->
+        <label class="option-button"><input type="radio" name="type" value="Programming" />Programming</label>
+        <label class="option-button"><input type="radio" name="type" value="Personality" />Personality</label>
+        <label class="option-button"><input type="radio" name="type" value="Aptitude" />Aptitude</label>
+        <!-- <label class="option-button"><input type="radio" name="type" value="General" />General</label> -->
+      </div>
+      <div class="section">
+        <label class="section-title">Assessment Builder <span style="color: red;">*</span></label>
+        <div class="builder-two-column" id="builderOptions">
+          <div class="builder-column">
+            <!-- Changed div.option-button to label.option-button -->
+            <label class="option-button">
+              <input type="radio" name="builder" />
+              <div class="option-text">
+                Start using library questions
+                <p class="option-description"> Set-up a assessment by selecting questions from library</p>
+              </div>
+            </label>
+          </div>
+          <div class="builder-column">
+            <!-- Changed div.option-button to label.option-button -->
+            <label class="option-button">
+              <input type="radio" name="builder" />
+              <div class="option-text">
+                Use multiple pre-built assessments
+                <p class="option-description"> Link multiple ready-made assessments from our library</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <label class="section-title">Section Options</label>
+        <!-- Modified to use builder-two-column for consistent alignment -->
+        <div class="builder-two-column" id="sectionOptions">
+          <div class="builder-column">
+            <label class="option-button">
+              <input type="radio" name="section" value="regular" />
+              <div class="option-text">
+                Create regular assessment
+                <p class="option-description"> Without any sections</p>
+              </div>
+            </label>
+          </div>
+          <div class="builder-column">
+            <label class="option-button">
+              <input type="radio" name="section" value="multiple" />
+              <div class="option-text">
+                Create assessment with multiple sections
+                <p class="option-description"> Enables dynamic question delivery based on pre-selected skills by candidate</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="form-section"> <!-- Added form-section wrapper here -->
+        <div style="display: flex; gap: 20px;">
+          <div style="flex: 1;">
+            <label style="display: block; font-weight: bold;">
+              Job title <span style="font-style: italic; font-weight: normal;">(optional)</span>
+            </label>
+            <input type="text" placeholder="This will be presented to the candidate" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; font-weight: bold;">
+              Job URL <span style="font-style: italic; font-weight: normal;">(optional)</span>
+            </label>
+            <input type="text" placeholder="Job URL" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; font-weight: bold;">
+              Work experience <span style="font-style: italic; font-weight: normal;">(optional)</span>
+            </label>
+            <select style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+              <option>Select work experience</option>
+              <option>0-1 years</option>
+              <option>1-3 years</option>
+              <option>3-5 years</option>
+              <option>5+ years</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="form-section"> <!-- This form-section now has default margin-bottom -->
+        <div class="option-row" id="privacyOptions">
+          <!-- Converted to radio buttons -->
+          <label class="privacy-option-button">
+            <input type="radio" name="privacy" value="private" /> <!-- Removed 'checked' attribute here -->
+            Private <i class="fas fa-lock" style="margin-left: auto;"></i>
+          </label>
+          <label class="privacy-option-button">
+            <input type="radio" name="privacy" value="organization" />
+            Share with organization <i class="fas fa-building" style="margin-left: auto;"></i>
+          </label>
+          <label class="privacy-option-button">
+            <input type="radio" name="privacy" value="team-member" />
+            Share with team member <i class="fas fa-users" style="margin-left: auto;"></i>
+          </label>
+        </div>
+      </div>
+      <div class="form-section lock-row">
+        <label class="form-label">Lock</label>
+        <label class="switch">
+          <input type="checkbox" id="lockSwitch">
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <!-- <div class="form-section">
+        <label class="form-label">Tags <span class="optional">(optional)</span></label>
+        <input type="text" class="form-input" placeholder="Type here...">
+      </div>
+      <div class="form-section">
+        <label class="form-label">Description <span class="optional">(optional, not shown to candidate)</span></label>
+        <textarea class="form-textarea" rows="3" placeholder=""></textarea>
+      </div> -->
+      <button class="save-btn" id="save-assessment-button">Next Step</button>
+    </div>
+  </div>
+
+  <!-- New Footer Section -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div class="footer-item">Author: Harsha</div>
+      <div class="footer-item">Questions: 7</div>
+      <div class="footer-item">Last updated: Apr 20, 2025</div>
+    </footer>
+
+  <!-- Script for header dropdown -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileMenuContainer = document.getElementById('profileMenuContainer');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const helpIcon = document.getElementById('helpIcon');
+
+        profileMenuContainer.addEventListener('click', function(event) {
+            if (event.target === helpIcon || helpIcon.contains(event.target)) {
+                event.stopPropagation();
+            } else {
+                event.stopPropagation();
+                profileDropdown.classList.toggle('show');
+            }
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!profileMenuContainer.contains(event.target)) {
+                profileDropdown.classList.remove('show');
+            }
+        });
+    });
+  </script>
+
+  <!-- Original script from AssessmentPage.html (modified for builder options and privacy options) -->
+  <script>
+    let currentType = null;
+
+    function setupToggleButtons(containerId) {
+      const container = document.getElementById(containerId);
+      // Select labels with class .option-button, as they are now the clickable elements
+      const buttons = container.querySelectorAll("label.option-button");
+
+      buttons.forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          // Check if the button itself is disabled (via the .disabled class on the label)
+          if (btn.classList.contains("disabled")) return;
+
+          // Remove active class from all buttons in the group
+          // Ensure we only affect buttons within the same 'name' group for radio buttons
+          const radioInput = btn.querySelector("input[type='radio']");
+          const radioName = radioInput.name;
+          document.querySelectorAll(`label.option-button input[name="${radioName}"]`).forEach(rInput => {
+            rInput.closest('label.option-button').classList.remove('active');
+          });
+
+          // Add active class to the clicked button
+          btn.classList.add("active");
+          // Check the associated radio button
+          radioInput.checked = true;
+
+          if (containerId === "assessmentTypes") handleTypeChange();
+          if (containerId === "builderOptions") handleBuilderSelection(index);
+        });
+      });
+    }
+
+    function handleTypeChange() {
+      const selectedType = document.querySelector("#assessmentTypes label.option-button.active input[name='type']")?.value;
+      currentType = selectedType;
+      const builderBtns = document.querySelectorAll("#builderOptions label.option-button");
+
+      // --- NEW LOGIC: Deselect all builder options when assessment type changes ---
+      builderBtns.forEach(btn => {
+        btn.classList.remove("active"); // Remove active class
+        btn.querySelector("input[type='radio']").checked = false; // Uncheck radio button
+        btn.classList.remove("disabled"); // Ensure they are re-enabled by default
+      });
+      // --- END NEW LOGIC ---
+
+      builderBtns.forEach((btn, i) => {
+        const radioInput = btn.querySelector("input[type='radio']");
+        if (selectedType === "Personality") {
+          // Only allow the first two options for Personality
+          const allow = (i === 0 || i === 1);
+          if (!allow) {
+            btn.classList.add("disabled"); // Disable if not allowed
+          }
+        }
+        // If not Personality, all builder options remain enabled (due to initial removal of 'disabled' class above)
+      });
+
+      resetSectionOptions(); // Always reset section options when type changes
+
+      const section = document.querySelector("#sectionOptions");
+      if (selectedType === "Personality") {
+        section.classList.add("disabled");
+        // Also uncheck and remove active from section options if Personality is selected and section is disabled
+        document.querySelectorAll("#sectionOptions label.option-button").forEach(secBtn => {
+          secBtn.classList.remove('active');
+          secBtn.querySelector('input[type="radio"]').checked = false;
+        });
+      } else {
+        section.classList.remove("disabled");
+      }
+    }
+
+    function handleBuilderSelection(index) {
+      const sectionBtns = document.querySelectorAll("#sectionOptions label.option-button");
+
+      sectionBtns.forEach(btn => {
+        btn.classList.remove("active", "disabled");
+        btn.querySelector("input[type='radio']").checked = false;
+      });
+
+      if (currentType === "Personality") {
+        if (index === 0) { // "Start using library questions"
+          sectionBtns[0].classList.add("active");
+          sectionBtns[0].querySelector("input[type='radio']").checked = true;
+          sectionBtns[1].classList.add("disabled");
+        }
+        else if (index === 1) { // "Use multiple pre-built assessments"
+          sectionBtns[1].classList.add("active");
+          sectionBtns[1].querySelector("input[type='radio']").checked = true;
+          sectionBtns[0].classList.add("disabled");
+        }
+      }
+    }
+
+    function resetSectionOptions() {
+      const sectionBtns = document.querySelectorAll("#sectionOptions label.option-button");
+      sectionBtns.forEach(btn => {
+        btn.classList.remove("active", "disabled");
+        btn.querySelector("input[type='radio']").checked = false;
+      });
+    }
+
+    setupToggleButtons("assessmentTypes");
+    setupToggleButtons("builderOptions");
+    // Removed setupToggleButtons("sectionOptions"); as it will now be handled by the DOM structure
+
+    const assessmentNameInput = document.getElementById('assessment-name-input');
+    const saveAssessmentButton = document.getElementById('save-assessment-button');
+
+    // Custom alert function (replaces alert())
+    function showCustomAlert(message, type = 'info') {
+        const existingModal = document.getElementById('custom-alert-modal');
+        if (existingModal) document.body.removeChild(existingModal);
+        const modal = document.createElement('div');
+        modal.id = 'custom-alert-modal';
+        let bgColor = type === 'success' ? '#28a745' : (type === 'error' ? '#dc3545' : '#fff');
+        let textColor = type === 'info' ? '#333' : '#fff';
+        modal.style.cssText = `
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background-color: ${bgColor}; color: ${textColor}; padding: 15px 25px;
+            border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1005;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            font-family: 'Inter', sans-serif; text-align: center; max-width: 90%;
+            border: 1px solid ${type === 'info' ? '#eee' : 'transparent'};
+            animation: fadeInDown 0.4s ease;
+        `;
+        modal.innerHTML = `<p style="font-size: 16px; margin:0;">${message}</p><button style="background-color: ${type === 'info' ? '#1d2686' : 'rgba(0,0,0,0.2)'}; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background-color 0.2s ease;">OK</button>`;
+        document.body.appendChild(modal);
+        const okButton = modal.querySelector('button');
+        okButton.onmouseover = () => okButton.style.backgroundColor = type === 'info' ? '#151c6d' : 'rgba(0,0,0,0.3)';
+        okButton.onmouseout = () => okButton.style.backgroundColor = type === 'info' ? '#1d2686' : 'rgba(0,0,0,0.2)';
+        okButton.addEventListener('click', () => document.body.removeChild(modal));
+        setTimeout(() => { if (document.body.contains(modal)) document.body.removeChild(modal); }, 5000);
+    }
+
+    // Keyframe for custom alert
+    const styleSheet = document.createElement('style');
+    styleSheet.type = 'text/css';
+    styleSheet.innerText = `
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translate(-50%, -20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+    `;
+    document.head.appendChild(styleSheet);
+
+
+    function validateAssessmentForm() {
+        const assessmentName = document.getElementById('assessment-name-input').value.trim();
+        const selectedType = document.querySelector('input[name="type"]:checked');
+        const selectedBuilder = document.querySelector('input[name="builder"]:checked');
+
+        if (!assessmentName) {
+            showCustomAlert("Please enter the Assessment Name.", "error");
+            return false;
+        }
+
+        if (!selectedType) {
+            showCustomAlert("Please select an Assessment Type.", "error");
+            return false;
+        }
+
+        if (!selectedBuilder) {
+            showCustomAlert("Please select an Assessment Builder option.", "error");
+            return false;
+        }
+
+        return true;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const nextStepButton = document.getElementById('next-step-button');
+        const saveAssessmentButton = document.getElementById('save-assessment-button');
+        const lockSwitch = document.getElementById('lockSwitch');
+        const privacyOptionsContainer = document.getElementById('privacyOptions');
+        const privacyRadioButtons = privacyOptionsContainer.querySelectorAll('input[type="radio"][name="privacy"]');
+        const privacyOptionLabels = privacyOptionsContainer.querySelectorAll('.privacy-option-button');
+        const associateToGroupSelect = document.getElementById('associateToGroupSelect');
+        const newGroupInput = document.getElementById('newGroupInput');
+        const newGroupInputWrapper = document.getElementById('newGroupInputWrapper'); // Get the wrapper
+        const clearNewGroupBtn = document.getElementById('clearNewGroupBtn'); // Get the clear button
+        const assessmentNameInput = document.getElementById('assessment-name-input'); // Get the assessment name input
+
+
+        // Function to update the visual state (active class) of privacy options
+        function updatePrivacyOptionVisuals() {
+            privacyOptionLabels.forEach(label => {
+                const radio = label.querySelector('input[type="radio"]');
+                if (radio.checked) {
+                    label.classList.add('active');
+                } else {
+                    label.classList.remove('active');
+                }
+            });
+        }
+
+        // Function to handle locking/unlocking privacy options
+        function handleLockToggle() {
+            if (lockSwitch.checked) {
+                // Lock the options
+                privacyRadioButtons.forEach(radio => {
+                    radio.disabled = true;
+                });
+                // Also apply disabled class to labels for visual feedback
+                privacyOptionLabels.forEach(label => {
+                    if (!label.querySelector('input[type="radio"]').checked) {
+                        label.classList.add('disabled');
+                    }
+                });
+            } else {
+                // Unlock the options
+                privacyRadioButtons.forEach(radio => {
+                    radio.disabled = false;
+                });
+                // Remove disabled class from all labels
+                privacyOptionLabels.forEach(label => {
+                    label.classList.remove('disabled');
+                });
+            }
+        }
+
+        // Event listener for privacy options to update visual state on change
+        privacyOptionsContainer.addEventListener('change', updatePrivacyOptionVisuals);
+
+        // Event listener for the lock switch
+        lockSwitch.addEventListener('change', handleLockToggle);
+
+        // Function to handle navigation and save assessment name
+        function navigateAndSaveAssessmentName() {
+            if (validateAssessmentForm()) {
+                // Save assessment name to sessionStorage
+                sessionStorage.setItem('assessmentName', assessmentNameInput.value.trim());
+                window.location.href = '/question-library/';
+            }
+        }
+
+        if (nextStepButton) {
+            nextStepButton.addEventListener('click', navigateAndSaveAssessmentName);
+        }
+
+        if (saveAssessmentButton) {
+            saveAssessmentButton.addEventListener('click', navigateAndSaveAssessmentName);
+        }
+
+        // Initial setup for privacy options
+        const anyPrivacyOptionChecked = Array.from(privacyRadioButtons).some(radio => radio.checked);
+        if (anyPrivacyOptionChecked) {
+            updatePrivacyOptionVisuals();
+        }
+        handleLockToggle(); // Apply initial lock state if the checkbox is pre-checked (unlikely, but good practice)
+
+        // Handle "Associate to Group" select change
+        if (associateToGroupSelect) {
+            associateToGroupSelect.addEventListener('change', function() {
+                // Check if "+ Others" is selected (removed "+ New Group")
+                if (this.value === '+ Others') {
+                    this.style.display = 'none'; // Hide the select
+                    newGroupInputWrapper.style.display = 'flex'; // Show the input wrapper
+                    newGroupInput.focus();
+                } else {
+                    newGroupInputWrapper.style.display = 'none'; // Hide the input wrapper
+                    newGroupInput.value = ''; // Clear the input
+                    this.style.display = 'block'; // Show the select
+                }
+            });
+        }
+
+        // Handle clear new group button click
+        if (clearNewGroupBtn) {
+            clearNewGroupBtn.addEventListener('click', function() {
+                newGroupInput.value = ''; // Clear the input
+                newGroupInputWrapper.style.display = 'none'; // Hide the input wrapper
+                associateToGroupSelect.style.display = 'block'; // Show the select
+                associateToGroupSelect.value = associateToGroupSelect.options[0].value; // Optionally reset to first option
+            });
+        }
+    });
+  </script>
+
+
+</body>
+</html>

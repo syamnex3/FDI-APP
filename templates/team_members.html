@@ -1,0 +1,3047 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Members Application</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Universal box-sizing for consistent layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Base body styles with smaller font and Inter font family */
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9fafc;
+            font-size: 14px;
+            /* Reduced base font size for the entire body */
+            padding-top: 55px;
+            /* Adjusted padding to push content below the new, single fixed header */
+            /* Rules to hide the scrollbar visually but keep content scrollable */
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        /* For Webkit browsers (Chrome, Safari, Opera) */
+        body::-webkit-scrollbar {
+            width: 0;
+            background: transparent;
+            /* Makes the scrollbar track transparent */
+        }
+
+        /* Fixed top header for consistent placement */
+        .top-header {
+            position: fixed;
+            width: 100%;
+            z-index: 10;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            top: 0;
+            /* Ensure it's fixed at the very top */
+            left: 0;
+            /* Ensure it's fixed from the very left */
+        }
+
+        /* Brand title section - dark blue bar at the very top */
+        /* Now acts as the main header, containing all elements */
+        .brand-title {
+            background-color: #1d2686;
+            color: #fff;
+            font-size: 20px;
+            padding: 10px 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            /* Distributes items to ends */
+            align-items: center;
+            height: 55px;
+            /* Fixed height for the new single header */
+        }
+
+        /* Text within the brand title */
+        .brand-title-text {
+            color: #fff;
+            font-size: 20px;
+            /* Reduced font size */
+            font-weight: bold;
+        }
+
+        /* Right-aligned section containing Candidates, Bell, and Profile */
+        .right-aligned-header-items {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            /* Tailwind equivalent of space-x-4 */
+        }
+
+        /* Profile Menu Container (S, dropdown arrow) */
+        .profile-menu-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            /* Reduced gap */
+            cursor: pointer;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Profile avatar (the 'S' circle) */
+        .profile-avatar {
+            width: 28px;
+            /* Reduced size */
+            height: 28px;
+            /* Reduced size */
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #1d2686;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            /* Reduced font size */
+            text-transform: uppercase;
+        }
+
+        /* Styles for the new question mark icon next to 'S' */
+        .profile-help-icon {
+            color: #fff;
+            /* White color for the question mark icon */
+            font-size: 20px;
+            /* Increased font size for visual weight to match 'S' visually */
+            width: 28px;
+            /* Matched width with .profile-avatar */
+            height: 28px;
+            /* Matched height with .profile-avatar */
+            border-radius: 6px;
+            /* Slightly rounded corners for the square */
+            display: flex;
+            /* Use flex to center the icon */
+            justify-content: center;
+            /* Center horizontally */
+            align-items: center;
+            margin-left: 10px;
+            /* Space it out from the profile avatar/dropdown */
+            cursor: pointer;
+            /* Indicate it's clickable */
+        }
+
+        /* Profile dropdown menu */
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            min-width: 200px;
+            /* Slightly reduced width */
+            display: none;
+            z-index: 100;
+            margin-top: 8px;
+            /* Reduced gap */
+            font-family: 'Inter', sans-serif;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        /* Header within the dropdown (Sri, email, company) */
+        .profile-dropdown-header {
+            padding: 8px 12px;
+            /* Reduced padding */
+            background-color: #f0f2f5;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .profile-dropdown-header span {
+            font-size: 14px;
+            /* Reduced font size */
+        }
+
+        .profile-dropdown-header small {
+            color: #666;
+            font-weight: 400;
+            font-size: 11px;
+            /* Reduced font size */
+        }
+
+        /* Individual items in the dropdown menu */
+        .profile-dropdown-item {
+            padding: 8px 12px;
+            /* Reduced padding */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* Reduced gap */
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 12px;
+            /* Reduced font size */
+            transition: background-color 0.2s;
+        }
+
+        .profile-dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .profile-dropdown-item i {
+            color: #1d2686;
+        }
+
+        /* General body styling, using Tailwind's default font family often points to Inter */
+        /* These were already present and apply to the main page content */
+        /* background-color moved from body to html, as padding-top is now on body */
+        html {
+            background-color: #f3f4f6;
+            /* Equivalent to Tailwind's bg-gray-100 */
+        }
+
+
+        /* Modal specific styling to control visibility */
+        .modal {
+            display: none;
+            /* Hidden by default */
+        }
+
+        .modal.open {
+            display: flex;
+            /* Display when the 'open' class is added */
+        }
+
+        /* Custom styles for the dropdown arrow for consistent appearance */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3Csvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            /* Space for the custom arrow */
+        }
+
+        /* Hide scrollbar for the modal content if it overflows, but allow content to scroll */
+        .modal-content-area::-webkit-scrollbar {
+            width: 0;
+            background: transparent;
+        }
+
+        .modal-content-area {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        /* Styles for the sub-menu container (though removed from new header structure) */
+        .sub-menu {
+            display: none;
+            /* Hidden by default */
+            position: absolute;
+            top: 0;
+            /* Align top with the parent profile-dropdown-item */
+            right: 100%;
+            /* Position it to the left of the parent item */
+            margin-right: 8px;
+            /* Small gap between main dropdown and sub-menu */
+            background-color: #fff;
+            /* Match main dropdown background */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            /* Match main dropdown shadow */
+            border-radius: 8px;
+            /* Match main dropdown border-radius */
+            overflow: hidden;
+            min-width: 200px;
+            /* Match main dropdown min-width */
+            z-index: 99;
+            /* Slightly lower z-index than main dropdown if main dropdown has 100, but still above content */
+        }
+
+        .sub-menu.show {
+            display: block;
+        }
+
+        /* Style for sub-menu items */
+        .sub-menu .profile-dropdown-item {
+            padding-top: 6px;
+            /* Adjust padding for sub-items */
+            padding-bottom: 6px;
+            font-size: 11px;
+            /* Smaller font for sub-items */
+            font-weight: 400;
+            /* Lighter font weight */
+        }
+
+        .sub-menu .profile-dropdown-item i {
+            font-size: 10px;
+            /* Smaller icon for sub-items */
+        }
+
+        /* Ensure the parent profile-dropdown-item has position: relative to anchor the sub-menu */
+        #teamMembersParent {
+            position: relative;
+            /* Add this to anchor the sub-menu correctly */
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gray-100 font-inter text-gray-800">
+
+    <!-- New Header Content -->
+    <div class="top-header">
+        <!-- Top bar with FDI and Profile -->
+        <div class="brand-title">
+            <div class="flex items-center">
+                <span class="brand-title-text mr-6">FDI</span>
+                <!-- Converted to <a> tags and applied styling for clickability -->
+                <a href="your_assessment_page.html"
+                    class="text-white text-base font-medium mr-6 no-underline hover:text-gray-300 transition-colors duration-200">ASSESSMENT</a>
+                <a href="your_interview_page.html"
+                    class="text-white text-base font-medium no-underline hover:text-gray-300 transition-colors duration-200">INTERVIEW</a>
+            </div>
+
+            <div class="right-aligned-header-items">
+                <!-- Candidates text as a link -->
+                <a href="your_candidate_page.html"
+                    class="text-white text-base font-medium no-underline hover:text-gray-300 transition-colors duration-200">CANDIDATES</a>
+                <!-- Bell icon -->
+                <i class="fas fa-bell text-white text-xl cursor-pointer hover:text-gray-300 transition-colors duration-200"></i>
+
+                <!-- Profile Menu Section -->
+                <div class="profile-menu-container" id="profileMenuContainer">
+                    <div class="profile-avatar">S</div> <!-- Initial for 'Sri' -->
+                    <!-- New question mark icon next to the profile avatar -->
+                    <i class="fas fa-question-circle profile-help-icon" id="helpIcon"></i>
+
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-dropdown-header">
+                            <span id="profileUserNameDropdown">Sri</span><br>
+                            <small>srharshak@nexnoratech.onmicros....</small><br>
+                            <small>Nexnoratech</small>
+                        </div>
+                        <a href="/company-profile/" class="profile-dropdown-item">
+                            <i class="fas fa-building"></i> Company Profile
+                        </a>
+                        <a href="/team-members/" class="profile-dropdown-item">
+                            <i class="fas fa-users"></i> Team Members
+                        </a>
+                        <a href="#" class="profile-dropdown-item">
+                            <i class="fas fa-envelope"></i> Email Templates
+                        </a>
+                        <a href="/question-library/" class="profile-dropdown-item">
+                            <i class="fas fa-question-circle"></i> Connect Question Library
+                        </a>
+                        <a href="#" class="profile-dropdown-item">
+                            <i class="fas fa-chart-bar"></i> Plan Usage
+                        </a>
+                        <a href="/setting/" class="profile-dropdown-item">
+                            <i class="fas fa-cog"></i> Setting Options
+                        </a>
+                        <a href="#" class="profile-dropdown-item">
+                            <i class="fas fa-user-circle"></i> My Account
+                        </a>
+                        <a href="/logout/" class="profile-dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End New Header Content -->
+
+    <!-- Main content area wrapper, white background -->
+    <div id="mainContent" class="bg-white rounded-lg shadow-lg mb-6 mx-auto max-w-7xl">
+
+        <!-- Team Members Header + Action Buttons + Summary Cards -->
+        <!-- Changed background to bg-blue-100 and text to text-black for contrast -->
+        <div class="bg-blue-100 py-4 px-4 flex flex-col items-start gap-2 pr-2 rounded-t-lg">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full">
+                <h1 class="text-xl font-semibold text-black mb-1 sm:mb-0">Team Members</h1>
+                <div class="flex flex-wrap gap-2">
+                    <!-- Add Member Button: Styled to match Manage Licenses button, with green color -->
+                    <button id="addMemberBtn"
+                        class="px-1.5 py-0.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md shadow-md transition-colors duration-200 flex items-center space-x-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span>Add Member</span>
+                    </button>
+                    <!-- Upload Slots Button: Styled to match Manage Licenses button -->
+                    <button id="uploadSlotsBtn"
+                        class="px-1.5 py-0.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-md transition-colors duration-200 flex items-center space-x-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3zm-6 2h-2v2h2v-2z" />
+                        </svg>
+                        <span>Upload Slots</span>
+                    </button>
+                    <!-- Upload Interviewers Button: Styled to match Manage Licenses button -->
+                    <button id="uploadInterviewersBtn"
+                        class="px-1.5 py-0.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-md transition-colors duration-200 flex items-center space-x-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0L8 12m4-4v12" />
+                        </svg>
+                        <span>Upload Interviewers</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Summary Cards container -->
+            <div id="summary-cards"
+                class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-px w-full text-center mt-2">
+                <!-- Cards will be rendered here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Search Bar and Tabs Section -->
+        <div
+            class="bg-blue-100 px-4 py-2 sm:px-6 flex flex-col md:flex-row items-center justify-start gap-3 border-t border-blue-200">
+            <div class="flex items-center flex-wrap md:flex-nowrap w-full md:w-auto">
+                <div class="relative flex-grow">
+                    <!-- Search Icon positioned absolutely inside the relative container -->
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5 text-gray-400 absolute left-2.5 top-1/2 transform -translate-y-1/2"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <!-- Changed text and placeholder color for better contrast on light background -->
+                    <input type="text" id="searchTerm" placeholder="Search..."
+                        class="w-full bg-blue-50 border border-blue-200 rounded-md py-1.5 pl-9 pr-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-500">
+                </div>
+
+                <!-- Changed background and text colors for tabs on lighter background -->
+                <div class="flex bg-blue-200 rounded-md overflow-hidden text-sm flex-shrink-0 ml-4">
+                    <button id="tabAll"
+                        class="px-2 py-1 transition-colors duration-200 bg-blue-400 text-gray-800">
+                        ALL <span id="countAll" class="text-xs ml-1">10</span>
+                    </button>
+                    <button id="tabCompany"
+                        class="px-2 py-1 transition-colors duration-200 text-blue-800 hover:bg-blue-300">
+                        COMPANY MEMBERS <span id="countCompany" class="text-xs ml-1">7</span>
+                    </button>
+                    <button id="tabExternal"
+                        class="px-2 py-1 transition-colors duration-200 text-blue-800 hover:bg-blue-300">
+                        EXTERNAL MEMBERS <span id="countExternal" class="text-xs ml-1">3</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 ml-auto">
+                <!-- New "Manage Screen Licenses" button -->
+                <button id="manageLicensesBtn"
+                    class="px-1.5 py-0.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-md transition-colors duration-200 text-sm flex items-center space-x-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <span>MANAGE SCREEN LICENSES</span>
+                </button>
+                <button id="reportBtn"
+                    class="px-1.5 py-0.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-md transition-colors duration-200 text-sm">
+                    Report
+                </button>
+            </div>
+        </div>
+
+
+        <!-- Fourth Section: Role, Group, Show Filters & Table (White background) -->
+        <div class="p-4 sm:p-6 bg-white rounded-b-lg">
+            <div class="flex flex-col md:flex-row items-center justify-end mb-6 gap-4">
+                <span class="text-gray-700 text-sm font-medium mr-2">Role:</span>
+                <select id="roleFilter"
+                    class="bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800">
+                    <option value="All roles">All roles</option>
+                    <!-- Options populated by JS -->
+                </select>
+                <span class="text-gray-700 text-sm font-medium mr-2">Group:</span>
+                <select id="groupFilter"
+                    class="bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800">
+                    <option value="All Groups">All Groups</option>
+                    <option value="Company Members">Company Members</option>
+                    <option value="External Members">External Members</option>
+                </select>
+                <span class="text-gray-700 text-sm font-medium mr-2">Show:</span>
+                <select id="showCount"
+                    class="bg-gray-100 border border-gray-300 rounded-md py-2 pl-3 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 w-24">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+
+            <!-- Team Members Table Container - Removed max-height and overflow-y to allow overall page scrolling -->
+            <div class="rounded-lg border border-gray-200">
+                <table class="w-full divide-y divide-gray-300">
+                    <thead class="bg-gray-50 sticky top-0 z-10">
+                        <tr>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider rounded-tl-lg">
+                                <!-- Master checkbox for select all/none -->
+                                <input type="checkbox" id="selectAllMembers"
+                                    class="form-checkbox h-4 w-4 text-blue-600 rounded">
+                            </th>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Name</th>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Contact</th>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Role</th>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Account Type</th>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Phone Screen</th>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Interview Slots</th>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider rounded-tr-lg">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <!-- Changed tbody background to a lighter gray for subtle stripes -->
+                    <tbody id="teamMembersTableBody" class="bg-gray-50">
+                        <!-- Table rows will be rendered here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Member Modal Background Overlay -->
+    <div id="memberModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <!-- Modal Content -->
+        <div class="relative bg-white rounded-lg shadow-xl w-11/12 max-w-4xl max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <h3 id="modalTitle" class="text-2xl font-bold text-gray-800">Add Team Member</h3>
+                <button id="closeModalBtn"
+                    class="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full p-1 transition duration-150 ease-in-out">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body (Form Fields) -->
+            <div class="p-6 overflow-y-auto flex-grow modal-content-area">
+                <form id="memberForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input type="hidden" id="memberId">
+                    <!-- Full Name Input -->
+                    <div>
+                        <label for="fullName" class="block text-gray-700 text-sm font-semibold mb-2">Full name<span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="fullName" name="fullName" placeholder="Enter full name"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400"
+                            required>
+                    </div>
+
+                    <!-- Email Input -->
+                    <div>
+                        <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">Email<span
+                                class="text-red-500">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="Enter email"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400"
+                            required>
+                        <p id="emailValidationMessage" class="text-red-500 text-xs mt-1 hidden">Please mention only
+                            the business email</p>
+                    </div>
+
+                    <!-- Role Dropdown -->
+                    <div class="relative">
+                        <label for="role" class="block text-gray-700 text-sm font-semibold mb-2">Role<span
+                                class="text-red-500">*</span></label>
+                        <select id="role" name="role"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+                            required>
+                            <option value="" disabled selected>Select a role</option>
+                            <!-- Options populated by JS -->
+                        </select>
+                        <!-- Custom dropdown arrow -->
+                        <div
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 mt-7">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20">
+                                <path d="M9.293 12.95l.707.707L15 8.293l-1.414-1.414L10 10.586 6.414 7.172 5 8.586z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Phone Input -->
+                    <div>
+                        <label for="phone" class="block text-gray-700 text-sm font-semibold mb-2">Phone <span
+                                class="text-gray-500">[optional]</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="e.g. +1 201-555-0123"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-400">
+                    </div>
+
+                    <!-- Account Type Dropdown -->
+                    <div class="relative">
+                        <label for="accountTypeModal" class="block text-gray-700 text-sm font-semibold mb-2">Account
+                            Type<span class="text-red-500">*</span></label>
+                        <select id="accountTypeModal" name="accountType"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+                            required>
+                            <!-- Options will be dynamically populated by JavaScript -->
+                        </select>
+                        <!-- Custom dropdown arrow -->
+                        <div
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 mt-7">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20">
+                                <path d="M9.293 12.95l.707.707L15 8.293l-1.414-1.414L10 10.586 6.414 7.172 5 8.586z" />
+                            </svg>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex justify-end p-6 border-t border-gray-200 space-x-4">
+                <button id="clearFormBtn" type="button"
+                    class="px-6 py-2 border border-gray-300 text-gray-700 font-semibold rounded-md hover:bg-gray-100 transition duration-150 ease-in-out">
+                    Clear
+                </button>
+                <button id="sendInvitesBtn" type="submit" form="memberForm"
+                    class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-150 ease-in-out">
+                    Send invites
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Availability Slots Section (hidden by default) -->
+    <div id="uploadSlotsSection" class="hidden min-h-screen bg-gray-100 font-inter text-gray-800 px-4 sm:px-6 py-4">
+        <!-- Header for Upload Availability Slots -->
+        <header
+            class="bg-blue-950 shadow-lg mb-4 py-3 px-4 flex items-center justify-between flex-wrap rounded-lg">
+            <div class="flex items-center">
+                <button id="backToTeamMembersBtn1"
+                    class="text-gray-300 hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span class="text-lg font-semibold">Team Members</span>
+                </button>
+                <span class="text-lg font-semibold text-white">| Upload Availability Slots</span>
+            </div>
+        </header>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-black mb-4">Add Interviewers availability slots</h2>
+
+            <!-- Steps/Progress Bar -->
+            <div
+                class="flex justify-between items-center bg-gray-100 rounded-lg p-4 mb-8 text-sm font-medium text-gray-600">
+                <div class="flex items-center space-x-2">
+                    <span class="font-bold text-black" id="step1Num">1.</span>
+                    <span id="downloadSlotsTemplateBtn" class="cursor-pointer text-black hover:underline">Download CSV
+                        template</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="font-bold text-black" id="step2Num">2.</span>
+                    <span id="uploadCsvFileStep" class="cursor-pointer text-black hover:underline">Upload CSV
+                        file</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="font-bold text-black" id="step3Num">3.</span>
+                    <span id="stepAddSlots" class="cursor-pointer text-black hover:underline">Add Slots</span>
+                </div>
+            </div>
+
+            <!-- Drag and Drop Area -->
+            <div id="dropAreaSlots"
+                class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center text-gray-500 bg-gray-50 hover:bg-gray-100 transition-colors duration-200 cursor-pointer">
+                <p>Drag and drop or <span class="text-blue-600 font-semibold">click to browse the CSV file</span></p>
+                <input type="file" id="csvFileInputSlots" accept=".csv" class="hidden">
+            </div>
+            <p id="fileNameDisplaySlots" class="mt-4 text-center text-gray-700"></p>
+
+            <!-- Inline message display for Slots -->
+            <div id="slotsMessage"
+                class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4">
+                <span id="slotsMessageText"></span>
+            </div>
+
+            <!-- Table for slots and buttons for manual entry -->
+            <div class="mt-8">
+                <div class="rounded-lg border border-gray-200 overflow-hidden">
+                    <table class="w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <!-- New Checkbox Column Header -->
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    <input type="checkbox" id="selectAllSlots"
+                                        class="form-checkbox h-4 w-4 text-blue-600 rounded">
+                                </th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Panel Name</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Email Id</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Date (DD-MM-YY)</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Start Time</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    End Time</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Time Zone</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="slotsTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Rows will be populated dynamically from CSV data or manual entry -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action Buttons for the Slots Page -->
+            <div class="flex justify-between items-center mt-6 py-3 px-2">
+                <button id="deleteSelectedSlotsBtn"
+                    class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition-colors duration-200">
+                    DELETE SELECTED
+                </button>
+                <div class="flex space-x-2">
+                    <button id="previousSlotsBtn"
+                        class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-200">
+                        Previous Slots
+                    </button>
+                    <button id="addSlotRowBtn"
+                        class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-200">
+                        Add New Row
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Upload Interviewers Section (hidden by default) -->
+    <div id="uploadInterviewersSection"
+        class="hidden min-h-screen bg-gray-100 font-inter text-gray-800 px-4 sm:px-6 py-4">
+        <!-- Header for Upload Interviewers -->
+        <header
+            class="bg-blue-950 shadow-lg mb-4 py-3 px-4 flex items-center justify-between flex-wrap rounded-lg">
+            <div class="flex items-center">
+                <button id="backToTeamMembersBtn2"
+                    class="text-gray-300 hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span class="text-lg font-semibold">Team Members</span>
+                </button>
+                <span class="text-lg font-semibold text-white">| Upload Interviewers</span>
+            </div>
+        </header>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Add Interviewers (Bulk Upload)</h2>
+
+            <!-- Steps/Progress Bar -->
+            <div
+                class="flex justify-between items-center bg-gray-100 rounded-lg p-4 mb-8 text-sm font-medium text-gray-600">
+                <div class="flex items-center space-x-2">
+                    <span class="font-bold text-black" id="step1NumInterviewer">1.</span>
+                    <span id="downloadInterviewersTemplateBtn"
+                        class="cursor-pointer text-black hover:underline">Download CSV template</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="font-bold text-black" id="step2NumInterviewer">2.</span>
+                    <span id="uploadCsvFileStepInterviewer" class="cursor-pointer text-black hover:underline">Upload
+                        CSV file</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="font-bold text-black" id="step3NumInterviewer">3.</span>
+                    <span id="stepAddInterviewers" class="cursor-pointer text-black hover:underline">Add
+                        Interviewers</span>
+                </div>
+            </div>
+
+            <!-- Drag and Drop Area -->
+            <div id="dropAreaInterviewers"
+                class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center text-gray-500 bg-gray-50 hover:bg-gray-100 transition-colors duration-200 cursor-pointer">
+                <p>Drag and drop or <span class="text-blue-600 font-semibold">click to browse the CSV file</span></p>
+                <input type="file" id="csvFileInputInterviewers" accept=".csv" class="hidden">
+            </div>
+            <p id="fileNameDisplayInterviewers" class="mt-4 text-center text-gray-700"></p>
+
+            <!-- Inline message display for Interviewers -->
+            <div id="interviewersMessage"
+                class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4">
+                <span id="interviewersMessageText"></span>
+            </div>
+
+            <!-- Table for interviewers and buttons for manual entry -->
+            <div class="mt-8">
+                <div class="rounded-lg border border-gray-200 overflow-hidden">
+                    <table class="w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <!-- New Checkbox Column Header -->
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    <input type="checkbox" id="selectAllInterviewers"
+                                        class="form-checkbox h-4 w-4 text-blue-600 rounded">
+                                </th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Interviewer Name<span class="text-red-500">*</span></th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Interviewer Email<span class="text-red-500">*</span></th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Date (DD-MM-YY)<span class="text-red-500">*</span></th>
+                                <!-- NEW COLUMN -->
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Grade</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    TSRs</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Eligible Rounds</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Account ID</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Geography</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="interviewersTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Rows will be populated dynamically from CSV data or manual entry -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action Buttons for the Interviewers Page -->
+            <div class="flex justify-between items-center mt-6 py-3 px-2">
+                <button id="deleteSelectedInterviewersBtn"
+                    class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition-colors duration-200">
+                    DELETE SELECTED
+                </button>
+                <div class="flex space-x-2">
+                    <button id="previousInterviewersBtn"
+                        class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-200">
+                        Previous Interviews
+                    </button>
+                    <button id="addInterviewerRowBtn"
+                        class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-200">
+                        Add New Row
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manage Licenses Section (hidden by default) -->
+    <div id="manageLicensesSection"
+        class="hidden min-h-screen bg-gray-100 font-inter text-gray-800 px-4 sm:px-6 py-4">
+        <!-- Header for Manage Screen Licenses -->
+        <header
+            class="bg-blue-950 shadow-lg mb-4 py-3 px-4 flex items-center justify-between flex-wrap rounded-lg">
+            <div class="flex items-center">
+                <button id="backToTeamMembersBtn3"
+                    class="text-gray-300 hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span class="text-lg font-semibold">Team Members</span>
+                </button>
+                <span class="text-lg font-semibold text-white">| Manage Screen Licenses</span>
+            </div>
+        </header>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Screen License Summary</h2>
+
+            <!-- License Summary Cards -->
+            <div id="license-summary-cards"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
+
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Screen Seat License Keys</h2>
+
+            <!-- License Keys Table -->
+            <div class="rounded-lg border border-gray-200 overflow-hidden">
+                <table class="w-full divide-y divide-gray-300">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                License Keys</th>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Valid From</th>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Valid Till</th>
+                            <th scope="col"
+                                class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                Assigned To</th>
+                        </tr>
+                    </thead>
+                    <tbody id="licenseKeysTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Table rows will be populated dynamically from JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scheduled Slots Modal (New) -->
+    <div id="scheduledSlotsModal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="relative bg-white rounded-lg shadow-xl w-11/12 max-w-4xl max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800">Scheduled Interview Slots (Today's)</h3>
+                <button id="closeScheduledSlotsModalBtn"
+                    class="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full p-1 transition duration-150 ease-in-out">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body (Table for slots) -->
+            <div class="p-6 overflow-y-auto flex-grow modal-content-area">
+                <div class="rounded-lg border border-gray-200 overflow-hidden">
+                    <table class="w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Panel Name</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Email Id</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Date (DD-MM-YY)</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Start Time</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    End Time</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Time Zone</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduledSlotsTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Scheduled slots will be rendered here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scheduled Interviews Modal (New) -->
+    <div id="scheduledInterviewsModal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="relative bg-white rounded-lg shadow-xl w-11/12 max-w-5xl max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800">Scheduled Interviewers (Today's)</h3>
+                <button id="closeScheduledInterviewsModalBtn"
+                    class="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full p-1 transition duration-150 ease-in-out">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body (Table for interviewers) -->
+            <div class="p-6 overflow-y-auto flex-grow modal-content-area">
+                <div class="rounded-lg border border-gray-200 overflow-hidden">
+                    <table class="w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Interviewer Name</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Interviewer Email</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Date (DD-MM-YY)</th>
+                                <!-- NEW COLUMN -->
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Grade</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    TSRs</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Eligible Rounds</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Account ID</th>
+                                <th scope="col"
+                                    class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Geography</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduledInterviewsTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Scheduled interviewers will be rendered here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- General Warning Modal (for all warnings not handled inline) -->
+    <div id="generalWarningModal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="relative bg-white rounded-lg shadow-xl w-11/12 max-w-sm max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-200">
+                <h4 class="text-lg font-bold text-red-700">Warning</h4>
+                <button id="closeGeneralWarningModalBtn"
+                    class="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full p-1 transition duration-150 ease-in-out">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-4 text-sm text-gray-700">
+                <p id="generalWarningMessage"></p>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex justify-end p-4 border-t border-gray-200">
+                <button id="generalWarningOkBtn" type="button"
+                    class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-150 ease-in-out">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Application state variables
+            let teamMembers = [];
+            let searchTerm = '';
+            let roleFilter = 'All roles';
+            let groupFilter = 'All Groups'; // This is for UI, actual filtering based on group is handled by activeMemberType
+            let showCount = 10;
+            let activeMemberType = 'all'; // 'all', 'company', 'external'
+
+            // Initial dummy data for team members
+            const initialMembers = [
+                {
+                    id: '2',
+                    name: 'Sri', // Name remains 'Sri'
+                    contact: 'srharshak@nexnoratech.com',
+                    role: 'Internal Recruiter',
+                    accountType: 'Super Admin', // accountType set to 'Super Admin'
+                    phoneScreen: '-',
+                    interviewStats: '0 / 0',
+                    memberType: 'company',
+                    // phone: '+1 987-654-3210',
+                    // Removed status and notes fields
+                },
+
+            ];
+            // List of roles used in dropdowns and summaries
+            const roles = [
+                'HR Manager',
+                'Internal Recruiter',
+                'Hiring Manager',
+                'Interviewer',
+                'External Interviewer',
+                // 'Pending Role', // Removed from main roles array if not explicitly selectable for new members
+            ];
+
+            // --- Dummy data for Licenses Page ---
+            const licenseSummaryData = {
+                totalLicense: 5, // Updated to match dummy data
+                assignedLicense: 2, // Updated to match dummy data
+                unassignedLicense: 3, // Updated to match dummy data
+                expiredLicense: 0
+            };
+
+            const licenseKeysData = [
+                { key: 'LIC-GHI-789', validFrom: '2023-06-20', validTill: '2026-06-20', assignedTo: 'Pavan' },
+                { key: 'LIC-JKL-012', validFrom: '2023-09-01', validTill: '2026-09-01', assignedTo: 'Sri' },
+            ];
+
+
+            // --- DOM Element References ---
+            const mainContent = document.getElementById('mainContent');
+            const uploadSlotsSection = document.getElementById('uploadSlotsSection');
+            const uploadInterviewersSection = document.getElementById('uploadInterviewersSection'); // New section
+            const manageLicensesSection = document.getElementById('manageLicensesSection'); // New licenses section
+
+            const backToTeamMembersBtn1 = document.getElementById('backToTeamMembersBtn1'); // Back button for Slots
+            const backToTeamMembersBtn2 = document.getElementById('backToTeamMembersBtn2'); // Back button for Interviewers
+            const backToTeamMembersBtn3 = document.getElementById('backToTeamMembersBtn3'); // Back button for Licenses
+
+            const summaryCardsDiv = document.getElementById('summary-cards');
+            const teamMembersTableBody = document.getElementById('teamMembersTableBody');
+            const searchTermInput = document.getElementById('searchTerm');
+            const roleFilterSelect = document.getElementById('roleFilter');
+            const groupFilterSelect = document.getElementById('groupFilter');
+            const showCountSelect = document.getElementById('showCount');
+            const addMemberBtn = document.getElementById('addMemberBtn');
+            const uploadSlotsBtn = document.getElementById('uploadSlotsBtn');
+            const uploadInterviewersBtn = document.getElementById('uploadInterviewersBtn'); // New button
+            const manageLicensesBtn = document.getElementById('manageLicensesBtn'); // New button for licenses
+            const reportBtn = document.getElementById('reportBtn'); // New: Report button
+
+            // Modal specific elements
+            const memberModal = document.getElementById('memberModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const memberForm = document.getElementById('memberForm');
+            const memberIdInput = document.getElementById('memberId');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const clearFormBtn = document.getElementById('clearFormBtn');
+            const sendInvitesBtn = document.getElementById('sendInvitesBtn');
+            const emailInput = document.getElementById('email'); // Added for direct email validation
+            const emailValidationMessage = document.getElementById('emailValidationMessage'); // Added for direct email validation message
+
+            // Account Type dropdown (Status dropdown removed)
+            const accountTypeModalSelect = document.getElementById('accountTypeModal');
+
+
+            const tabAllBtn = document.getElementById('tabAll');
+            const tabCompanyBtn = document = document.getElementById('tabCompany');
+            const tabExternalBtn = document.getElementById('tabExternal');
+            const countAllSpan = document.getElementById('countAll');
+            const countCompanySpan = document.getElementById('countCompany');
+            const countExternalSpan = document.getElementById('countExternal');
+
+            // Profile dropdown elements
+            const profileMenuContainer = document.getElementById('profileMenuContainer');
+            const profileDropdown = document.getElementById('profileDropdown');
+            // profileUserName is not needed here as it was for the old header's inline name next to 'S'
+            const profileUserNameDropdown = document.getElementById('profileUserNameDropdown'); // Name within dropdown header
+            const helpIcon = document.getElementById('helpIcon'); // Get the new help icon by ID
+
+            // New elements for Team Members sub-menu (logic removed from new header structure)
+            const teamMembersParent = document.getElementById('teamMembersParent');
+
+
+            // Table selection elements
+            const selectAllMembersCheckbox = document.getElementById('selectAllMembers');
+
+
+            // Drag and Drop elements for Slots
+            const dropAreaSlots = document.getElementById('dropAreaSlots');
+            const csvFileInputSlots = document.getElementById('csvFileInputSlots');
+            const fileNameDisplaySlots = document.getElementById('fileNameDisplaySlots');
+            const slotsTableBody = document.getElementById('slotsTableBody'); // Table body for slots data
+            const downloadSlotsTemplateBtn = document.getElementById('downloadSlotsTemplateBtn'); // New: Download Slots Template button
+            const stepAddSlots = document.getElementById('stepAddSlots'); // Reference to "3. Add Slots" step
+            const step1Num = document.getElementById('step1Num');
+            const step2Num = document.getElementById('step2Num');
+            const step3Num = document.getElementById('step3Num');
+            const uploadCsvFileStep = document.getElementById('uploadCsvFileStep');
+            const addSlotRowBtn = document.getElementById('addSlotRowBtn'); // New button for adding manual row
+            const previousSlotsBtn = document.getElementById('previousSlotsBtn'); // NEW: Previous Slots button
+            const selectAllSlotsCheckbox = document.getElementById('selectAllSlots'); // New: Master checkbox for slots table
+            const deleteSelectedSlotsBtn = document.getElementById('deleteSelectedSlotsBtn'); // New: DELETE SELECTED button for slots
+            const slotsMessage = document.getElementById('slotsMessage'); // Inline message for slots page
+            const slotsMessageText = document.getElementById('slotsMessageText'); // Text content for slots message
+
+            // Drag and Drop elements for Interviewers (New)
+            const dropAreaInterviewers = document.getElementById('dropAreaInterviewers');
+            const csvFileInputInterviewers = document.getElementById('csvFileInputInterviewers');
+            const fileNameDisplayInterviewers = document.getElementById('fileNameDisplayInterviewers');
+            const interviewersTableBody = document.getElementById('interviewersTableBody'); // Table body for interviewers data
+            const downloadInterviewersTemplateBtn = document.getElementById('downloadInterviewersTemplateBtn'); // New: Download Interviewers Template button
+            const stepAddInterviewers = document.getElementById('stepAddInterviewers'); // New: Reference to "3. Add Interviewers" step
+            const step1NumInterviewer = document.getElementById('step1NumInterviewer'); // New: for Interviewer steps
+            const step2NumInterviewer = document.getElementById('step2NumInterviewer'); // New: for Interviewer steps
+            const step3NumInterviewer = document.getElementById('step3NumInterviewer'); // New: for Interviewer steps
+            const uploadCsvFileStepInterviewer = document.getElementById('uploadCsvFileStepInterviewer'); // New: for Interviewer steps
+            const addInterviewerRowBtn = document.getElementById('addInterviewerRowBtn'); // New button for adding manual row
+            const previousInterviewersBtn = document.getElementById('previousInterviewersBtn'); // NEW: Previous Interviewers button
+            const selectAllInterviewersCheckbox = document.getElementById('selectAllInterviewers'); // New: Master checkbox for interviewers table
+            const deleteSelectedInterviewersBtn = document.getElementById('deleteSelectedInterviewersBtn'); // New: DELETE SELECTED button for interviewers
+            const interviewersMessage = document.getElementById('interviewersMessage'); // Inline message for interviewers page
+            const interviewersMessageText = document.getElementById('interviewersMessageText'); // Text content for interviewers message
+
+
+            // Licenses Page elements
+            const licenseSummaryCardsDiv = document.getElementById('license-summary-cards');
+            const licenseKeysTableBody = document.getElementById('licenseKeysTableBody');
+
+            // Scheduled Slots Modal elements (New)
+            const scheduledSlotsModal = document.getElementById('scheduledSlotsModal');
+            const closeScheduledSlotsModalBtn = document.getElementById('closeScheduledSlotsModalBtn');
+            const scheduledSlotsTableBody = document.getElementById('scheduledSlotsTableBody');
+
+            // Scheduled Interviews Modal elements (New)
+            const scheduledInterviewsModal = document.getElementById('scheduledInterviewsModal');
+            const closeScheduledInterviewsModalBtn = document.getElementById('closeScheduledInterviewsModalBtn');
+            const scheduledInterviewsTableBody = document.getElementById('scheduledInterviewsTableBody');
+
+            // General Warning Modal (for all warnings not handled inline)
+            const generalWarningModal = document.getElementById('generalWarningModal');
+            const closeGeneralWarningModalBtn = document.getElementById('closeGeneralWarningModalBtn');
+            const generalWarningOkBtn = document.getElementById('generalWarningOkBtn');
+            const generalWarningMessage = document = document.getElementById('generalWarningMessage');
+
+
+            // State for uploaded/manual CSV data (for slots and interviewers)
+            // This array will hold the data currently displayed and editable in the table
+            let currentSlotsData = [];
+            let currentInterviewersData = [];
+
+            // New: Persistent storage for scheduled slots and interviewers
+            let scheduledSlots = [];
+            let scheduledInterviewers = [];
+
+            let isEmailValid = true; // Track email validation state
+
+            // --- Helper Functions ---
+
+            /**
+             * Generates a simple unique ID.
+             * @returns {string} A unique ID string.
+             */
+            function generateUniqueId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2);
+            }
+
+            /**
+             * Formats a Date object into a DD-MM-YY string.
+             * @param {Date} date The date object to format.
+             * @returns {string} The date formatted as DD-MM-YY.
+             */
+            function formatDateToDDMMYY(date) {
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+                const year = String(date.getFullYear()).slice(-2); // Get last two digits of year
+                return `${day}-${month}-${year}`;
+            }
+
+            /**
+             * Checks if a date string in DD-MM-YY format is today's date.
+             * @param {string} ddMmYyDateString The date string to check (e.g., "18-06-24").
+             * @returns {boolean} True if the date string represents today's date, false otherwise.
+             */
+            function isToday(ddMmYyDateString) {
+                const today = new Date();
+                const [day, month, year] = ddMmYyDateString.split('-').map(Number);
+                // Construct a Date object for the given string, adjusting for 2-digit year (e.g., '24' -> 2024)
+                // This handles years 00-99 as 2000-2099 for modern contexts.
+                const fullYear = (year < 100) ? (2000 + year) : year; // Adjust 2-digit year to 4-digit
+                const compareDate = new Date(fullYear, month - 1, day); // Month is 0-indexed
+
+                return today.getDate() === compareDate.getDate() &&
+                    today.getMonth() === compareDate.getMonth() &&
+                    today.getFullYear() === compareDate.getFullYear();
+            }
+
+            /**
+             * Shows an inline message in the specified message area.
+             * @param {HTMLElement} messageElement The div element to show/hide.
+             * @param {HTMLElement} messageTextElement The span element inside for the text.
+             * @param {string} message The message text.
+             * @param {number} durationMs Duration in milliseconds before hiding (default 3000).
+             */
+            function showInlineMessage(messageElement, messageTextElement, message, durationMs = 3000) {
+                messageTextElement.textContent = message;
+                messageElement.classList.remove('hidden');
+                setTimeout(() => {
+                    messageElement.classList.add('hidden');
+                    messageTextElement.textContent = ''; // Clear message after hiding
+                }, durationMs);
+            }
+
+            /**
+             * Populates the role filter dropdown with available roles.
+             */
+            function populateRoleFilter() {
+                // Clear existing options, then add the 'All roles' default option
+                roleFilterSelect.innerHTML = '<option value="All roles">All roles</option>';
+                roles.forEach(role => {
+                    const option = document.createElement('option');
+                    option.value = role;
+                    option.textContent = role;
+                    roleFilterSelect.appendChild(option);
+                });
+
+                // Also populate the role dropdown in the modal
+                const modalRoleSelect = memberForm.querySelector('#role');
+                modalRoleSelect.innerHTML = '<option value="" disabled selected>Select a role</option>'; // Default option for modal
+                roles.forEach(role => {
+                    const option = document.createElement('option');
+                    option.value = role;
+                    option.textContent = role;
+                    modalRoleSelect.appendChild(option);
+                });
+            }
+
+            /**
+             * Renders the summary cards based on the current teamMembers data.
+             */
+            function renderSummaryCards() {
+                summaryCardsDiv.innerHTML = ''; // Clear existing cards
+                // Define the specific roles for the summary cards with full labels
+                const summaryRoles = [
+                    { label: 'HR Managers', full: 'HR Manager' },
+                    { label: 'Internal Recruiters', full: 'Internal Recruiter' },
+                    { label: 'Hiring Managers', full: 'Hiring Manager' },
+                    { label: 'Interviewer', full: 'Interviewer' },
+                    { label: 'External Interviewers', full: 'External Interviewer' },
+                    // REMOVED: { label: 'Pending Roles', full: 'Pending Role' }
+                ];
+
+                summaryRoles.forEach(roleCategory => {
+                    // Calculate count for each role category
+                    const count = teamMembers.filter(member => {
+                        return member.role === roleCategory.full;
+                    }).length;
+
+                    // Create HTML for a single summary card with reduced padding and font size for count
+                    const cardHtml = `
+                        <div class="bg-blue-800 rounded-lg shadow-md flex flex-col justify-center items-center py-2">
+                            <div class="text-base font-bold text-blue-400">${count}</div>
+                            <div class="text-xs text-gray-300">${roleCategory.label}</div>
+                        </div>
+                    `;
+                    summaryCardsDiv.insertAdjacentHTML('beforeend', cardHtml);
+                });
+            }
+
+            /**
+             * Updates the counts displayed on the "All", "Company Members", and "External Members" tabs
+             * and applies active styling.
+             */
+            function updateTabCounts() {
+                // Update text content of count spans
+                countAllSpan.textContent = teamMembers.length;
+                countCompanySpan.textContent = teamMembers.filter(m => m.memberType === 'company').length;
+                countExternalSpan.textContent = teamMembers.filter(m => m.memberType === 'external').length;
+
+                // Remove active styling from all tab buttons
+                document.querySelectorAll('.flex.bg-blue-700 button').forEach(btn => {
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('text-gray-300', 'hover:bg-blue-600');
+                });
+
+                // Apply active styling to the currently active tab
+                if (activeMemberType === 'all') {
+                    tabAllBtn.classList.add('bg-blue-600', 'text-white');
+                    tabAllBtn.classList.remove('text-gray-300', 'hover:bg-blue-600');
+                } else if (activeMemberType === 'company') {
+                    tabCompanyBtn.classList.add('bg-blue-600', 'text-white');
+                    tabCompanyBtn.classList.remove('text-gray-300', 'hover:bg-blue-600');
+                } else if (activeMemberType === 'external') {
+                    tabExternalBtn.classList.add('bg-blue-600', 'text-white');
+                    tabExternalBtn.classList.remove('text-gray-300', 'hover:bg-blue-600');
+                }
+            }
+
+            /**
+             * Renders the team members table based on current filters and search term.
+             */
+            function renderTable() {
+                teamMembersTableBody.innerHTML = ''; // Clear existing table rows
+
+                // Filter members based on current state
+                const filtered = teamMembers.filter(member => {
+                    const matchesSearch = searchTerm === '' || member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        member.contact.toLowerCase().includes(searchTerm.toLowerCase());
+                    const matchesRole = roleFilter === 'All roles' || member.role === roleFilter;
+                    const matchesMemberType = activeMemberType === 'all' || member.memberType === activeMemberType;
+                    return matchesSearch && matchesRole && matchesMemberType;
+                }).slice(0, showCount); // Apply showCount limit
+
+                console.log(`Rendering table: Total members: ${teamMembers.length}, Filtered members: ${filtered.length}, Show count: ${showCount}`);
+
+
+                // If no members found after filtering
+                if (filtered.length === 0) {
+                    teamMembersTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="px-4 py-2 text-center text-sm text-gray-600">No team members found.</td>
+                        </tr>
+                    `;
+                    // Reset select all checkbox if no members are displayed
+                    if (selectAllMembersCheckbox) {
+                        selectAllMembersCheckbox.checked = false;
+                    }
+                } else {
+                    // Render each filtered member as a table row
+                    filtered.forEach(member => {
+                        // FIX: Changed insertCell() to insertRow() to correctly create a new row
+                        const row = teamMembersTableBody.insertRow();
+                        // Add border-b to actual data rows
+                        row.classList.add('border-b', 'border-gray-200');
+                        // Determine background and text color based on accountType
+                        let badgeBgClass = '';
+                        let badgeTextColor = '';
+                        let accountTypeDisplay = member.accountType; // Default display
+
+                        if (member.accountType === 'Member') {
+                            badgeBgClass = 'bg-yellow-100';
+                            badgeTextColor = 'text-yellow-800';
+                        } else if (member.accountType === 'Admin') {
+                            badgeBgClass = 'bg-green-100';
+                            badgeTextColor = 'text-green-800';
+                        } else if (member.accountType === 'Super Admin') {
+                            badgeBgClass = 'bg-purple-100'; // Using purple for Super Admin
+                            badgeTextColor = 'text-purple-800';
+                        } else if (member.accountType === 'Pending') {
+                            badgeBgClass = 'bg-yellow-100';
+                            badgeTextColor = 'text-yellow-800';
+                            accountTypeDisplay = `
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${badgeBgClass} ${badgeTextColor}">
+                                    Pending
+                                </span>
+                                <button data-id="${member.id}" class="resend-invite block mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-md transition-colors duration-200 text-xs">
+                                    Resend Invite
+                                </button>
+                            `;
+                        }
+
+                        // Conditionally render the delete button
+                        const deleteButtonHtml = member.accountType !== 'Super Admin' ? `
+                            <button data-id="${member.id}" class="delete-member text-red-600 hover:text-red-800 transition-colors duration-200">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        ` : '';
+
+                        // Populate row with member data and action buttons
+                        row.innerHTML = `
+                            <td class="px-4 py-2 text-sm text-gray-800">
+                                <input type="checkbox" class="member-checkbox form-checkbox h-4 w-4 text-blue-600 rounded">
+                            </td>
+                            <td class="px-4 py-2 text-sm font-medium text-gray-800 flex items-center">
+                                <div class="w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full text-white text-xs font-bold mr-3">
+                                    ${member.name.charAt(0).toUpperCase()}
+                                </div>
+                                ${member.name}
+                            </td>
+                            <td class="px-4 py-2 text-sm text-gray-700">${member.contact}</td>
+                            <td class="px-4 py-2 text-sm text-gray-700">${member.role}</td>
+                            <td class="px-4 py-2 text-sm">
+                                ${member.accountType !== 'Pending' ? `
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${badgeBgClass} ${badgeTextColor}">
+                                    ${member.accountType}
+                                </span>` : accountTypeDisplay}
+                            </td>
+                            <td class="px-4 py-2 text-sm text-gray-700">${member.phoneScreen}</td>
+                            <td class="px-4 py-2 text-sm text-gray-700">${member.interviewStats}</td>
+                            <td class="px-4 py-2 text-sm font-medium flex items-center space-x-4">
+                                <button data-id="${member.id}" class="edit-member text-blue-600 hover:text-blue-800 transition-colors duration-200">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                ${deleteButtonHtml} <!-- Conditionally rendered delete button -->
+                            </td>
+                        `;
+                    });
+
+
+                    // REMOVED: The logic to add empty rows for consistent spacing has been removed.
+                    // The table will now only display rows corresponding to actual filtered members.
+                }
+
+
+                // Attach event listeners to newly rendered edit and resend buttons
+                document.querySelectorAll('.edit-member').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id; // Get member ID from data-id attribute
+                        const member = teamMembers.find(m => m.id === id); // Find the member object
+                        if (member) openEditModal(member); // Open modal with member data
+                    });
+                });
+
+                document.querySelectorAll('.delete-member').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        console.log(`Delete action for member ID: ${id}`);
+                        // Removed confirm() as it is not allowed
+                        teamMembers = teamMembers.filter(m => m.id !== id);
+                        renderTable();
+                        renderSummaryCards();
+                        updateTabCounts();
+                    });
+                });
+
+
+                document.querySelectorAll('.resend-invite').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        console.log(`Resending invite for member ID: ${id}`);
+                        // In a real application, this would trigger an API call to resend an invite.
+                        // For this demo, it just logs to the console.
+                    });
+                });
+
+                // Reset master checkbox state when table is re-rendered
+                if (selectAllMembersCheckbox) {
+                    selectAllMembersCheckbox.checked = false;
+                }
+            }
+
+            /**
+             * Function to show the member modal
+             */
+            const showMemberModal = () => {
+                memberModal.classList.remove('hidden');
+                memberModal.classList.add('open');
+                document.body.classList.add('overflow-hidden'); // Prevent scrolling of background
+                validateEmailInput(); // Validate email on modal open for existing data
+            };
+
+            /**
+             * Function to hide the member modal
+             */
+            const hideMemberModal = () => {
+                memberModal.classList.add('hidden');
+                memberModal.classList.remove('open');
+                document.body.classList.remove('overflow-hidden'); // Re-enable scrolling
+                memberForm.reset(); // Clears all form fields
+                memberIdInput.value = ''; // Ensures the hidden ID field is cleared
+                emailValidationMessage.classList.add('hidden'); // Hide email validation message on close
+                sendInvitesBtn.disabled = false; // Re-enable button on close
+                sendInvitesBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            };
+
+            /**
+             * Configures and opens the modal for adding a new member.
+             */
+            function openAddModal() {
+                modalTitle.textContent = 'Add Team Member';
+                sendInvitesBtn.textContent = 'Send invites';
+                memberIdInput.value = ''; // No ID for a new member
+                memberForm.reset(); // Clear all fields
+
+                // Populate account type for new member: only Member and Admin selectable
+                accountTypeModalSelect.innerHTML = `
+                    <option value="" disabled selected>Select account type</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Member">Member</option>
+                `;
+                memberForm.querySelector('#role').value = ''; // Select a role
+                memberForm.querySelector('#accountTypeModal').value = ''; // Select account type
+                isEmailValid = false; // Initially, email is empty, so not valid for submission
+                updateSubmitButtonState(); // Update button state
+                showMemberModal(); // Show the new modal
+            }
+
+            /**
+             * Configures and opens the modal for editing an existing member.
+             * @param {Object} member - The member object to be edited.
+             */
+            function openEditModal(member) {
+                modalTitle.textContent = 'Edit Team Member';
+                sendInvitesBtn.textContent = 'Save Changes'; // Changed from 'Send invites' to 'Save Changes' for edit mode
+                memberIdInput.value = member.id; // Set the hidden ID for editing
+
+                // Populate form fields with the existing member's data
+                memberForm.querySelector('#fullName').value = member.name;
+                memberForm.querySelector('#email').value = member.contact; // Using 'contact' for email
+                memberForm.querySelector('#role').value = member.role;
+                memberForm.querySelector('#phone').value = member.phone || ''; // Populate phone if it exists
+
+                // Dynamically populate accountTypeModalSelect based on the member's existing account type
+                accountTypeModalSelect.innerHTML = ''; // Clear existing options
+
+                if (member.accountType === 'Super Admin') {
+                    // If editing a Super Admin, only offer Admin and Member as selectable options.
+                    // The 'Super Admin' value will still be displayed, but not selectable from the list.
+                    accountTypeModalSelect.innerHTML += `<option value="Super Admin" selected>Super Admin</option>`; // Display current value, not selectable
+                    accountTypeModalSelect.innerHTML += `<option value="Admin">Admin</option>`;
+                    accountTypeModalSelect.innerHTML += `<option value="Member">Member</option>`;
+                    // Set the current value. Even though 'Super Admin' is not an option, this makes the browser display it.
+                    accountTypeModalSelect.value = 'Super Admin';
+                } else {
+                    // For Admin, Member or Pending, offer only Admin and Member options
+                    accountTypeModalSelect.innerHTML += `<option value="Admin">Admin</option>`;
+                    accountTypeModalSelect.innerHTML += `<option value="Member">Member</option>`;
+                    // Set the current value. If the current member is 'Pending', set to 'Member' as a default if 'Pending' is not an option.
+                    accountTypeModalSelect.value = member.accountType === 'Pending' ? 'Member' : member.accountType || '';
+                }
+
+                showMemberModal(); // Show the new modal
+            }
+
+            /**
+             * Function to display the Upload Slots section and hide main content.
+             */
+            function showUploadSlotsSection() {
+                mainContent.classList.add('hidden');
+                uploadInterviewersSection.classList.add('hidden'); // Ensure other sections are hidden
+                manageLicensesSection.classList.add('hidden'); // Ensure licenses section is hidden
+                scheduledSlotsModal.classList.add('hidden'); // Ensure scheduled slots modal is hidden
+                scheduledInterviewsModal.classList.add('hidden'); // Ensure scheduled interviews modal is hidden
+                uploadSlotsSection.classList.remove('hidden');
+                document.body.classList.remove('bg-gray-100'); // Remove background from body to avoid double background
+                document.body.classList.add('bg-gray-200'); // Set background for slots page
+                updateSlotsSteps(1); // Set initial active step for slots upload
+
+                // When showing the slots section, render initial view (today's slots)
+                renderSlotsTable(currentSlotsData, 'today');
+                fileNameDisplaySlots.textContent = ''; // Clear any displayed file name
+                slotsMessage.classList.add('hidden'); // Hide any previous inline message
+            }
+
+            /**
+             * Function to display the Upload Interviewers section and hide main content.
+             */
+            function showUploadInterviewersSection() {
+                mainContent.classList.add('hidden');
+                uploadSlotsSection.classList.add('hidden'); // Ensure other sections are hidden
+                manageLicensesSection.classList.add('hidden'); // Ensure licenses section is hidden
+                scheduledSlotsModal.classList.add('hidden'); // Ensure scheduled slots modal is hidden
+                scheduledInterviewsModal.classList.add('hidden'); // Ensure scheduled interviews modal is hidden
+                uploadInterviewersSection.classList.remove('hidden');
+                document.body.classList.remove('bg-gray-100'); // Remove background from body to avoid double background
+                document.body.classList.add('bg-gray-200'); // Set background for interviewers page
+                updateInterviewersSteps(1); // Set initial active step for interviewers upload
+
+                // When showing the interviewers section, render initial view (today's interviewers)
+                renderInterviewersTable(currentInterviewersData, 'today');
+                fileNameDisplayInterviewers.textContent = ''; // Clear any displayed file name
+                interviewersMessage.classList.add('hidden'); // Hide any previous inline message
+            }
+
+            /**
+             * Function to display the Manage Licenses section and hide main content.
+             */
+            function showManageLicensesSection() {
+                mainContent.classList.add('hidden');
+                uploadSlotsSection.classList.add('hidden');
+                uploadInterviewersSection.classList.add('hidden');
+                scheduledSlotsModal.classList.add('hidden'); // Ensure scheduled slots modal is hidden
+                scheduledInterviewsModal.classList.add('hidden'); // Ensure scheduled interviews modal is hidden
+                manageLicensesSection.classList.remove('hidden');
+                document.body.classList.remove('bg-gray-100');
+                document.body.classList.add('bg-gray-200'); // Apply consistent background
+                renderLicenseSummaryCards(); // Render license summary data
+                renderLicenseKeysTable(); // Render license keys table
+            }
+
+            /**
+             * Function to display the main content and hide other sections.
+             */
+            function showMainContent() {
+                uploadSlotsSection.classList.add('hidden');
+                uploadInterviewersSection.classList.add('hidden');
+                manageLicensesSection.classList.add('hidden'); // Also hide licenses section
+                scheduledSlotsModal.classList.add('hidden'); // Ensure scheduled slots modal is hidden
+                scheduledInterviewsModal.classList.add('hidden'); // Ensure scheduled interviews modal is hidden
+                mainContent.classList.remove('hidden');
+                document.body.classList.remove('bg-gray-200'); // Remove background from other pages
+                document.body.classList.add('bg-gray-100'); // Set background for main page
+            }
+
+            /**
+             * Generic CSV file handler for drag and drop or input.
+             * @param {File} file The CSV file to process.
+             * @param {HTMLElement} fileNameDisplayElement The element to display the file name.
+             * @param {function} renderTableFunction The function to call to render the table with parsed data.
+             * @param {string[]} expectedHeaders An array of expected column headers.
+             * @param {string} fileTypeIdentifier As a string to identify the type of file being processed (e.g., 'slots', 'interviewers').
+             */
+            function handleCsvFile(file, fileNameDisplayElement, renderTableFunction, expectedHeaders, fileTypeIdentifier) {
+                if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
+                    fileNameDisplayElement.textContent = `Selected file: ${file.name}`;
+                    console.log(`CSV file selected for ${fileTypeIdentifier}:`, file.name);
+
+                    if (fileTypeIdentifier === 'slots') {
+                        updateSlotsSteps(2); // Set active step to 2 for slots
+                    } else if (fileTypeIdentifier === 'interviewers') {
+                        updateInterviewersSteps(2); // Set active step to 2 for interviewers
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const csvContent = e.target.result;
+                        try {
+                            const parsedData = parseCsv(csvContent, expectedHeaders);
+                            if (fileTypeIdentifier === 'slots') {
+                                currentSlotsData = parsedData; // Update the current editable data
+                                slotsTableBody.innerHTML = `<tr><td colspan="8" class="px-4 py-2 text-center text-sm text-gray-600">Click '3. Add Slots' to view uploaded data.</td></tr>`; // Updated colspan
+                            } else if (fileTypeIdentifier === 'interviewers') {
+                                currentInterviewersData = parsedData; // Update the current editable data
+                                interviewersTableBody.innerHTML = `<tr><td colspan="10" class="px-4 py-2 text-center text-sm text-gray-600">Click '3. Add Interviewers' to view uploaded data.</td></tr>`; // Updated colspan
+                            }
+                            // Hide any inline messages on successful file load
+                            if (fileTypeIdentifier === 'slots') slotsMessage.classList.add('hidden');
+                            if (fileTypeIdentifier === 'interviewers') interviewersMessage.classList.add('hidden');
+                        } catch (error) {
+                            fileNameDisplayElement.textContent = `Error parsing CSV: ${error.message}`;
+                            console.error(`Error parsing CSV for ${fileTypeIdentifier}:`, error);
+                            if (fileTypeIdentifier === 'slots') {
+                                // Updated colspan to 8 (1 for checkbox + 6 data columns + 1 for actions)
+                                slotsTableBody.innerHTML = `<tr><td colspan="8" class="px-4 py-2 text-center text-red-600">Error parsing CSV: ${error.message}</td></tr>`;
+                                showInlineMessage(slotsMessage, slotsMessageText, `Error parsing CSV: ${error.message}`, 5000);
+                            } else if (fileTypeIdentifier === 'interviewers') {
+                                // Updated colspan to 10 (1 for checkbox + 8 data columns + 1 for actions)
+                                interviewersTableBody.innerHTML = `<tr><td colspan="10" class="px-4 py-2 text-center text-red-600">Error parsing CSV: ${error.message}</td></tr>`;
+                                showInlineMessage(interviewersMessage, interviewersMessageText, `Error parsing CSV: ${error.message}`, 5000);
+                            }
+                        }
+                    };
+                    reader.readAsText(file);
+                } else {
+                    fileNameDisplayElement.textContent = `Please select a CSV file for ${fileTypeIdentifier}.`;
+                    console.warn(`Non-CSV file selected for ${fileTypeIdentifier}.`);
+                    if (fileTypeIdentifier === 'slots') {
+                        currentSlotsData = []; // Clear data if wrong file type
+                        // Updated colspan to 8 (1 for checkbox + 6 data columns + 1 for actions)
+                        slotsTableBody.innerHTML = `<tr><td colspan="8" class="px-4 py-2 text-center text-red-600">Please select a CSV file.</td></tr>`;
+                        showInlineMessage(slotsMessage, slotsMessageText, `Please select a CSV file.`, 5000);
+                    } else if (fileTypeIdentifier === 'interviewers') {
+                        currentInterviewersData = []; // Clear data if wrong file type
+                        // Updated colspan to 10 (1 for checkbox + 8 data columns + 1 for actions)
+                        interviewersTableBody.innerHTML = `<tr><td colspan="10" class="px-4 py-2 text-center text-red-600">Please select a CSV file.</td></tr>`;
+                        showInlineMessage(interviewersMessage, interviewersMessageText, `Please select a CSV file.`, 5000);
+                    }
+                }
+            }
+
+            /**
+             * Parses CSV content into an array of objects.
+             * Assumes the first row is headers.
+             * Assigns a unique ID to each row.
+             * @param {string} csvString The CSV content as a string.
+             * @param {string[]} expectedHeaders An array of expected column headers.
+             * @returns {Array<Object>} An array of objects, where each object represents a row with a unique 'id'.
+             * @throws {Error} If CSV is invalid or headers don't match.
+             */
+            function parseCsv(csvString, expectedHeaders) {
+                const lines = csvString.trim().split('\n');
+                if (lines.length === 0) {
+                    throw new Error('CSV file is empty.');
+                }
+
+                const headers = lines[0].split(',').map(header => header.trim());
+
+                // Optional: Validate headers against expectedHeaders
+                if (expectedHeaders && expectedHeaders.length > 0) {
+                    const missingHeaders = expectedHeaders.filter(h => !headers.includes(h));
+                    if (missingHeaders.length > 0) {
+                        throw new Error(`Missing expected CSV headers: ${missingHeaders.join(', ')}`);
+                    }
+                }
+
+                const data = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',').map(value => value.trim());
+                    if (values.length !== headers.length) {
+                        // Skip malformed rows or throw an error
+                        console.warn(`Skipping malformed row ${i + 1}: ${lines[i]}`);
+                        continue;
+                    }
+                    const rowObject = { id: generateUniqueId() }; // Assign a unique ID
+                    headers.forEach((header, index) => {
+                        rowObject[header] = values[index];
+                    });
+                    data.push(rowObject);
+                }
+                return data;
+            }
+
+            /**
+             * Renders the currentSlotsData into the slots table with editable inputs and a checkbox.
+             * @param {Array<Object>} data The data to render.
+             * @param {'today'|'previous'|'all'} filterType Determines which data to display: 'today' (default), 'previous', or 'all'.
+             */
+            function renderSlotsTable(data, filterType = 'today') {
+                slotsTableBody.innerHTML = ''; // Clear existing rows
+                const todayFormatted = formatDateToDDMMYY(new Date());
+                let filteredData = [];
+
+                if (filterType === 'today') {
+                    filteredData = data.filter(row => isToday(row['Date (DD-MM-YY)']));
+                } else if (filterType === 'previous') {
+                    filteredData = data.filter(row => !isToday(row['Date (DD-MM-YY)']));
+                } else { // 'all'
+                    filteredData = data;
+                }
+
+                if (filteredData.length === 0) {
+                    let message = '';
+                    if (filterType === 'today') {
+                        message = `No slots available for today (${todayFormatted}).`;
+                    } else if (filterType === 'previous') {
+                        message = `No previous slots found.`;
+                    } else { // 'all'
+                        message = `No slots added yet. Add a new row or upload a CSV.`;
+                    }
+                    // Updated colspan to 8 (1 for checkbox + 6 data columns + 1 for actions)
+                    slotsTableBody.innerHTML = `<tr><td colspan="8" class="px-4 py-2 text-center text-sm text-gray-600">${message}</td></tr>`;
+                    // Reset master checkbox state
+                    if (selectAllSlotsCheckbox) selectAllSlotsCheckbox.checked = false;
+                    return;
+                }
+
+                filteredData.forEach((row) => { // Removed index as we'll use row.id
+                    const tr = document.createElement('tr');
+                    tr.dataset.id = row.id; // Set data-id on the row for easier lookup
+                    tr.innerHTML = `
+                        <td class="px-4 py-2 text-sm text-gray-700">
+                            <input type="checkbox" class="slot-checkbox form-checkbox h-4 w-4 text-blue-600 rounded" data-id="${row.id}">
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['Panel Name'] || ''}" data-column="Panel Name" data-id="${row.id}" class="w-full p-1 border rounded-md text-sm">
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="email" value="${row['Email Id'] || ''}" data-column="Email Id" data-id="${row.id}" class="w-full p-1 border rounded-md text-sm">
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['Date (DD-MM-YY)'] || ''}" data-column="Date (DD-MM-YY)" data-id="${row.id}" placeholder="DD-MM-YY" class="w-full p-1 border rounded-md text-sm">
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['Start Time'] || ''}" data-column="Start Time" data-id="${row.id}" placeholder="HH:MM" class="w-full p-1 border rounded-md text-sm">
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['End Time'] || ''}" data-column="End Time" data-id="${row.id}" placeholder="HH:MM" class="w-full p-1 border rounded-md text-sm">
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['Time Zone'] || ''}" data-column="Time Zone" data-id="${row.id}" placeholder="e.g. EST" class="w-full p-1 border rounded-md text-sm">
+                        </td>
+                        <td class="px-4 py-2 text-sm whitespace-nowrap">
+                            <button class="save-slot-row text-gray-500 hover:text-green-600 transition-colors duration-200 mr-2" data-id="${row.id}" title="Confirm changes">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="delete-slot-row text-red-600 hover:text-red-800 transition-colors duration-200" data-id="${row.id}" title="Clear row fields">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    `;
+                    slotsTableBody.appendChild(tr);
+                });
+                // Attach event listeners for input changes
+                slotsTableBody.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', updateSlotDataFromInput);
+                });
+                // Attach event listeners for individual delete buttons (now clearing fields)
+                slotsTableBody.querySelectorAll('.delete-slot-row').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const idToClear = e.currentTarget.dataset.id;
+                        clearSlotRowFields(idToClear); // Call new clear function
+                    });
+                });
+                // Attach event listeners for individual save buttons
+                slotsTableBody.querySelectorAll('.save-slot-row').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.currentTarget.classList.remove('text-gray-500');
+                        e.currentTarget.classList.add('text-green-600');
+                        console.log(`Slot row with ID ${e.currentTarget.dataset.id} confirmed/saved.`);
+                        // Re-render the table after saving to apply date filter immediately
+                        // Use 'all' filter type after save, assuming the user is managing all data
+                        renderSlotsTable(currentSlotsData, 'all');
+                    });
+                });
+            }
+
+            /**
+             * Clears all input fields in a specific slot row and updates the corresponding data object.
+             * If all fields are already empty, shows a warning.
+             * @param {string} idToClear The unique ID of the slot row whose fields to clear.
+             */
+            function clearSlotRowFields(idToClear) {
+                const rowElement = slotsTableBody.querySelector(`tr[data-id="${idToClear}"]`);
+                if (!rowElement) return;
+
+                const inputFields = rowElement.querySelectorAll('input');
+                let allFieldsEmpty = true;
+                inputFields.forEach(input => {
+                    if (input.value.trim() !== '') {
+                        allFieldsEmpty = false;
+                    }
+                });
+
+                if (allFieldsEmpty) {
+                    showInlineMessage(slotsMessage, slotsMessageText, "Please fill the fields.");
+                    return;
+                }
+
+                // Clear input values
+                inputFields.forEach(input => {
+                    input.value = '';
+                });
+
+                // Update the data object in currentSlotsData to reflect cleared fields
+                const targetRow = currentSlotsData.find(row => row.id === idToClear);
+                if (targetRow) {
+                    inputFields.forEach(input => {
+                        targetRow[input.dataset.column] = '';
+                    });
+                }
+
+                // Reset save icon color to indicate pending changes (cleared fields)
+                const saveButton = rowElement.querySelector('.save-slot-row');
+                if (saveButton && saveButton.classList.contains('text-green-600')) {
+                    saveButton.classList.remove('text-green-600');
+                    saveButton.classList.add('text-gray-500');
+                }
+
+                console.log(`Fields for slot row with ID ${idToClear} cleared.`);
+            }
+
+
+            /**
+             * Determines the currently active filter type for the slots table based on rendered content.
+             * This is a heuristic and might need adjustment if more complex UI states are added.
+             * @returns {'today'|'previous'|'all'} The active filter type.
+             */
+            function getActiveSlotsFilterType() {
+                // For simplicity, we assume if step3Num (Add Slots) was clicked last, it's 'all'
+                // If previousSlotsBtn has 'active-filter', it's 'previous'
+                // Otherwise, it's 'today' (default when entering section)
+                return previousSlotsBtn.classList.contains('active-filter') ? 'previous' :
+                    stepAddSlots.classList.contains('text-blue-600') ? 'all' : 'today';
+            }
+
+            /**
+             * Checks if all fields in the most recently added slot row are filled.
+             * @returns {boolean} True if all fields are filled, false otherwise.
+             */
+            function areAllSlotFieldsFilled() {
+                if (currentSlotsData.length === 0) return true; // No rows, so no unfilled row
+                const lastRowData = currentSlotsData[currentSlotsData.length - 1];
+                const lastRowElement = slotsTableBody.querySelector(`tr[data-id="${lastRowData.id}"]`);
+
+                if (!lastRowElement) return true; // Row not yet rendered or somehow missing
+
+                const inputFields = lastRowElement.querySelectorAll('input');
+                for (const input of inputFields) {
+                    // Skip the checkbox as it's not a data input field to be filled
+                    if (input.type === 'checkbox') continue;
+
+                    // Check for empty required fields
+                    // Assuming all fields in the row are considered "required" for this check
+                    if (input.value.trim() === '') {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            /**
+             * Adds an empty, editable row to the slots table.
+             */
+            function addEmptySlotRow() {
+                // Prevent adding a new row if the last one is not fully filled
+                if (!areAllSlotFieldsFilled()) {
+                    showInlineMessage(slotsMessage, slotsMessageText, "Please fill all fields in the current row before adding a new one.");
+                    return;
+                }
+
+                const newRow = {
+                    id: generateUniqueId(), // Assign a unique ID
+                    'Panel Name': '',
+                    'Email Id': '',
+                    'Date (DD-MM-YY)': formatDateToDDMMYY(new Date()), // Default to today's date
+                    'Start Time': '',
+                    'End Time': '',
+                    'Time Zone': ''
+                };
+                currentSlotsData.push(newRow);
+                renderSlotsTable(currentSlotsData, 'all'); // Render all data when adding a new row
+                updateSlotsSteps(3); // Keep step 3 active
+                previousSlotsBtn.classList.remove('active-filter'); // Ensure previous button is not active
+            }
+
+            /**
+             * Updates a specific slot data point in `currentSlotsData` based on input change.
+             */
+            function updateSlotDataFromInput(event) {
+                const rowId = event.target.dataset.id;
+                const columnName = event.target.dataset.column;
+                const value = event.target.value;
+                const targetRow = currentSlotsData.find(row => row.id === rowId);
+                if (targetRow) {
+                    targetRow[columnName] = value;
+                    // Reset save icon color to indicate pending changes, if it was green
+                    const saveButton = slotsTableBody.querySelector(`.save-slot-row[data-id="${rowId}"]`);
+                    if (saveButton && saveButton.classList.contains('text-green-600')) {
+                        saveButton.classList.remove('text-green-600');
+                        saveButton.classList.add('text-gray-500');
+                    }
+                }
+            }
+
+            /**
+             * Updates the styling of the step indicators in the "Upload Availability Slots" section.
+             * @param {number} activeStep The current active step (1, 2, or 3).
+             */
+            function updateSlotsSteps(activeStep) {
+                // Get references to all step elements
+                const allStepNumbers = [step1Num, step2Num, step3Num];
+                const allStepTexts = [downloadSlotsTemplateBtn, uploadCsvFileStep, stepAddSlots];
+
+                // Remove 'text-blue-600' and add 'text-black' for all steps
+                allStepNumbers.forEach(el => {
+                    el.classList.remove('text-blue-600');
+                    el.classList.add('text-black');
+                });
+                allStepTexts.forEach(el => {
+                    el.classList.remove('text-blue-600');
+                    el.classList.add('text-black');
+                });
+
+                // Apply blue and bold only to the current active step
+                if (activeStep === 1) {
+                    step1Num.classList.add('text-blue-600');
+                    downloadSlotsTemplateBtn.classList.add('text-blue-600');
+                } else if (activeStep === 2) {
+                    step2Num.classList.add('text-blue-600');
+                    uploadCsvFileStep.classList.add('text-blue-600');
+                } else if (activeStep === 3) {
+                    step3Num.classList.add('text-blue-600');
+                    stepAddSlots.classList.add('text-blue-600');
+                }
+            }
+
+
+            /**
+             * Renders the currentInterviewersData into the interviewers table with editable inputs and a checkbox.
+             * @param {Array<Object>} data The data to render.
+             * @param {'today'|'previous'|'all'} filterType Determines which data to display: 'today' (default), 'previous', or 'all'.
+             */
+            function renderInterviewersTable(data, filterType = 'today') {
+                interviewersTableBody.innerHTML = ''; // Clear existing rows
+                const todayFormatted = formatDateToDDMMYY(new Date());
+                let filteredData = [];
+
+                if (filterType === 'today') {
+                    filteredData = data.filter(row => isToday(row['Date (DD-MM-YY)']));
+                } else if (filterType === 'previous') {
+                    filteredData = data.filter(row => !isToday(row['Date (DD-MM-YY)']));
+                } else { // 'all'
+                    filteredData = data;
+                }
+
+                if (filteredData.length === 0) {
+                    let message = '';
+                    if (filterType === 'today') {
+                        message = `No interviewers data available for today (${todayFormatted}).`;
+                    } else if (filterType === 'previous') {
+                        message = `No previous interviewers found.`;
+                    } else { // 'all'
+                        message = `No interviewers data added yet. Add a new row or upload a CSV.`;
+                    }
+                    // Updated colspan to 10 (1 for checkbox + 8 data columns + 1 for actions)
+                    interviewersTableBody.innerHTML = `<tr><td colspan="10" class="px-4 py-2 text-center text-sm text-gray-600">${message}</td></tr>`;
+                    // Reset master checkbox state
+                    if (selectAllInterviewersCheckbox) selectAllInterviewersCheckbox.checked = false;
+                    return;
+                }
+
+                filteredData.forEach((row) => { // Removed index as we'll use row.id
+                    const tr = document.createElement('tr');
+                    tr.dataset.id = row.id; // Set data-id on the row for easier lookup
+                    tr.innerHTML = `
+                        <td class="px-4 py-2 text-sm text-gray-700">
+                            <input type="checkbox" class="interviewer-checkbox form-checkbox h-4 w-4 text-blue-600 rounded" data-id="${row.id}">
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['Interviewer Name'] || ''}" data-column="Interviewer Name" data-id="${row.id}" class="w-full p-1 border rounded-md text-sm" required>
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="email" value="${row['Interviewer Email'] || ''}" data-column="Interviewer Email" data-id="${row.id}" class="w-full p-1 border rounded-md text-sm" required>
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['Date (DD-MM-YY)'] || ''}" data-column="Date (DD-MM-YY)" data-id="${row.id}" placeholder="DD-MM-YY" class="w-full p-1 border rounded-md text-sm" required>
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['Grade'] || ''}" data-column="Grade" data-id="${row.id}" class="w-full p-1 border rounded-md text-sm">
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['TSRs'] || ''}" data-column="TSRs" data-id="${row.id}" class="w-full p-1 border rounded-md text-sm">
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['Eligible Rounds'] || ''}" data-column="Eligible Rounds" data-id="${row.id}" class="w-full p-1 border rounded-md text-sm">
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['Account ID'] || ''}" data-column="Account ID" data-id="${row.id}" class="w-full p-1 border rounded-md text-sm">
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="text" value="${row['Geography'] || ''}" data-column="Geography" data-id="${row.id}" class="w-full p-1 border rounded-md text-sm">
+                        </td>
+                        <td class="px-4 py-2 text-sm whitespace-nowrap">
+                            <button class="save-interviewer-row text-gray-500 hover:text-green-600 transition-colors duration-200 mr-2" data-id="${row.id}" title="Confirm changes">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="delete-interviewer-row text-red-600 hover:text-red-800 transition-colors duration-200" data-id="${row.id}" title="Clear row fields">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    `;
+                    interviewersTableBody.appendChild(tr);
+                });
+                // Attach event listeners for input changes
+                interviewersTableBody.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', updateInterviewerDataFromInput);
+                });
+                // Attach event listeners for individual delete buttons (now clearing fields)
+                interviewersTableBody.querySelectorAll('.delete-interviewer-row').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const idToClear = e.currentTarget.dataset.id;
+                        clearInterviewerRowFields(idToClear); // Call new clear function
+                    });
+                });
+                // Attach event listeners for individual save buttons
+                interviewersTableBody.querySelectorAll('.save-interviewer-row').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.currentTarget.classList.remove('text-gray-500');
+                        e.currentTarget.classList.add('text-green-600');
+                        console.log(`Interviewer row with ID ${e.currentTarget.dataset.id} confirmed/saved.`);
+                        // Re-render the table after saving to apply date filter immediately
+                        renderInterviewersTable(currentInterviewersData, 'all');
+                    });
+                });
+            }
+
+            /**
+             * Clears all input fields in a specific interviewer row and updates the corresponding data object.
+             * If all fields are already empty, shows a warning.
+             * @param {string} idToClear The unique ID of the interviewer row whose fields to clear.
+             */
+            function clearInterviewerRowFields(idToClear) {
+                const rowElement = interviewersTableBody.querySelector(`tr[data-id="${idToClear}"]`);
+                if (!rowElement) return;
+
+                const inputFields = rowElement.querySelectorAll('input');
+                let allFieldsEmpty = true;
+                inputFields.forEach(input => {
+                    if (input.value.trim() !== '') {
+                        allFieldsEmpty = false;
+                    }
+                });
+
+                if (allFieldsEmpty) {
+                    showInlineMessage(interviewersMessage, interviewersMessageText, "Fill the fields.");
+                    return;
+                }
+
+                // Clear input values
+                inputFields.forEach(input => {
+                    input.value = '';
+                });
+
+                // Update the data object in currentInterviewersData to reflect cleared fields
+                const targetRow = currentInterviewersData.find(row => row.id === idToClear);
+                if (targetRow) {
+                    inputFields.forEach(input => {
+                        targetRow[input.dataset.column] = '';
+                    });
+                }
+
+                // Reset save icon color to indicate pending changes (cleared fields)
+                const saveButton = rowElement.querySelector('.save-interviewer-row');
+                if (saveButton && saveButton.classList.contains('text-green-600')) {
+                    saveButton.classList.remove('text-green-600');
+                    saveButton.classList.add('text-gray-500');
+                }
+
+                console.log(`Fields for interviewer row with ID ${idToClear} cleared.`);
+            }
+
+
+            /**
+             * Determines the currently active filter type for the interviewers table.
+             * @returns {'today'|'previous'|'all'} The active filter type.
+             */
+            function getActiveInterviewersFilterType() {
+                return previousInterviewersBtn.classList.contains('active-filter') ? 'previous' :
+                    stepAddInterviewers.classList.contains('text-blue-600') ? 'all' : 'today';
+            }
+
+            /**
+             * Checks if all fields in the most recently added interviewer row are filled.
+             * @returns {boolean} True if all fields are filled, false otherwise.
+             */
+            function areAllInterviewerFieldsFilled() {
+                if (currentInterviewersData.length === 0) return true;
+                const lastRowData = currentInterviewersData[currentInterviewersData.length - 1];
+                const lastRowElement = interviewersTableBody.querySelector(`tr[data-id="${lastRowData.id}"]`);
+
+                if (!lastRowElement) return true;
+
+                const inputFields = lastRowElement.querySelectorAll('input');
+                for (const input of inputFields) {
+                    if (input.type === 'checkbox') continue;
+                    // Check if the field has the 'required' attribute and is empty
+                    if (input.hasAttribute('required') && input.value.trim() === '') {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            /**
+             * Adds an empty, editable row to the interviewers table.
+             */
+            function addEmptyInterviewerRow() {
+                // Prevent adding a new row if the last one is not fully filled
+                if (!areAllInterviewerFieldsFilled()) {
+                    showInlineMessage(interviewersMessage, interviewersMessageText, "Please fill all required fields in the current row before adding a new one.");
+                    return;
+                }
+
+                const newRow = {
+                    id: generateUniqueId(), // Assign a unique ID
+                    'Interviewer Name': '',
+                    'Interviewer Email': '',
+                    'Date (DD-MM-YY)': formatDateToDDMMYY(new Date()), // Default to today's date
+                    'Grade': '',
+                    'TSRs': '',
+                    'Eligible Rounds': '',
+                    'Account ID': '',
+                    'Geography': ''
+                };
+                currentInterviewersData.push(newRow);
+                renderInterviewersTable(currentInterviewersData, 'all'); // Render all data when adding a new row
+                updateInterviewersSteps(3); // Keep step 3 active
+                previousInterviewersBtn.classList.remove('active-filter'); // Ensure previous button is not active
+            }
+
+            /**
+             * Updates a specific interviewer data point in `currentInterviewersData` based on input change.
+             */
+            function updateInterviewerDataFromInput(event) {
+                const rowId = event.target.dataset.id;
+                const columnName = event.target.dataset.column;
+                const value = event.target.value;
+                const targetRow = currentInterviewersData.find(row => row.id === rowId);
+                if (targetRow) {
+                    targetRow[columnName] = value;
+                    // Reset save icon color to indicate pending changes, if it was green
+                    const saveButton = interviewersTableBody.querySelector(`.save-interviewer-row[data-id="${rowId}"]`);
+                    if (saveButton && saveButton.classList.contains('text-green-600')) {
+                        saveButton.classList.remove('text-green-600');
+                        saveButton.classList.add('text-gray-500');
+                    }
+                }
+            }
+
+
+            /**
+             * Updates the styling of the step indicators in the "Upload Interviewers" section.
+             * @param {number} activeStep The current active step (1, 2, or 3).
+             */
+            function updateInterviewersSteps(activeStep) {
+                // Get references to all step elements
+                const allStepNumbers = [step1NumInterviewer, step2NumInterviewer, step3NumInterviewer];
+                const allStepTexts = [downloadInterviewersTemplateBtn, uploadCsvFileStepInterviewer, stepAddInterviewers];
+
+                // Reset all step numbers and text to black
+                allStepNumbers.forEach(el => {
+                    el.classList.remove('text-blue-600');
+                    el.classList.add('text-black');
+                });
+                allStepTexts.forEach(el => {
+                    el.classList.remove('text-blue-600');
+                    el.classList.add('text-black');
+                });
+
+                // Apply blue and bold only to the current active step
+                if (activeStep === 1) {
+                    step1NumInterviewer.classList.add('text-blue-600');
+                    downloadInterviewersTemplateBtn.classList.add('text-blue-600');
+                } else if (activeStep === 2) {
+                    step2NumInterviewer.classList.add('text-blue-600');
+                    uploadCsvFileStepInterviewer.classList.add('text-blue-600');
+                } else if (activeStep === 3) {
+                    step3NumInterviewer.classList.add('text-blue-600');
+                    stepAddInterviewers.classList.add('text-blue-600');
+                }
+            }
+
+
+            /**
+             * Renders the license summary cards.
+             */
+            function renderLicenseSummaryCards() {
+                licenseSummaryCardsDiv.innerHTML = ''; // Clear existing cards
+                const summaryItems = [
+                    { label: 'Total License', value: licenseSummaryData.totalLicense, color: 'blue' },
+                    { label: 'Assigned License', value: licenseSummaryData.assignedLicense, color: 'green' },
+                    { label: 'Unassigned License', value: licenseSummaryData.unassignedLicense, color: 'blue' },
+                    { label: 'Expired License', value: licenseSummaryData.expiredLicense, color: 'red' }
+                ];
+
+                summaryItems.forEach(item => {
+                    const cardHtml = `
+                        <div class="bg-white rounded-lg shadow-md p-4 text-center border-l-4
+                            ${item.color === 'blue' ? 'border-blue-500' : ''}
+                            ${item.color === 'green' ? 'border-green-500' : ''}
+                            ${item.color === 'red' ? 'border-red-500' : ''}">
+                            <div class="text-3xl font-bold mb-1
+                                ${item.color === 'blue' ? 'text-blue-700' : ''}
+                                ${item.color === 'green' ? 'text-green-700' : ''}
+                                ${item.color === 'red' ? 'text-red-700' : ''}">
+                                ${item.value}
+                            </div>
+                            <div class="text-sm text-gray-600">${item.label}</div>
+                        </div>
+                    `;
+                    licenseSummaryCardsDiv.insertAdjacentHTML('beforeend', cardHtml);
+                });
+            }
+
+            /**
+             * Renders the license keys table.
+             */
+            function renderLicenseKeysTable() {
+                licenseKeysTableBody.innerHTML = ''; // Clear existing rows
+                if (licenseKeysData.length === 0) {
+                    licenseKeysTableBody.innerHTML = `<tr><td colspan="4" class="px-4 py-2 text-center text-sm text-gray-600">No license keys found.</td></tr>`;
+                    return;
+                }
+                licenseKeysData.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="px-4 py-2 text-sm text-gray-700">${row.key}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row.validFrom}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row.validTill}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row.assignedTo}</td>
+                    `;
+                    licenseKeysTableBody.appendChild(tr);
+                });
+            }
+
+
+            /**
+             * Generates and downloads a CSV file.
+             * @param {string[]} headers An array of strings representing the CSV headers.
+             * @param {Array<Object>} data An array of objects, where each object represents a row.
+             * @param {string} filename The name of the CSV file to download.
+             */
+            function downloadCsv(headers, data, filename) {
+                let csvContent = '\ufeff' + headers.join(',') + '\n'; // Add BOM for Excel compatibility
+
+                data.forEach(row => {
+                    const values = headers.map(header => {
+                        let value = row[header] !== undefined && row[header] !== null ? String(row[header]) : '';
+                        // Escape double quotes and enclose in double quotes if value contains comma or double quote
+                        if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+                            value = `"${value.replace(/"/g, '""')}"`;
+                        }
+                        return value;
+                    });
+                    csvContent += values.join(',') + '\n';
+                });
+
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                if (link.download !== undefined) { // Feature detection for download attribute
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', filename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    // Fallback for browsers that do not support the download attribute
+                    console.error('Download attribute not supported. Cannot download file directly.');
+                    // Optionally, open in a new window/tab as text
+                    // window.open('data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent));
+                }
+            }
+
+
+            /**
+             * Shows the Scheduled Slots modal.
+             */
+            function showScheduledSlotsModal() {
+                scheduledSlotsModal.classList.remove('hidden');
+                scheduledSlotsModal.classList.add('open');
+                document.body.classList.add('overflow-hidden'); // Prevent scrolling of background
+                renderScheduledSlotsTable(); // Render the slots when modal is shown
+            }
+
+            /**
+             * Hides the Scheduled Slots modal.
+             */
+            function hideScheduledSlotsModal() {
+                scheduledSlotsModal.classList.add('hidden');
+                scheduledSlotsModal.classList.remove('open');
+                document.body.classList.remove('overflow-hidden'); // Re-enable scrolling
+            }
+
+            /**
+             * Renders the scheduledSlots data into the scheduled slots table within the modal, filtered by today's date.
+             */
+            function renderScheduledSlotsTable() {
+                scheduledSlotsTableBody.innerHTML = ''; // Clear existing rows
+                const todayFormatted = formatDateToDDMMYY(new Date());
+                const filteredScheduledSlots = scheduledSlots.filter(row => isToday(row['Date (DD-MM-YY)']));
+
+                if (filteredScheduledSlots.length === 0) {
+                    scheduledSlotsTableBody.innerHTML = `<tr><td colspan="6" class="px-4 py-2 text-center text-sm text-gray-600">No scheduled slots available for today (${todayFormatted}).</td></tr>`;
+                    return;
+                }
+                filteredScheduledSlots.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Panel Name'] || ''}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Email Id'] || ''}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Date (DD-MM-YY)'] || ''}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Start Time'] || ''}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['End Time'] || ''}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Time Zone'] || ''}</td>
+                    `;
+                    scheduledSlotsTableBody.appendChild(tr);
+                });
+            }
+
+            /**
+             * Shows the Scheduled Interviews modal.
+             */
+            function showScheduledInterviewsModal() {
+                scheduledInterviewsModal.classList.remove('hidden');
+                scheduledInterviewsModal.classList.add('open');
+                document.body.classList.add('overflow-hidden'); // Prevent scrolling of background
+                renderScheduledInterviewsTable(); // Render the interviewers when modal is shown
+            }
+
+            /**
+             * Hides the Scheduled Interviews modal.
+             */
+            function hideScheduledInterviewsModal() {
+                scheduledInterviewsModal.classList.add('hidden');
+                scheduledInterviewsModal.classList.remove('open');
+                document.body.classList.remove('overflow-hidden'); // Re-enable scrolling
+            }
+
+            /**
+             * Renders the scheduledInterviewers data into the scheduled interviewers table within the modal, filtered by today's date.
+             */
+            function renderScheduledInterviewsTable() {
+                scheduledInterviewsTableBody.innerHTML = ''; // Clear existing rows
+                const todayFormatted = formatDateToDDMMYY(new Date());
+                const filteredScheduledInterviewers = scheduledInterviewers.filter(row => isToday(row['Date (DD-MM-YY)']));
+
+                if (filteredScheduledInterviewers.length === 0) {
+                    scheduledInterviewsTableBody.innerHTML = `<tr><td colspan="8" class="px-4 py-2 text-center text-sm text-gray-600">No scheduled interviewers available for today (${todayFormatted}).</td></tr>`;
+                    return;
+                }
+                filteredScheduledInterviewers.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Interviewer Name'] || ''}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Interviewer Email'] || ''}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Date (DD-MM-YY)'] || ''}</td> <!-- NEW COLUMN -->
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Grade'] || ''}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['TSRs'] || ''}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Eligible Rounds'] || ''}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Account ID'] || ''}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">${row['Geography'] || ''}</td>
+                    `;
+                    scheduledInterviewsTableBody.appendChild(tr);
+                });
+            }
+
+            /**
+             * Shows the general warning modal.
+             * @param {string} message The message to display in the warning.
+             */
+            function showGeneralWarningModal(message) {
+                generalWarningMessage.textContent = message;
+                generalWarningModal.classList.remove('hidden');
+                generalWarningModal.classList.add('open');
+                document.body.classList.add('overflow-hidden'); // Prevent background scrolling
+            }
+
+            /**
+             * Hides the general warning modal.
+             */
+            function hideGeneralWarningModal() {
+                generalWarningModal.classList.add('hidden');
+                generalWarningModal.classList.remove('open');
+                document.body.classList.remove('overflow-hidden'); // Re-enable background scrolling
+            }
+
+            /**
+             * Validates if an email address is a "business email" (i.e., not a Gmail address).
+             * @param {string} email The email address to validate.
+             * @returns {boolean} True if it's a business email, false otherwise (if it's a Gmail).
+             */
+            function isBusinessEmail(email) {
+                return !email.toLowerCase().endsWith('@gmail.com');
+            }
+
+            /**
+             * Validates the email input field and updates the validation message and submit button state.
+             */
+            function validateEmailInput() {
+                const email = emailInput.value.trim();
+                if (email === '') {
+                    emailValidationMessage.classList.add('hidden');
+                    isEmailValid = false; // Email is required, so empty is invalid
+                } else if (!isBusinessEmail(email)) {
+                    emailValidationMessage.classList.remove('hidden');
+                    isEmailValid = false;
+                } else {
+                    emailValidationMessage.classList.add('hidden');
+                    isEmailValid = true;
+                }
+                updateSubmitButtonState();
+            }
+
+            /**
+             * Updates the state of the submit button based on email validation and form validity.
+             */
+            function updateSubmitButtonState() {
+                // Ensure form validity is also checked (e.g., required fields are filled)
+                const isFormValid = memberForm.checkValidity();
+                if (isEmailValid && isFormValid) {
+                    sendInvitesBtn.disabled = false;
+                    sendInvitesBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    sendInvitesBtn.disabled = true;
+                    sendInvitesBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+
+
+            // --- Event Listeners ---
+
+            // Search input event listener
+            searchTermInput.addEventListener('input', (e) => {
+                searchTerm = e.target.value;
+                renderTable(); // Re-render table on search input
+            });
+
+            // Role filter dropdown event listener
+            roleFilterSelect.addEventListener('change', (e) => {
+                roleFilter = e.target.value;
+                renderTable(); // Re-render table on role filter change
+            });
+
+            // Group filter dropdown event listener
+            groupFilterSelect.addEventListener('change', (e) => {
+                groupFilter = e.target.value;
+                console.log("Group Filter changed (Note: This dropdown's logic is not fully integrated with table filtering in this version):", groupFilter);
+                renderTable(); // Re-render table (although visual change won't happen unless integrated)
+            });
+
+
+            // Show count dropdown event listener
+            showCountSelect.addEventListener('change', (e) => {
+                showCount = Number(e.target.value);
+                renderTable(); // Re-render table on show count change
+            });
+
+            // "Add Member" button click listener
+            addMemberBtn.addEventListener('click', openAddModal);
+
+            // "Upload Slots" button click listener (TOP action button)
+            uploadSlotsBtn.addEventListener('click', showUploadSlotsSection);
+
+            // "Upload Interviewers" button click listener (TOP action button)
+            uploadInterviewersBtn.addEventListener('click', showUploadInterviewersSection);
+
+            // "Manage Screen Licenses" button click listener (TOP action button)
+            manageLicensesBtn.addEventListener('click', showManageLicensesSection);
+
+            // "Report" button click listener (New)
+            reportBtn.addEventListener('click', () => {
+                // Updated headers to include all fields from Nexnoratech_Team_Report_10Jun2025_011642 (1).csv
+                const reportHeaders = [
+                    "Member Name", "Email", "Role", "Account Type", "Phone Screen",
+                    "Interview Slots", "Phone", "Status", "Notes"
+                ];
+                const reportData = teamMembers.map(member => ({
+                    "Member Name": member.name,
+                    "Email": member.contact, // Using contact as email
+                    "Role": member.role,
+                    "Account Type": member.accountType,
+                    "Phone Screen": member.phoneScreen,
+                    "Interview Slots": member.interviewStats,
+                    "Phone": member.phone || '', // Include phone, default to empty string if not present
+                    "Status": '', // Placeholder as this data is not in current teamMembers structure
+                    "Notes": '' // Placeholder as this data is not in current teamMembers structure
+                }));
+                downloadCsv(reportHeaders, reportData, 'Nexnoratech_Team_Report.csv');
+            });
+
+
+            // "Back to Team Members" button click listener on Upload Slots page
+            backToTeamMembersBtn1.addEventListener('click', showMainContent);
+
+            // "Back to Team Members" button click listener on Upload Interviewers page
+            backToTeamMembersBtn2.addEventListener('click', showMainContent);
+
+            // "Back to Team Members" button click listener on Manage Licenses page
+            backToTeamMembersBtn3.addEventListener('click', showMainContent);
+
+
+            // "X" close button in member modal click listener
+            closeModalBtn.addEventListener('click', hideMemberModal);
+
+            // Click outside member modal to close
+            memberModal.addEventListener('click', (e) => {
+                if (e.target === memberModal) {
+                    hideMemberModal();
+                }
+            });
+
+            // "Clear" button in member modal click listener
+            clearFormBtn.addEventListener('click', () => {
+                memberForm.reset(); // Resets all form fields
+                memberIdInput.value = ''; // Ensure hidden ID is cleared
+                emailValidationMessage.classList.add('hidden'); // Hide email validation message
+                isEmailValid = false; // Reset email validation state
+                updateSubmitButtonState(); // Update button state
+            });
+
+            // Email input real-time validation
+            emailInput.addEventListener('input', validateEmailInput);
+            // Also listen to change event to catch autofill scenarios
+            emailInput.addEventListener('change', validateEmailInput);
+
+            // Ensure submit button state is updated whenever other form fields (like role) change
+            memberForm.querySelectorAll('input, select').forEach(element => {
+                if (element.id !== 'email') { // Already handled email separately
+                    element.addEventListener('input', updateSubmitButtonState);
+                    element.addEventListener('change', updateSubmitButtonState);
+                }
+            });
+
+
+            // Tab click listeners for "All", "Company Members", "External Members"
+            tabAllBtn.addEventListener('click', () => {
+                activeMemberType = 'all';
+                updateTabCounts(); // Update counts and active styling
+                renderTable(); // Re-render table based on new active type
+            });
+            tabCompanyBtn.addEventListener('click', () => {
+                activeMemberType = 'company';
+                updateTabCounts(); // Update counts and active styling
+                renderTable(); // Re-render table based on new active type
+            });
+            tabExternalBtn.addEventListener('click', () => {
+                activeMemberType = 'external';
+                updateTabCounts(); // Update counts and active styling
+                renderTable(); // Re-render table based on new active type
+            });
+
+            // Master checkbox for select all/none functionality for main team members table
+            if (selectAllMembersCheckbox) {
+                selectAllMembersCheckbox.addEventListener('change', (e) => {
+                    const isChecked = e.target.checked;
+                    // Select all individual member checkboxes
+                    document.querySelectorAll('.member-checkbox').forEach(checkbox => {
+                        checkbox.checked = isChecked;
+                    });
+                });
+            }
+
+            // Master checkbox for select all/none functionality for slots table
+            if (selectAllSlotsCheckbox) {
+                selectAllSlotsCheckbox.addEventListener('change', (e) => {
+                    const isChecked = e.target.checked;
+                    document.querySelectorAll('#slotsTableBody .slot-checkbox').forEach(checkbox => {
+                        checkbox.checked = isChecked;
+                    });
+                });
+            }
+
+            // Master checkbox for select all/none functionality for interviewers table
+            if (selectAllInterviewersCheckbox) {
+                selectAllInterviewersCheckbox.addEventListener('change', (e) => {
+                    const isChecked = e.target.checked;
+                    document.querySelectorAll('#interviewersTableBody .interviewer-checkbox').forEach(checkbox => {
+                        checkbox.checked = isChecked;
+                    });
+                });
+            }
+
+
+            // Member Modal form submission listener (for both Add and Edit)
+            memberForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent default form submission behavior
+
+                // Re-validate email on submission to catch any last-minute changes or bypasses
+                validateEmailInput();
+                if (!isEmailValid) {
+                    console.log("Form submission stopped due to invalid email.");
+                    return; // Stop the form submission if email is not valid
+                }
+
+                const formData = new FormData(memberForm);
+                const memberId = memberIdInput.value;
+                const isNewMember = !memberId; // true if adding, false if editing
+
+                const email = formData.get('email');
+
+                let newMemberData = {
+                    name: formData.get('fullName'),
+                    contact: email, // Use the validated email
+                    role: formData.get('role'),
+                    phone: formData.get('phone') || '',
+                    phoneScreen: '0 used / 0 active licenses',
+                    interviewStats: '0 / 0',
+                    memberType: 'company' // Default for new members
+                };
+
+                let effectiveAccountType = formData.get('accountType'); // Get selected value from dropdown
+
+                if (isNewMember) {
+                    // For new members, force accountType to 'Pending'.
+                    // This ensures all new non-Super Admin members start in a 'Pending' state,
+                    // regardless of what was selected in the Account Type dropdown in the Add Member modal.
+                    effectiveAccountType = 'Pending';
+                } else {
+                    // For existing members (editing), apply Super Admin restriction
+                    const existingMember = teamMembers.find(m => m.id === memberId);
+                    if (existingMember && existingMember.accountType === 'Super Admin' &&
+                        (effectiveAccountType === 'Admin' || effectiveAccountType === 'Member' || effectiveAccountType === 'Pending')) {
+                        showGeneralWarningModal("Changing a Super Admin's account type to 'Admin', 'Member', or 'Pending' is not allowed.");
+                        accountTypeModalSelect.value = 'Super Admin'; // Revert the dropdown display
+                        return; // Stop the form submission
+                    }
+                }
+
+                newMemberData.accountType = effectiveAccountType; // Assign the determined account type
+
+                if (memberId) {
+                    // Update existing member
+                    teamMembers = teamMembers.map(member =>
+                        member.id === memberId ? { ...member, ...newMemberData } : member
+                    );
+                } else {
+                    // Add new member
+                    teamMembers.push({ ...newMemberData, id: String(Date.now()) });
+                }
+
+                let currentMaxShowOption = Math.max(...Array.from(showCountSelect.options).map(o => Number(o.value)));
+                if (teamMembers.length > currentMaxShowOption) {
+                    showCount = teamMembers.length;
+                    const newOption = document.createElement('option');
+                    newOption.value = showCount;
+                    newOption.textContent = showCount;
+                    showCountSelect.appendChild(newOption);
+                }
+                showCountSelect.value = showCount;
+
+                hideMemberModal();
+                renderSummaryCards();
+                updateTabCounts();
+                renderTable();
+            });
+
+            // --- Profile Dropdown Logic ---
+            profileMenuContainer.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent document click from immediately closing it
+                // Check if the clicked element is the help icon or contains it
+                if (e.target === helpIcon || helpIcon.contains(e.target)) {
+                    // Add any specific action for the help icon here if needed
+                    console.log("Help icon clicked!"); // For demonstration
+                } else {
+                    profileDropdown.classList.toggle('show'); // Correctly toggles the 'show' class
+                }
+            });
+
+            // Close the dropdown if the user clicks outside of it
+            document.addEventListener('click', (e) => {
+                if (!profileMenuContainer.contains(e.target)) {
+                    profileDropdown.classList.remove('show'); // Correctly removes the 'show' class
+                }
+            });
+
+            // --- CSV file handling for Upload Slots ---
+            dropAreaSlots.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropAreaSlots.classList.add('border-blue-500', 'bg-blue-50');
+            });
+            dropAreaSlots.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropAreaSlots.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+            dropAreaSlots.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropAreaSlots.classList.remove('border-blue-500', 'bg-blue-50');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    // Expect the detailed headers for parsing the uploaded file
+                    handleCsvFile(files[0], fileNameDisplaySlots, renderSlotsTable, ['Panel Name', 'Email Id', 'Date (DD-MM-YY)', 'Start Time', 'End Time', 'Time Zone'], 'slots');
+                }
+            });
+            dropAreaSlots.addEventListener('click', () => { csvFileInputSlots.click(); });
+            csvFileInputSlots.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    // Expect the detailed headers for parsing the uploaded file
+                    handleCsvFile(e.target.files[0], fileNameDisplaySlots, renderSlotsTable, ['Panel Name', 'Email Id', 'Date (DD-MM-YY)', 'Start Time', 'End Time', 'Time Zone'], 'slots');
+                }
+            });
+
+            // Event listener for "Download CSV template" for slots
+            downloadSlotsTemplateBtn.addEventListener('click', () => {
+                // IMPORTANT: Updated headers to match the provided screenshot
+                downloadCsv(['Panel Name', 'Email Id', 'Date (DD-MM-YY)', 'Start Time', 'End Time', 'Time Zone'], [], 'slots_template.csv'); // Pass empty array for data when downloading template
+                updateSlotsSteps(1); // Keep step 1 active after download
+            });
+
+            // Event listener for "Upload CSV file" click to trigger file input AND update step color
+            uploadCsvFileStep.addEventListener('click', () => {
+                updateSlotsSteps(2); // Immediately set step 2 as active
+                csvFileInputSlots.click(); // Programmatically click the hidden file input
+                // The handleCsvFile will also call updateSlotsSteps(2) after file selection, which is fine.
+            });
+
+            // Event listener for "3. Add Slots" click (now shows all data)
+            stepAddSlots.addEventListener('click', () => {
+                updateSlotsSteps(3); // Set step 3 as active
+                renderSlotsTable(currentSlotsData, 'all'); // Display ALL data in the table
+                previousSlotsBtn.classList.remove('active-filter'); // Remove active state from previous button
+                slotsMessage.classList.add('hidden'); // Hide any inline message
+            });
+
+            // Event listener for "Add New Row" button in Slots section
+            addSlotRowBtn.addEventListener('click', addEmptySlotRow);
+
+            // NEW: Event listener for "Previous Slots" button
+            previousSlotsBtn.addEventListener('click', () => {
+                updateSlotsSteps(3); // Keep step 3 active (as we are viewing data in the table)
+                renderSlotsTable(currentSlotsData, 'previous'); // Display only previous data
+                previousSlotsBtn.classList.add('active-filter'); // Add active state to this button
+                slotsMessage.classList.add('hidden'); // Hide any inline message
+            });
+
+            // Event listener for "DELETE SELECTED" button for slots table
+            deleteSelectedSlotsBtn.addEventListener('click', () => {
+                // Get all checked checkboxes in the slots table
+                const checkedCheckboxes = document.querySelectorAll('#slotsTableBody .slot-checkbox:checked');
+
+                // If no checkboxes are checked, do nothing
+                if (checkedCheckboxes.length === 0) {
+                    console.log("No slots selected for deletion.");
+                    showInlineMessage(slotsMessage, slotsMessageText, "No slots selected for deletion.");
+                    return;
+                }
+
+                // Get the IDs of the rows to be deleted
+                const idsToDelete = Array.from(checkedCheckboxes)
+                    .map(cb => cb.dataset.id);
+
+                // Remove selected rows from currentSlotsData
+                currentSlotsData = currentSlotsData.filter(row => !idsToDelete.includes(row.id));
+
+                // Re-render the slots table to reflect deletions
+                renderSlotsTable(currentSlotsData, getActiveSlotsFilterType()); // Maintain current filter view
+                selectAllSlotsCheckbox.checked = false; // Uncheck master checkbox after deletion
+                showInlineMessage(slotsMessage, slotsMessageText, "Selected slots deleted successfully.");
+            });
+
+
+            // --- CSV file handling for Upload Interviewers (New) ---
+            dropAreaInterviewers.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropAreaInterviewers.classList.add('border-blue-500', 'bg-blue-50');
+            });
+            dropAreaInterviewers.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropAreaInterviewers.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+            dropAreaInterviewers.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropAreaInterviewers.classList.remove('border-blue-500', 'bg-blue-50');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleCsvFile(files[0], fileNameDisplayInterviewers, renderInterviewersTable, ['Interviewer Name', 'Interviewer Email', 'Date (DD-MM-YY)', 'Grade', 'TSRs', 'Eligible Rounds', 'Account ID', 'Geography'], 'interviewers');
+                }
+            });
+            dropAreaInterviewers.addEventListener('click', () => { csvFileInputInterviewers.click(); });
+            csvFileInputInterviewers.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleCsvFile(e.target.files[0], fileNameDisplayInterviewers, renderInterviewersTable, ['Interviewer Name', 'Interviewer Email', 'Date (DD-MM-YY)', 'Grade', 'TSRs', 'Eligible Rounds', 'Account ID', 'Geography'], 'interviewers');
+                }
+            });
+
+            // Event listener for "Download CSV template" for interviewers
+            downloadInterviewersTemplateBtn.addEventListener('click', () => {
+                downloadCsv(['Interviewer Name', 'Interviewer Email', 'Date (DD-MM-YY)', 'Grade', 'TSRs', 'Eligible Rounds', 'Account ID', 'Geography'], [], 'interviewers_template.csv'); // Pass empty array for data when downloading template
+                updateInterviewersSteps(1); // Keep step 1 active after download
+            });
+
+            // Event listener for "Upload CSV file" click to trigger file input AND update step color for interviewers
+            uploadCsvFileStepInterviewer.addEventListener('click', () => {
+                updateInterviewersSteps(2); // Immediately set step 2 as active
+                csvFileInputInterviewers.click(); // Programmatically click the hidden file input
+            });
+
+            // Event listener for "3. Add Interviewers" click (now shows all data)
+            stepAddInterviewers.addEventListener('click', () => {
+                updateInterviewersSteps(3); // Set step 3 as active
+                renderInterviewersTable(currentInterviewersData, 'all'); // Display ALL data in the table
+                previousInterviewersBtn.classList.remove('active-filter'); // Remove active state from previous button
+                interviewersMessage.classList.add('hidden'); // Hide any inline message
+            });
+
+            // Event listener for "Add New Row" button in Interviewers section
+            addInterviewerRowBtn.addEventListener('click', addEmptyInterviewerRow);
+
+            // NEW: Event listener for "Previous Interviews" button
+            previousInterviewersBtn.addEventListener('click', () => {
+                updateInterviewersSteps(3); // Keep step 3 active (as we are viewing data in the table)
+                renderInterviewersTable(currentInterviewersData, 'previous'); // Display only previous data
+                previousInterviewersBtn.classList.add('active-filter'); // Add active state to this button
+                interviewersMessage.classList.add('hidden'); // Hide any inline message
+            });
+
+            // Event listener for "DELETE SELECTED" button for interviewers table
+            deleteSelectedInterviewersBtn.addEventListener('click', () => {
+                const checkedCheckboxes = document.querySelectorAll('#interviewersTableBody .interviewer-checkbox:checked');
+
+                if (checkedCheckboxes.length === 0) {
+                    console.log("No interviewers selected for deletion.");
+                    showInlineMessage(interviewersMessage, interviewersMessageText, "No interviewers selected for deletion.");
+                    return;
+                }
+
+                const idsToDelete = Array.from(checkedCheckboxes)
+                    .map(cb => cb.dataset.id);
+
+                currentInterviewersData = currentInterviewersData.filter(row => !idsToDelete.includes(row.id));
+
+                renderInterviewersTable(currentInterviewersData, getActiveInterviewersFilterType()); // Maintain current filter view
+                selectAllInterviewersCheckbox.checked = false;
+                showInlineMessage(interviewersMessage, interviewersMessageText, "Selected interviewers deleted successfully.");
+            });
+
+
+            // Event listener for closing the Scheduled Slots modal
+            closeScheduledSlotsModalBtn.addEventListener('click', hideScheduledSlotsModal);
+
+            // Click outside Scheduled Slots modal to close
+            scheduledSlotsModal.addEventListener('click', (e) => {
+                if (e.target === scheduledSlotsModal) {
+                    hideScheduledSlotsModal();
+                }
+            });
+
+            // Event listener for closing the Scheduled Interviews modal (New)
+            closeScheduledInterviewsModalBtn.addEventListener('click', hideScheduledInterviewsModal);
+
+            // Click outside Scheduled Interviews modal to close (New)
+            scheduledInterviewsModal.addEventListener('click', (e) => {
+                if (e.target === scheduledInterviewsModal) {
+                    hideScheduledInterviewsModal();
+                }
+            });
+
+            // Event listeners for General Warning Modal (still used for Super Admin changes)
+            closeGeneralWarningModalBtn.addEventListener('click', hideGeneralWarningModal);
+            generalWarningOkBtn.addEventListener('click', hideGeneralWarningModal);
+            generalWarningModal.addEventListener('click', (e) => {
+                if (e.target === generalWarningModal) {
+                    hideGeneralWarningModal();
+                }
+            });
+
+
+            /**
+             * Sets the profile user name dynamically in the header dropdown.
+             */
+            function setProfileUserName() {
+                // Find the "Sri" member from initialMembers (or current teamMembers)
+                const sriMember = initialMembers.find(member => member.name === 'Sri');
+                if (sriMember && sriMember.accountType === 'Super Admin') {
+                    profileUserNameDropdown.textContent = 'Super Admin';
+                } else {
+                    profileUserNameDropdown.textContent = 'Sri'; // Default to 'Sri' if not Super Admin
+                }
+            }
+
+
+            // --- Initial Application Load ---
+            // This function runs once when the DOM is fully loaded to set up the initial state
+            function initializeApp() {
+                // Simulate a loading delay for demonstration purposes
+                setTimeout(() => {
+                    teamMembers = initialMembers; // Load the predefined dummy data
+                    populateRoleFilter(); // Populate role filter dropdowns
+                    renderSummaryCards(); // Render initial summary cards
+                    updateTabCounts(); // Update initial tab counts and styling
+                    renderTable(); // Render the initial table content
+                    setProfileUserName(); // Set the profile name in the header
+                }, 500); // Small delay to show initial page, then content renders
+
+                // Ensure the main content is visible and upload section is hidden on initial load
+                showMainContent();
+            }
+
+            initializeApp(); // Call to start the application
+        });
+    </script>
+</body>
+
+</html>

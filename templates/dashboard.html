@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FDI Dashboard</title>
+  <!-- Link to Google Fonts for Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Add Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* --- BASE & GENERAL STYLES --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F3F4F6;
+      overflow-x: hidden;
+      color: #1F2937;
+      /* Add padding to the top to prevent content from being hidden by the fixed header */
+      padding-top: 95px; 
+    }
+    body.modal-open {
+      overflow: hidden;
+    }
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    /* --- UTILITIES --- */
+    .hidden {
+      display: none !important;
+    }
+
+    /* --- HEADER STYLES --- */
+    .top-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+ 
+    .brand-title {
+      background-color: #1d2686;
+      color: #fff;
+      font-size: 20px;
+      padding: 10px 12px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-title-text {
+        color: #fff;
+        font-size: 20px;
+        font-weight: bold;
+    }
+ 
+    .profile-menu-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .profile-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: #e0e0e0;
+      color: #1d2686;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .profile-help-icon {
+        color: #fff;
+        font-size: 20px;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      overflow: hidden;
+      min-width: 200px;
+      display: none;
+      z-index: 100;
+      margin-top: 8px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .profile-dropdown.show {
+      display: block;
+    }
+
+    .profile-dropdown-header {
+        padding: 8px 12px;
+        background-color: #f0f2f5;
+        border-bottom: 1px solid #eee;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .profile-dropdown-header span {
+        font-size: 14px;
+    }
+
+    .profile-dropdown-header small {
+        color: #666;
+        font-weight: 400;
+        font-size: 11px;
+    }
+
+    .profile-dropdown-item {
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      font-size: 12px;
+      transition: background-color 0.2s;
+    }
+
+    .profile-dropdown-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .profile-dropdown-item i {
+        color: #1d2686;
+    }
+
+    /* --- SECONDARY NAVIGATION --- */
+    .secondary-nav {
+      width: 100%;
+      padding: 0.5rem 1rem;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+    }
+    .secondary-nav-content {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .nav-left > * + * { margin-left: 1rem; }
+    .nav-right { gap: 1rem; }
+    .nav-item-link {
+      color: #374151;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.25rem 0;
+    }
+    .plan-link {
+      color: #0EA5E9;
+      font-weight: 600;
+    }
+    .plan-link:hover {
+      text-decoration: underline;
+    }
+    
+    /* --- DROPDOWN MENUS (NAV) --- */
+    .dropdown {
+      position: relative;
+    }
+    .dropdown-menu {
+      position: absolute;
+      background-color: #ffffff;
+      border-radius: 0.375rem;
+      z-index: 20;
+      color: #374151;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .dropdown-menu.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .dropdown-menu-assessment {
+      left: 0;
+      margin-top: 0.5rem;
+      width: 12rem;
+      padding: 0.25rem 0;
+      transform-origin: top center;
+      transform: rotateX(-90deg) scale(0.95);
+    }
+    .dropdown-menu-assessment.is-open {
+      transform: rotateX(0deg) scale(1);
+    }
+    .dropdown-menu-interview {
+      left: 0;
+      margin-top: 0.5rem;
+      width: 12rem;
+      padding: 0.25rem 0;
+      transform-origin: top left;
+      transform: rotateY(90deg) scale(0.95);
+    }
+    .dropdown-menu-interview.is-open {
+      transform: rotateY(0deg) scale(1);
+    }
+    .submenu {
+      position: relative;
+    }
+    .submenu-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .submenu-arrow {
+      font-size: 0.75rem;
+      margin-left: 0.25rem;
+    }
+    .submenu-menu {
+      position: absolute;
+      left: 100%;
+      top: 0;
+      width: 11rem; /* Decreased width */
+      background-color: #fff;
+      border-radius: 0.375rem;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
+      z-index: 30;
+      margin-left: 0.25rem;
+      padding: 0.25rem 0;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 0.25rem 1rem;
+      font-size: 0.875rem;
+    }
+    .menu-item:hover {
+      background-color: #F3F4F6;
+    }
+
+
+    /* --- MAIN CONTENT --- */
+    .main-container {
+      padding: 2rem 1rem 1.5rem 1rem;
+    }
+    .card-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .card-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    .content-card {
+      background-color: #ffffff;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease-in-out;
+    }
+    .content-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1F2937;
+      margin-bottom: 0.5rem;
+    }
+    .card-text {
+      color: #4B5563;
+      margin-bottom: 1rem;
+    }
+    .card-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .card-link {
+      color: #2563EB;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    .card-link:hover {
+      text-decoration: underline;
+    }
+
+    /* --- MODALS --- */
+    .modal-container {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 1000;
+      perspective: 1200px;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(17, 24, 39, 0.75);
+      transition: opacity 0.3s ease-in-out;
+    }
+    .modal-content {
+      background-color: #ffffff;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      transform: scale(1);
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      transition: opacity 0.4s ease-in-out, transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    @media (min-width: 768px) {
+      .modal-content { padding: 2rem; }
+    }
+    .new-assignment-modal .modal-content { max-width: 42rem; }
+    .help-modal .modal-content { max-width: 32rem; }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1F2937;
+    }
+    .modal-close-button {
+      color: #6B7280;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .modal-close-button:hover { color: #374151; }
+    .modal-close-icon { width: 1.75rem; height: 1.75rem; }
+    .modal-grid {
+      display: grid;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .modal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .modal-card {
+      border: 1px solid #D1D5DB;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      text-align: center;
+      transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+      cursor: pointer;
+    }
+    .modal-card:hover {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    }
+    .modal-card.auto:hover { border-color: #3B82F6; }
+    .modal-card.manual:hover { border-color: #10B981; }
+    .modal-card-image {
+      width: 5rem;
+      height: 5rem;
+      margin: 0 auto 1rem auto;
+      border-radius: 0.375rem;
+    }
+    .modal-card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.25rem;
+    }
+    .modal-card-text {
+      font-size: 0.875rem;
+      color: #4B5563;
+    }
+    .modal-footer {
+      margin-top: 1.5rem;
+      text-align: right;
+    }
+    .ok-button {
+      background-color: #3B82F6;
+      color: #ffffff;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+    .ok-button:hover { background-color: #2563EB; }
+
+    /* --- ANIMATIONS --- */
+    .modal-container.hidden .modal-backdrop { opacity: 0; }
+    .modal-container.hidden .modal-content-flip {
+      opacity: 0;
+      transform: rotateY(-180deg) scale(0.9);
+    }
+    .modal-container.hidden .modal-content {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    #automaticAssign, #customAssign {
+      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transform-style: preserve-3d;
+    }
+    #automaticAssign.is-flipping, #customAssign.is-flipping {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-header">
+    <div class="brand-title">
+        <span class="brand-title-text">FDI</span>
+        <div class="profile-menu-container" id="profileMenuContainer">
+            <div class="profile-avatar">S</div>
+            <i class="fas fa-question-circle profile-help-icon" id="helpIcon"></i>
+
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="profile-dropdown-header">
+                    <span>Sri</span><br>
+                    <small>srharshak@nexnoratech.onmicros....</small><br>
+                    <small>Nexnoratech</small>
+                </div>
+                <a href="/company-profile/" class="profile-dropdown-item">
+                    <i class="fas fa-building"></i> Company Profile
+                </a>
+                <a href="/team-members/" class="profile-dropdown-item">
+                    <i class="fas fa-users"></i> Team Members
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-envelope"></i> Email Templates
+                </a>
+                <a href="/question-library/" class="profile-dropdown-item">
+                    <i class="fas fa-question-circle"></i> Connect Question Library
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-chart-bar"></i> Plan Usage
+                </a>
+                <a href="/setting/" class="profile-dropdown-item">
+                    <i class="fas fa-cog"></i> Setting Options
+                </a>
+                <a href="#" class="profile-dropdown-item">
+                    <i class="fas fa-user-circle"></i> My Account 
+                </a>
+                <a href="/logout/" class="profile-dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+    <nav class="secondary-nav">
+      <div class="secondary-nav-content">
+          <div class="nav-left">
+              <div class="dropdown">
+                  <div class="nav-item-link">Assessment</div>
+                  <div class="dropdown-menu dropdown-menu-assessment">
+                      <a href="/assessments-page/" class="menu-item">Assessments</a>
+                      <div class="submenu">
+                          <a href="#" class="menu-item submenu-link">
+                              Library <span class="submenu-arrow">▶</span>
+                          </a>
+                          <div class="dropdown-menu submenu-menu dropdown-menu-assessment">
+                              <a href="/question-library/" class="menu-item">Question Library</a>
+                              <a href="/assessment-library/" class="menu-item">Assessment Library</a>
+                          </div>
+                      </div>
+                      <a href="#" id="openNewAssignmentHeader" class="menu-item">New Assignment</a>
+                  </div>
+              </div>
+  
+              <div class="dropdown">
+                  <div class="nav-item-link">Interview</div>
+                  <div class="dropdown-menu dropdown-menu-interview">
+                      <a href="#" class="menu-item">Interview</a>
+                      <a href="#" class="menu-item">Coding/Interview</a>
+                      <a href="#" class="menu-item">Coding</a>
+                  </div>
+              </div>
+          </div>
+          <div class="nav-right">
+              <a href="#" class="plan-link">Check Plan</a>
+              <a href="#" class="plan-link">Upgrade Plan</a>
+          </div>
+      </div>
+    </nav>
+  </div>
+
+  <main id="fdiSection" class="main-container">
+    <div class="card-grid">
+      <div class="content-card">
+        <h2 class="card-title">Assessment</h2>
+        <p class="card-text">This section provides information about assessments, including how to create, manage, and evaluate them.</p>
+        <div class="card-links">
+          <a href="/assessments-page/" class="card-link">Assessments</a>
+          <a href="/question-library/" class="card-link">Question Library</a>
+          <a href="/assessment-library/" class="card-link">Assessment Library</a>
+          <a href="#" id="openNewAssignmentContent" class="card-link">New Assignment</a>
+        </div>
+      </div>
+      <div class="content-card">
+        <h2 class="card-title">Interview</h2>
+        <p class="card-text">Learn about conducting effective interviews, different interview types, and best practices for evaluating candidates.</p>
+        <div class="card-links">
+          <a href="#" class="card-link">Interview</a>
+          <a href="#" class="card-link">Coding/Interview</a>
+          <a href="#" class="card-link">Coding</a>
+        </div>
+      </div>
+      <div class="content-card">
+        <h2 class="card-title">Connect</h2>
+        <p class="card-text">Find resources and tools to connect with other professionals, share knowledge, and collaborate on projects.</p>
+        <div class="card-links">
+          <a href="mailto:support@nex.com" class="card-link">support@nex.com</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="newAssignmentModal" class="modal-container new-assignment-modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">New Assignment</h2>
+        <button id="closeNewAssignmentModal" class="modal-close-button">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="modal-close-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-grid">
+        <div id="automaticAssign" class="modal-card auto">
+          <img src="https://placehold.co/80x80/3B82F6/FFFFFF?text=Auto" alt="Automatic" class="modal-card-image">
+          <h3 class="modal-card-title">Automatic</h3>
+          <p class="modal-card-text">Automatically creates assignments based on predefined rules and data.</p>
+        </div>
+        <div id="customAssign" class="modal-card manual">
+          <img src="https://placehold.co/80x80/10B981/FFFFFF?text=Manual" alt="Custom" class="modal-card-image">
+          <h3 class="modal-card-title">Manual</h3>
+          <p class="modal-card-text">Manually create and customize your assignment details.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="helpModal" class="modal-container help-modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-content-flip">
+      <div class="modal-header">
+        <h2 class="modal-title">Help & Information</h2>
+        <button id="closeHelpModal" class="modal-close-button">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="modal-close-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <p>This is where help information or links to a help page would go. For now, this is a placeholder modal.</p>
+      <div class="modal-footer">
+        <button id="okHelpModal" class="ok-button">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // --- PROFILE DROPDOWN SCRIPT ---
+      const profileMenuContainer = document.getElementById('profileMenuContainer');
+      const profileDropdown = document.getElementById('profileDropdown');
+      const helpIcon = document.getElementById('helpIcon');
+
+      if (profileMenuContainer) {
+        profileMenuContainer.addEventListener('click', function(event) {
+            if (event.target === helpIcon || helpIcon.contains(event.target)) {
+                event.stopPropagation();
+                showHelpModal(); 
+            } else {
+                event.stopPropagation();
+                // We need to find the correct dropdown to toggle
+                const dropdown = profileMenuContainer.querySelector('.profile-dropdown');
+                if(dropdown) dropdown.classList.toggle('show');
+            }
+        });
+      }
+
+      // --- NAV DROPDOWNS SCRIPT ---
+      document.querySelectorAll('.secondary-nav .dropdown').forEach(function(dropdown) {
+        const menu = dropdown.querySelector('.dropdown-menu');
+        let closeTimeout;
+
+        const openMenu = () => {
+            clearTimeout(closeTimeout);
+            menu.classList.add('is-open');
+        };
+
+        const closeMenu = () => {
+            closeTimeout = setTimeout(() => {
+                menu.classList.remove('is-open');
+            }, 150);
+        };
+
+        dropdown.addEventListener('mouseenter', openMenu);
+        dropdown.addEventListener('mouseleave', closeMenu);
+        
+        dropdown.addEventListener('click', function(event) {
+            event.stopPropagation();
+            const isCurrentlyOpen = menu.classList.contains('is-open');
+            // Close other open dropdowns
+            document.querySelectorAll('.dropdown-menu.is-open').forEach(m => {
+                if(m !== menu) m.classList.remove('is-open');
+            });
+            if (!isCurrentlyOpen) {
+              openMenu();
+            } else {
+              menu.classList.remove('is-open');
+            }
+        });
+      });
+      
+      // --- SUBMENU SCRIPT ---
+      document.querySelectorAll('.submenu').forEach(function(submenu) {
+        const submenuMenu = submenu.querySelector('.submenu-menu');
+        submenu.addEventListener('mouseenter', () => submenuMenu.classList.add('is-open'));
+        submenu.addEventListener('mouseleave', () => submenuMenu.classList.remove('is-open'));
+      });
+
+      // --- GLOBAL CLICK LISTENER TO CLOSE MENUS ---
+      document.addEventListener('click', function(event) {
+          // Close profile dropdown
+          if (profileMenuContainer && !profileMenuContainer.contains(event.target)) {
+              const dropdown = profileMenuContainer.querySelector('.profile-dropdown');
+              if(dropdown) dropdown.classList.remove('show');
+          }
+          // Close nav dropdowns
+          document.querySelectorAll('.secondary-nav .dropdown-menu.is-open').forEach(menu => {
+              menu.classList.remove('is-open');
+          });
+      });
+      
+      // --- MODAL SCRIPT ---
+      const openModal = (modal) => {
+        if (modal) {
+          modal.classList.remove("hidden");
+          document.body.classList.add("modal-open");
+        }
+      };
+
+      const closeModal = (modal) => {
+        if (modal) {
+          modal.classList.add("hidden");
+          document.body.classList.remove("modal-open");
+        }
+      };
+      
+      const openNewAssignmentContentBtn = document.getElementById("openNewAssignmentContent");
+      const openNewAssignmentHeaderBtn = document.getElementById("openNewAssignmentHeader");
+      const newAssignmentModal = document.getElementById("newAssignmentModal");
+      const closeNewAssignmentModalBtn = document.getElementById("closeNewAssignmentModal");
+      const automaticAssignBtn = document.getElementById("automaticAssign");
+      const customAssignBtn = document.getElementById("customAssign");
+
+      if (openNewAssignmentHeaderBtn) {
+          openNewAssignmentHeaderBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              openModal(newAssignmentModal);
+          });
+      }
+      if (openNewAssignmentContentBtn) {
+        openNewAssignmentContentBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          openModal(newAssignmentModal);
+        });
+      }
+      if (closeNewAssignmentModalBtn) {
+        closeNewAssignmentModalBtn.addEventListener("click", () => closeModal(newAssignmentModal));
+      }
+
+      const handleAssignmentChoice = (element, callback) => {
+          if (element.classList.contains('is-flipping')) return;
+          element.classList.add('is-flipping');
+          
+          setTimeout(() => {
+              callback();
+              setTimeout(() => {
+                element.classList.remove('is-flipping');
+              }, 1000);
+          }, 600);
+      }
+
+      if (automaticAssignBtn) {
+        automaticAssignBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          handleAssignmentChoice(automaticAssignBtn, () => {
+              closeModal(newAssignmentModal);
+              console.log("Navigating to question.html (automatic)");
+              window.location.href = "/automatic/";
+          });
+        });
+      }
+      if (customAssignBtn) {
+        customAssignBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+           handleAssignmentChoice(customAssignBtn, () => {
+              closeModal(newAssignmentModal);
+              window.location.href = "/assessment-summary/";
+           });
+        });
+      }
+
+      const helpModal = document.getElementById("helpModal");
+      const closeHelpModalBtn = document.getElementById("closeHelpModal");
+      const okHelpModalBtn = document.getElementById("okHelpModal");
+      
+      window.showHelpModal = () => openModal(helpModal);
+      if (closeHelpModalBtn) closeHelpModalBtn.addEventListener("click", () => closeModal(helpModal));
+      if (okHelpModalBtn) okHelpModalBtn.addEventListener("click", () => closeModal(helpModal));
+      
+      [newAssignmentModal, helpModal].forEach(modal => {
+        if(modal) {
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    closeModal(modal);
+                }
+            });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

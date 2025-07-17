@@ -1,0 +1,3133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Fundamentals Assessment</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts for Inter (used in new header) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Universal box-sizing for consistent layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* --- Header specific CSS from question_library.html --- */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand-title {
+            background-color: #1d2686;
+            color: #fff;
+            font-size: 20px;
+            padding: 9px 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-title-text {
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .header-top-icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            font-size: 10px;
+            color: #999;
+        }
+
+        .breadcrumb-link {
+            padding: 5px 10px;
+            cursor: pointer;
+            color: #1d2686;
+            font-size: 12px;
+            transition: 0.2s ease;
+            margin-right: 8px;
+            margin-left: -10px;
+        }
+
+        .breadcrumb-heading {
+            color: #999;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 12px;
+        }
+        
+        .breadcrumb-heading.active {
+            color: #1d2686;
+            font-weight: bold;
+        }
+
+        .breadcrumb-heading:hover {
+            color: #1d2686;
+        }
+
+        .breadcrumb-separator {
+            font-size: 16px;
+            color: #ccc;
+            margin-left: 4px;
+            margin-right: 4px;
+            font-weight: normal;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 13px;
+            margin-left: auto;
+        }
+
+        .status .active-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .invite-btn {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            margin-right:-5px;
+            padding: 4px 12px 4px 12px;
+            font-weight: 600;
+            font-size: 13px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .profile-menu-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .profile-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #1d2686;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .profile-help-icon {
+            color: #fff;
+            font-size: 20px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            min-width: 200px;
+            display: none;
+            z-index: 100;
+            margin-top: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .profile-dropdown-header {
+            padding: 8px 12px;
+            background-color: #f0f2f5;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .profile-dropdown-header span {
+            font-size: 14px;
+        }
+
+        .profile-dropdown-header small {
+            color: #666;
+            font-weight: 400;
+            font-size: 11px;
+        }
+
+        .profile-dropdown-item {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .profile-dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .profile-dropdown-item i {
+            color: #1d2686;
+        }
+
+        .cart-icon-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .cart-icon-container .fa-list {
+            font-size: 20px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cart-item-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+            height: 18px;
+        }
+
+
+        /* --- Main Page CSS --- */
+        /* CSS Variables for consistent styling */
+        :root {
+            --font-family-sans: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* UPDATED FONT */
+            --primary-color: #1d2686; /* Dark Blue */
+            --primary-color-light: #3b4cdc; /* Lighter Blue */
+            --premium-color: #e8a800; /* Gold for premium items */
+            --text-color-light: #fff;
+            --text-color-dark: #333;
+            --text-color-muted: #999;
+            --border-color-light: #eee;
+            --border-color-medium: #ddd;
+            --border-radius-sm: 4px;
+            --border-radius-md: 6px;
+            --total-header-height: 70px; /* UPDATED HEIGHT to match reference */
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --correct-answer-color: #28a745;
+            --bottom-buttons-height: 90px;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            /* MODIFICATION: Prevent the body itself from scrolling */
+            overflow-y: hidden;
+            width: 100%;
+        }
+
+        body {
+            font-family: var(--font-family-sans);
+            background-color: #eef2f9; /* UPDATED: Changed background color */
+            color: var(--text-color-dark);
+            padding-top: var(--total-header-height); /* Ensure content starts below fixed header */
+            /* MODIFICATION: Removed bottom padding */
+            padding-bottom: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* UPDATED: Adjusted padding and width for the main content container */
+        .customize-content {
+            padding: 20px;
+            /* MODIFICATION: Added padding-bottom to account for fixed buttons */
+            padding-bottom: var(--bottom-buttons-height);
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            background-color: #fff;
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            /* MODIFICATION: Make this the scrollable container */
+            height: calc(100vh - var(--total-header-height));
+            overflow-y: auto;
+        }
+
+        .assessment-details-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color-light);
+            position: relative;
+        }
+
+        .assessment-logo {
+            width: 180px;
+            height: 80px;
+            border-radius: var(--border-radius-md);
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .assessment-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .assessment-info {
+            flex-grow: 1;
+        }
+
+        .assessment-info h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .assessment-info p {
+            font-size: 14px;
+            color: var(--text-color-muted);
+            margin-bottom: 10px;
+        }
+
+        .assessment-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .assessment-tag {
+            background-color: #e0e7ff;
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: var(--border-radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .assessment-summary-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-color-dark);
+            font-weight: 600;
+        }
+        .summary-item .icon {
+            color: var(--primary-color-light);
+        }
+        .time-summary .icon {
+            color: var(--primary-color);
+        }
+
+        .customize-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 8px 20px;
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-md);
+            background-color: #f7f7f7;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .customize-header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .question-count-display {
+            font-size: 16px;
+            color: var(--text-color-dark);
+            font-weight: 600;
+        }
+
+        .action-button {
+            color: var(--text-color-light);
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 14px;
+        }
+
+        .proceed-button {
+            background-color: var(--primary-color);
+            margin-left: auto;
+        }
+        .proceed-button:hover {
+            background-color: var(--primary-color-light);
+        }
+
+        .customize-action-button {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+        .customize-action-button:hover {
+            background-color: var(--primary-color-light);
+        }
+
+
+        #questions-layout-container {
+            display: flex;
+            width: 100%;
+            gap: 8px;
+            height: auto; 
+        }
+        
+        /* Styles to hide scrollbar */
+        .question-list, #question-detail-panel {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+            overflow-y: auto; /* Ensure content is scrollable */
+        }
+        /* Webkit (Chrome, Safari) */
+        .question-list::-webkit-scrollbar, #question-detail-panel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .question-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            flex-shrink: 0;
+            padding-right: 5px;
+            box-sizing: border-box;
+            transition: width 0.35s ease-in-out;
+        }
+        .question-list.shrunk {
+            width: 30%;
+        }
+
+
+        .question-item {
+            display: flex;
+            align-items: flex-start;
+            background-color: #fcfcfc;
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-md);
+            padding: 15px 20px;
+            transition: box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .question-item:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .question-number {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-right: 15px;
+            flex-shrink: 0;
+            padding-top: 2px;
+        }
+
+        .question-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .question-main-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color-dark);
+            max-width: 60%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .question-list.shrunk .question-text {
+            max-width: 100%;
+        }
+
+
+        .question-summary-details-list-view {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 15px;
+            font-size: 12px;
+            color: var(--text-color-muted);
+            margin-bottom: 8px;
+        }
+        .question-summary-details-list-view .summary-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 7px;
+            border-radius: var(--border-radius-sm);
+            background-color: #f0f0f0;
+            color: var(--text-color-dark);
+            font-weight: 500;
+        }
+         .question-summary-details-list-view .summary-detail-item .icon {
+            color: var(--primary-color);
+         }
+         .question-summary-details-list-view .summary-detail-item.points .icon {
+            color: var(--premium-color);
+         }
+
+        .question-item .add-to-item-list-btn {
+            display: none;
+        }
+
+        .question-arrow {
+            font-size: 20px;
+            color: var(--primary-color);
+            cursor: pointer;
+            flex-shrink: 0;
+            align-self: center;
+            transition: transform 0.2s ease;
+        }
+
+        .question-topic {
+            font-size: 13px;
+            color: var(--text-color-muted);
+            margin-top: 5px;
+        }
+
+        #question-detail-panel {
+            width: 0;
+            opacity: 0;
+            visibility: hidden;
+            flex-shrink: 0;
+            transition: width 0.35s ease-in-out, opacity 0.35s ease-in-out, visibility 0s linear 0.35s;
+            padding-left: 0;
+            background-color: #f8f9fa;
+            /* MODIFICATION: Removed left border */
+            border-left: none; 
+        }
+        
+        #question-detail-panel.visible {
+            width: 70%;
+            opacity: 1;
+            visibility: visible;
+            padding: 20px;
+            transition: width 0.35s ease-in-out, opacity 0.35s ease-in-out, padding 0.35s ease-in-out, visibility 0s linear 0s;
+        }
+        .question-full-text-detail {
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+            word-wrap: break-word;
+            margin-bottom: 10px;
+        }
+        .question-options-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+        .question-options-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color-light);
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        .question-options-list li:last-child {
+            border-bottom: none;
+        }
+        .question-options-list li .fa-check-circle {
+            color: var(--correct-answer-color);
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        #question-detail-panel .add-to-item-list-btn-detail {
+            background-color: #e0e7ff;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 8px 12px;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        #question-detail-panel .add-to-item-list-btn-detail.added {
+            background-color: var(--success-color);
+            color: var(--text-color-light);
+            border-color: var(--success-color);
+        }
+        #question-detail-panel .add-to-item-list-btn-detail.added .fa-check {
+            margin-right: 5px;
+        }
+        #question-detail-panel .add-to-item-list-btn-detail.added .fa-trash-alt {
+            margin-left: 8px;
+            font-size: 0.9em;
+        }
+
+        .detail-section {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-md);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .detail-section:last-of-type {
+            margin-bottom: 0;
+        }
+        .detail-section h5 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color-light);
+            padding-bottom: 5px;
+        }
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px 20px;
+            margin-top: 10px;
+        }
+        .metadata-grid p {
+            margin-bottom: 0;
+            font-size: 14px;
+            color: var(--text-color-dark);
+        }
+        .metadata-grid p strong {
+            color: var(--primary-color-light);
+        }
+
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color-light);
+            background-color: #f7f7f7;
+        }
+
+        .modal-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+         .cart-modal-header h3 .item-count-indicator {
+            font-weight: normal;
+            color: var(--text-color-muted);
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-color-muted);
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+         .modal-close-btn:hover {
+            color: var(--text-color-dark);
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .modal-body .form-group {
+            margin-bottom: 15px;
+        }
+        .modal-body .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-color-muted);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .modal-body .form-group input[type="text"],
+        .modal-body .form-group input[type="number"],
+        .modal-body .form-group textarea,
+        .modal-body .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color-medium);
+            border-radius: var(--border-radius-sm);
+            font-size: 14px;
+            font-family: 'Calibri', sans-serif;
+        }
+        .modal-body .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .modal-body .options-container .option-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+        .modal-body .options-container .option-item .option-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-color);
+            min-width: 20px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .modal-body .options-container .option-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 0;
+            flex-shrink: 0;
+            accent-color: var(--success-color);
+        }
+        .modal-body .options-container .option-item input[type="text"] {
+            flex-grow: 1;
+            flex-basis: 70%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color-medium);
+            border-radius: var(--border-radius-sm);
+            font-size: 14px;
+           font-family: 'Calibri', sans-serif;
+        }
+        .modal-body .options-container .remove-option-btn {
+            color: var(--danger-color);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 16px;
+            padding: 0;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+         .modal-body .add-option-btn {
+            font-size: 13px;
+            color: var(--primary-color);
+            cursor: pointer;
+            background: none;
+            border: 1px solid var(--primary-color);
+            padding: 5px 10px;
+            border-radius: var(--border-radius-sm);
+            margin-top: 5px;
+         }
+         .modal-body .add-option-btn:hover {
+            background-color: #e0e7ff;
+         }
+
+
+        .cart-modal-item-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cart-modal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color-light);
+            font-size: 14px;
+        }
+        .cart-modal-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-modal-item-text {
+            flex-grow: 1;
+            margin-right: 10px;
+            color: var(--text-color-dark);
+            font-size: 13px;
+        }
+
+        .cart-modal-item-remove-btn {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+        }
+        .cart-modal-item-remove-btn:hover {
+            color: #a71d2a;
+        }
+
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color-light);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            background-color: #f7f7f7;
+            gap: 10px;
+        }
+        .cart-modal-footer {
+             justify-content: space-between;
+        }
+
+        .modal-footer .action-button-modal {
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 16px;
+            min-width: 180px;
+            text-align: center;
+        }
+
+        .cart-modal-footer .clear-list-btn {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        .cart-modal-footer .clear-list-btn:hover {
+            background-color: var(--primary-color-light);
+            color: var(--text-color-light);
+            border-color: var(--primary-color-light);
+        }
+
+        .modal-footer .save-btn,
+        .cart-modal-footer .create-assessment-btn {
+            background-color: var(--success-color);
+            color: var(--text-color-light);
+        }
+        .modal-footer .save-btn:hover,
+        .cart-modal-footer .create-assessment-btn:hover {
+            background-color: #218838;
+        }
+        .cart-modal-footer .create-assessment-btn.disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        .modal-footer .cancel-btn {
+            background-color: #6c757d;
+            color: var(--text-color-light);
+        }
+        .modal-footer .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+        
+        #bottom-action-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            height: 30px;
+            gap: 20px;
+            padding: 20px;
+            padding-bottom: 30px;
+            background-color: #fff;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+
+        .review-page-bottom-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            padding-bottom: 30px;
+            background-color: #fff;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            border-top: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-md);
+        }
+
+        #bottom-action-buttons .action-button, .review-page-bottom-actions .action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            gap: 12px;
+            min-width: 200px;
+            text-align: center;
+            color: var(--text-color-light);
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        #bottom-action-buttons .create-new-question-btn, .review-page-bottom-actions .create-new-question-btn {
+            background-color: var(--success-color);
+        }
+
+        #bottom-action-buttons .create-new-question-btn:hover, .review-page-bottom-actions .create-new-question-btn:hover {
+            background-color: #218838;
+        }
+
+        #bottom-action-buttons .question-library-btn, .review-page-bottom-actions .question-library-btn {
+            background-color: var(--primary-color);
+        }
+
+        #bottom-action-buttons .question-library-btn:hover, .review-page-bottom-actions .question-library-btn:hover {
+            background-color: var(--primary-color-light);
+        }
+
+        #review-page-container {
+            display: none;
+            padding: 20px;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            background-color: #fff;
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding-bottom: calc(var(--bottom-buttons-height) + 20px);
+            height: calc(100vh - var(--total-header-height));
+            overflow-y: auto;
+        }
+
+        #review-page-container .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color-medium);
+        }
+
+        #review-page-container .review-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        #review-page-container .review-header .total-time-display {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-left: 15px;
+        }
+
+        #review-page-container .review-header #nextReviewPageBtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            min-width: 160px;
+        }
+
+        #review-page-container .review-header #nextReviewPageBtn:hover {
+            background-color: #45a049;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        #review-page-container .review-question-item {
+            background-color: #fcfcfc;
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-md);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #review-page-container .review-question-item h4 {
+            font-size: 16px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color-light);
+            position: relative;
+            z-index: 2;
+        }
+
+        #review-page-container .review-question-item p {
+            font-size: 14px;
+            color: var(--text-color-dark);
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        #review-page-container .review-options-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        #review-page-container .review-options-list li {
+            padding: 5px 0;
+            font-size: 13px;
+            color: var(--text-color-dark);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        #review-page-container .review-options-list input[type="radio"],
+        #review-page-container .review-options-list input[type="checkbox"] {
+            margin-right: 8px;
+            accent-color: var(--primary-color);
+        }
+        
+        .review-question-item .delete-question-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 3;
+            transition: color 0.2s ease;
+        }
+
+        .review-question-item .delete-question-btn:hover {
+            color: #a71d2a;
+        }
+        
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 1.5em;
+            color: rgba(128, 128, 128, 0.1);
+            pointer-events: none;
+            z-index: 1;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        
+        #review-header-actions {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #next-actions-container {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 5px;
+            background-color: #fff;
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            min-width: 220px;
+            text-align: left;
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        #next-actions-container.visible {
+            display: flex;
+        }
+
+        #next-actions-container .action-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            font-size: 15px;
+            color: var(--primary-color);
+            cursor: pointer;
+            border-radius: var(--border-radius-sm);
+            transition: background-color 0.2s ease;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        #next-actions-container .action-item:hover {
+            background-color: #e0e7ff;
+        }
+        #next-actions-container .action-item i {
+            color: var(--primary-color-light);
+            font-size: 16px;
+        }
+        
+        .invite-modal .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .invite-modal .radio-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .invite-modal .radio-group label {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color-dark);
+            cursor: pointer;
+        }
+
+        .invite-modal .radio-group input[type="radio"] {
+            margin-right: 8px;
+            accent-color: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        .invite-modal .dynamic-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        /* NEW/UPDATED Styles for invite modal reviewer list */
+        #externalReviewerFields {
+            display: flex;
+            align-items: flex-end; /* Aligns labels and button baseline */
+            gap: 15px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        #externalReviewerFields .form-group {
+            flex: 1 1 150px; /* Grow, shrink, with a base width */
+            margin-bottom: 0;
+        }
+
+        #externalReviewerFields #addExternalReviewerBtn {
+            flex-shrink: 0;
+            padding: 8px 24px;
+            height: 40px; /* Match input height */
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #addedReviewersContainer {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color-light);
+            padding-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .added-reviewer-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 10px;
+            background: #f7f9fc;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--border-color-light);
+        }
+
+        .added-reviewer-item .reviewer-info {
+            display: flex;
+            flex-grow: 1;
+            gap: 20px;
+            overflow: hidden;
+            align-items: center;
+        }
+
+        .reviewer-info > span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .reviewer-info .reviewer-name {
+            width: 25%;
+            font-weight: 600;
+        }
+
+        .reviewer-info .reviewer-email {
+            width: 40%;
+            color: var(--text-color-muted);
+        }
+
+        .reviewer-info .reviewer-password {
+            width: 20%;
+        }
+        
+        .reviewer-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .reviewer-actions i {
+            cursor: pointer;
+            color: var(--primary-color);
+            font-size: 16px;
+        }
+        .reviewer-actions i:hover {
+            color: var(--primary-color-light);
+        }
+
+
+        .invite-modal .dynamic-fields .form-group label {
+            white-space: nowrap;
+            margin-bottom: 5px;
+        }
+
+        .invite-modal .dynamic-fields .form-group input[type="text"],
+        .invite-modal .dynamic-fields .form-group input[type="email"],
+        .invite-modal .dynamic-fields .form-group input[type="password"] {
+            height: 40px;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color-medium);
+            border-radius: var(--border-radius-sm);
+            font-size: 14px;
+            font-family: 'Calibri', sans-serif;
+            width: 100%;
+        }
+
+        .invite-modal .modal-footer {
+            justify-content: flex-end;
+        }
+        
+        .modal-footer .action-button-modal#shareViaEmailBtn {
+            font-size: 14px;
+            padding: 10px 20px;
+        }
+
+        .assessment-details-container {
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--border-radius-md);
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .assessment-details-header-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #f7f7f7;
+            border-bottom: 1px solid var(--border-color-light);
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .assessment-details-header-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .assessment-details-header-toggle.collapsed i {
+            transform: rotate(-90deg);
+        }
+
+        .assessment-details-header-toggle:not(.collapsed) i {
+            transform: rotate(0deg);
+        }
+
+
+        .assessment-details-content-wrapper {
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            padding: 20px 15px;
+        }
+
+        .assessment-details-content-wrapper.collapsed {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .header { flex-direction: column; align-items: flex-start; height: auto; padding-bottom: 10px; }
+            .breadcrumb { margin-bottom: 10px; flex-wrap: wrap; }
+            .status { width: 100%; justify-content: space-between; margin-top:10px; }
+            .customize-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .customize-header-info { flex-direction: column; align-items: flex-start; width: 100%; gap: 10px; }
+            .customize-header-info .proceed-button { margin-left: 0; }
+            .assessment-details-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .assessment-summary-right { width: 100%; align-items: flex-start; }
+            .question-item { padding: 10px; flex-wrap: wrap; }
+            .question-number { width: 100%; margin-bottom: 10px; text-align: left; padding-top: 0; }
+            .question-main-info { flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; }
+            .question-arrow { margin-left: auto; align-self: flex-end; margin-top: 0; }
+            .question-summary-details-list-view { font-size: 11px; gap: 5px 10px;}
+            .question-text { max-width: 100%; }
+            .cart-modal-footer { flex-direction: column; gap: 10px; }
+            .cart-modal-footer .clear-list-btn,
+            .cart-modal-footer .create-assessment-btn { width: 100%; }
+            #questions-layout-container { flex-direction: column; height: auto; /* Adjust height for mobile */ }
+            .question-list.shrunk, .question-list { width: 100% !important; }
+            #question-detail-panel.visible { width: 100% !important; margin-top: 15px; max-height: none; }
+            #bottom-action-buttons, .review-page-bottom-actions { flex-direction: column; align-items: center; }
+            #bottom-action-buttons .action-button, .review-page-bottom-actions .action-button { width: 90%; }
+            #review-page-container { padding: 15px; padding-bottom: calc(var(--bottom-buttons-height) + 15px); }
+            #review-page-container .review-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            #review-page-container .review-header #nextReviewPageBtn { margin-left: 0; width: 100%; font-size: 14px; padding: 8px 15px; }
+            .invite-modal .radio-group { flex-direction: column; align-items: flex-start; }
+            #externalReviewerFields { align-items: stretch; flex-direction: column; } /* Keep as column on mobile */
+            #externalReviewerFields .form-group { flex: 1 1 100%; }
+        }
+         @media (max-width: 480px) {
+            .question-summary-details-list-view .summary-detail-item { padding: 2px 5px; }
+         }
+    </style>
+</head>
+<body>
+    <div class="top-header">
+        <div class="brand-title">
+            <span class="brand-title-text">FDI</span>
+            <div class="header-top-icons">
+                <div class="profile-menu-container" id="profileMenuContainer">
+                    <div class="profile-avatar">S</div>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-dropdown-header">
+                            <span>Sri</span><br>
+                            <small>srharshak@nexnoratech.onmicros....</small><br>
+                            <small>Nexnoratech</small>
+                        </div>
+                        <a href="/company-profile/" class="profile-dropdown-item"><i class="fas fa-building"></i> Company Profile</a>
+                        <a href="/team-members/" class="profile-dropdown-item"><i class="fas fa-users"></i> Team Members</a>
+                        <a href="/email-templates/" class="profile-dropdown-item"><i class="fas fa-envelope"></i> Email Templates</a>
+                        <a href="/question-library/" class="profile-dropdown-item"><i class="fas fa-question-circle"></i> Connect Question Library</a>
+                        <a href="/plan-usage/" class="profile-dropdown-item"><i class="fas fa-chart-bar"></i> Plan Usage</a>
+                        <a href="/setting/" class="profile-dropdown-item"><i class="fas fa-cog"></i> Setting Options</a>
+                        <a href="/my-account/" class="profile-dropdown-item"><i class="fas fa-user-circle"></i> My Account</a>
+                        <a href="/logout/" class="profile-dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+                <div class="cart-icon-container" id="cart-icon-trigger">
+                    <i class="fa-solid fa-list"></i>
+                    <span class="cart-item-count" id="cart-item-count-display">0</span>
+                </div>
+                <i class="fas fa-question-circle profile-help-icon" id="helpIcon"></i>
+            </div>
+        </div>
+        <div class="header">
+          <div class="breadcrumb">
+            <span class="breadcrumb-link" onclick="history.back()">Back</span>
+            <a href="/assessment-summary/" class="breadcrumb-heading">SUMMARY</a>
+            <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+            <a href="/question-library/" class="breadcrumb-heading active">QUESTION</a>
+            <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+            <a href="/configuration/" class="breadcrumb-heading">CONFIGURE</a>
+            <i class="fa-solid fa-greater-than breadcrumb-separator"></i>
+            <a href="/invite-options/" class="breadcrumb-heading">INVITE OPTIONS</a>
+          </div>
+          <div class="status">
+            <span><span class="active-dot"></span> Active</span>
+            <a href="your_candidate_page.html" style="cursor:pointer; text-decoration: none; color: inherit;"><i class="fa-solid fa-users"></i> CANDIDATE</a>
+            <a href="invite_page.html" class="invite-btn">+   INVITE</a>
+          </div>
+        </div>
+    </div>
+
+    <main class="customize-content">
+        <div class="assessment-details-container">
+            <div class="assessment-details-header-toggle" id="assessmentDetailsToggle">
+                <span id="assessment-details-title">Python Fundamentals Assessment</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="assessment-details-content-wrapper collapsed" id="assessmentDetailsContent">
+                <div class="assessment-details-header">
+                    <div class="assessment-logo">
+                        <img id="assessment-logo-img" src="https://placehold.co/80x80/3776ab/ffffff?text=Py" alt="Assessment Logo" onerror="this.onerror=null;this.src='https://placehold.co/80x80/f0f0f0/ccc?text=Img+Error';">
+                    </div>
+                    <div class="assessment-info">
+                        <h2 id="assessment-info-title">Python Fundamentals Assessment</h2>
+                        <p id="assessment-info-description">Description: This assessment covers core Python concepts, including data structures, algorithms, and standard library usage. Designed by Face D Interview.</p>
+                        <div class="assessment-tags" id="assessment-info-tags">
+                            <span class="assessment-tag">PYTHON</span>
+                            <span class="assessment-tag">BACKEND</span>
+                            <span class="assessment-tag">DATA SCIENCE</span>
+                            <span class="assessment-tag">TECH</span>
+                        </div>
+                    </div>
+                    <div class="assessment-summary-right">
+                        <span class="summary-item" id="summary-total-questions"><i class="fas fa-question-circle icon"></i> <span id="summary-question-count-text">0</span> Questions</span>
+                        <span class="summary-item points-summary"><i class="fas fa-medal icon"></i> <span id="total-points-display">0</span></span>
+                        <span class="summary-item time-summary"><i class="fas fa-clock icon"></i> <span id="total-time-display">0m</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="customize-header">
+            <div class="customize-header-info">
+                <span class="question-count-display" id="customize-question-count">0 Questions</span>
+                <button class="action-button proceed-button" id="proceed-to-review-btn">PROCEED TO REVIEW</button>
+            </div>
+        </div>
+
+        <div id="questions-layout-container">
+            <div class="question-list">
+                </div>
+            <div id="question-detail-panel">
+                </div>
+        </div>
+
+        <div id="bottom-action-buttons">
+            <button class="action-button create-new-question-btn" id="addNewQuestionBtn"><i class="fas fa-plus"></i>      CREATE NEW QUESTION</button>
+            <button class="action-button question-library-btn" id="questionLibraryBtn"><i class="fas fa-book"></i>        QUESTION LIBRARY</button>
+        </div >
+    </main>
+
+    <div class="modal-overlay" id="cartModalOverlay">
+        <div class="modal-content cart-modal">
+            <div class="modal-header cart-modal-header">
+                <h3><span id="modalItemCount">0</span> Questions added to the Question list</h3>
+                <button class="modal-close-btn" id="cartModalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="assessmentNameInput">Enter assessment name</label>
+                    <input type="text" id="assessmentNameInput" placeholder="Type assessment name here...">
+                </div>
+                <ul class="cart-modal-item-list" id="cartModalItemList">
+                    </ul>
+            </div>
+            <div class="modal-footer cart-modal-footer">
+                <button class="action-button-modal clear-list-btn" id="clearItemListBtn">Clear Question List</button>
+                <button class="action-button-modal create-assessment-btn" id="createAssessmentBtnModal">CREATE ASSESSMENT</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addQuestionModalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Question</h3>
+                <button class="modal-close-btn" id="addQuestionModalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addQuestionForm">
+                    <div class="form-group">
+                        <label for="newQuestionText">Question Text (Full)</label>
+                        <textarea id="newQuestionText" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="newQuestionTopic">Topic</label>
+                        <input type="text" id="newQuestionTopic" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newQuestionType">Question Type</label>
+                        <select id="newQuestionType">
+                            <option value="Multiple Choice">Multiple Choice</option>
+                            <option value="Multiple Selection">Multiple Selection</option>
+                            <option value="Coding">Coding</option>
+                            <option value="Pseudo Code">Pseudo Code</option>
+                            <option value="Text Entry">Text Entry</option>
+                            <option value="File Upload">File Upload</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newQuestionDifficulty">Difficulty</label>
+                        <select id="newQuestionDifficulty">
+                            <option value="Basic">Basic</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Expert">Expert</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newQuestionDepthOfKnowledge">Depth of Knowledge</label>
+                        <select id="newQuestionDepthOfKnowledge">
+                            <option value="">Select DOK</option>
+                            <option value="Recall">Recall</option>
+                            <option value="Skill/Concept">Skill/Concept</option>
+                            <option value="Strategic Thinking">Strategic Thinking</option>
+                            <option value="Extended Thinking">Extended Thinking</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newQuestionDomain">Domain</label>
+                        <select id="newQuestionDomain">
+                            <option value="TECH">TECH</option>
+                            <option value="NON-TECH">NON-TECH</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newQuestionPoints">Points</label>
+                        <input type="number" id="newQuestionPoints" value="5" min="0" required>
+                    </div>
+                     <div class="form-group">
+                        <label for="newQuestionTime">Time (e.g., 5-00 for 5min 0sec)</label>
+                        <input type="text" id="newQuestionTime" value="5-00" pattern="\d{1,2}-\d{2}" placeholder="MM-SS" required>
+                    </div>
+                    <div class="form-group" id="newQuestionOptionsContainer">
+                        <label>Options (for Multiple Choice/Selection/Pseudo Code)</label>
+                        <div id="newQuestionOptionsList">
+                            </div>
+                        <button type="button" class="add-option-btn" id="addNewOptionBtn"><i class="fas fa-plus"></i> Add Option</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="action-button-modal cancel-btn" id="cancelAddQuestionBtn">CANCEL</button>
+                <button type="submit" class="action-button-modal save-btn" id="saveNewQuestionBtn" form="addQuestionForm">SAVE QUESTION</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="review-page-container" style="display: none;">
+        <div class="review-header">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button class="action-button" id="backToSelectionBtn" style="background-color: #6c757d; min-width: auto; padding: 10px 18px; font-size: 14px; line-height: 1;">
+                    <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Back
+                </button>
+                <h2 style="margin: 0; display: flex; align-items: center; gap: 10px;" id="review-page-title">
+                    Selected Questions for Review
+                    <span class="total-time-display" id="review-page-total-time"></span>
+                </h2>
+            </div>
+            <div id="review-header-actions">
+                <button id="nextReviewPageBtn" class="action-button-modal proceed-button">Next</button>
+                <div id="next-actions-container">
+                    <div class="action-item" id="nextActionSaveAndProceed">
+                        <i class="fas fa-save" ></i> Save and Proceed to Library
+                    </div>
+                    <div class="action-item" id="nextActionInviteForReview">
+                        <i class="fas fa-user-plus"></i> Invite for Review
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="selected-questions-display">
+        </div>
+        <div class="review-page-bottom-actions">
+            <button class="action-button create-new-question-btn" id="addNewQuestionBtnReview"><i class="fas fa-plus"></i> CREATE NEW QUESTION</button>
+            <button class="action-button question-library-btn" id="questionLibraryBtnReview"><i class="fas fa-book"></i> QUESTION LIBRARY</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="inviteReviewModalOverlay">
+        <div class="modal-content invite-modal" style="max-width: 800px;"> <!-- Increased modal width -->
+            <div class="modal-header">
+                <h3>Invite for review</h3>
+                <button class="modal-close-btn" id="inviteReviewModalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="reviewerType" value="external" id="externalReviewerRadio" checked>
+                        External reviewer
+                    </label>
+                    <label>
+                        <input type="radio" name="reviewerType" value="teamMember" id="teamMemberRadio">
+                        Team member
+                    </label>
+                </div>
+
+                <div id="externalReviewerFieldsWrapper" class="dynamic-fields">
+                    <div id="externalReviewerFields">
+                        <div class="form-group">
+                            <label for="externalName">Name <span style="color:red;">*</span></label>
+                            <input type="text" id="externalName" placeholder="Enter name">
+                        </div>
+                        <div class="form-group">
+                            <label for="externalEmail">Business Email <span style="color:red;">*</span></label>
+                            <input type="email" id="externalEmail" placeholder="Enter email">
+                        </div>
+                        <div class="form-group">
+                            <label for="externalPassword">Set login password <span style="color:red;">*</span></label>
+                            <input type="password" id="externalPassword" placeholder="Set password">
+                        </div>
+                        <button type="button" id="addExternalReviewerBtn" class="action-button">ADD</button>
+                    </div>
+                    <div id="addedReviewersContainer">
+                        <!-- Added reviewers will be displayed here by JavaScript -->
+                    </div>
+                </div>
+
+                <div id="teamMemberFields" class="dynamic-fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="teamMemberNameEmail">Name/Email <span style="color:red;">*</span></label>
+                        <input type="text" id="teamMemberNameEmail" placeholder="Enter name or email" required>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="action-button-modal save-btn" id="shareViaEmailBtn">SHARE via EMAIL</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State Variables ---
+        let externalReviewers = [];
+        let editingReviewerId = null; // To track if we are in edit mode
+
+        // --- Local Storage Management ---
+        const LOCAL_STORAGE_KEY = "selectedAssessmentQuestions";
+        const LIBRARY_STORAGE_KEY = 'assessmentLibrary'; // Key for the main library
+        const POPULARITY_STORAGE_KEY = 'assessmentPopularity'; // Key for popularity scores
+
+        function getAddedItemsFromLocalStorage() {
+            try {
+                const storedItems = localStorage.getItem(LOCAL_STORAGE_KEY);
+                return storedItems ? JSON.parse(storedItems) : [];
+            } catch (e) {
+                console.error("Error parsing selected questions from local storage:", e);
+                return [];
+            }
+        }
+
+        function saveAddedItemsToLocalStorage(questions) {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(questions));
+            } catch (e) {
+                console.error("Error saving selected questions to local storage:", e);
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- DOM Elements ---
+            const customizeQuestionCountDisplay = document.getElementById('customize-question-count');
+            const summaryQuestionCountText = document.getElementById('summary-question-count-text');
+            const totalPointsDisplay = document.getElementById('total-points-display');
+            const totalTimeDisplay = document.getElementById('total-time-display');
+            const proceedToReviewBtn = document.getElementById('proceed-to-review-btn');
+            const cartIconTrigger = document.getElementById('cart-icon-trigger'); 
+            const cartItemCountHeaderDisplay = document.getElementById('cart-item-count-display');
+            const cartModalOverlay = document.getElementById('cartModalOverlay');
+            const cartModalCloseBtn = document.getElementById('cartModalCloseBtn');
+            const cartModalItemList = document.getElementById('cartModalItemList');
+            const modalItemCountDisplay = document.getElementById('modalItemCount');
+            const clearItemListBtn = document.getElementById('clearItemListBtn');
+            const createAssessmentBtnModal = document.getElementById('createAssessmentBtnModal');
+            const assessmentNameInput = document.getElementById('assessmentNameInput');
+            const questionListDiv = document.querySelector('.question-list');
+            const questionDetailPanel = document.getElementById('question-detail-panel');
+            const addNewQuestionBtnMainPage = document.getElementById('addNewQuestionBtn');
+            const addQuestionModalOverlay = document.getElementById('addQuestionModalOverlay');
+            const addQuestionModalCloseBtn = document.getElementById('addQuestionModalCloseBtn');
+            const cancelAddQuestionBtn = document.getElementById('cancelAddQuestionBtn');
+            const addQuestionForm = document.getElementById('addQuestionForm');
+            const newQuestionTypeSelect = document.getElementById('newQuestionType');
+            const newQuestionOptionsContainer = document.getElementById('newQuestionOptionsContainer');
+            const newQuestionOptionsList = document.getElementById('newQuestionOptionsList');
+            const addNewOptionBtn = document.getElementById('addNewOptionBtn');
+            const newQuestionDepthOfKnowledgeSelect = document.getElementById('newQuestionDepthOfKnowledge');
+            const questionLibraryBtn = document.getElementById('questionLibraryBtn');
+            const profileMenuContainer = document.getElementById('profileMenuContainer');
+            const profileDropdown = document.getElementById('profileDropdown');
+            const helpIcon = document.getElementById('helpIcon');
+            const customizeButtonRight = document.getElementById('customize-button-right');
+            const mainCustomizeContent = document.querySelector('main.customize-content');
+            const bottomActionButtons = document.getElementById('bottom-action-buttons');
+            const reviewPageContainer = document.getElementById('review-page-container');
+            const selectedQuestionsDisplay = document.getElementById('selected-questions-display');
+            const nextReviewPageBtn = document.getElementById('nextReviewPageBtn');
+            const addNewQuestionBtnReviewPage = document.getElementById('addNewQuestionBtnReview');
+            const questionLibraryBtnReview = document.getElementById('questionLibraryBtnReview');
+            const reviewPageTotalTimeDisplay = document.getElementById('review-page-total-time');
+            const reviewPageTitle = document.getElementById('review-page-title');
+            const nextActionsContainer = document.getElementById('next-actions-container');
+            const nextActionSaveAndProceed = document.getElementById('nextActionSaveAndProceed');
+            const nextActionInviteForReview = document.getElementById('nextActionInviteForReview');
+            const inviteReviewModalOverlay = document.getElementById('inviteReviewModalOverlay');
+            const inviteReviewModalCloseBtn = document.getElementById('inviteReviewModalCloseBtn');
+            const externalReviewerRadio = document.getElementById('externalReviewerRadio');
+            const teamMemberRadio = document.getElementById('teamMemberRadio');
+            const externalReviewerFieldsWrapper = document.getElementById('externalReviewerFieldsWrapper');
+            const teamMemberFields = document.getElementById('teamMemberFields');
+            const shareViaEmailBtn = document.getElementById('shareViaEmailBtn');
+            const assessmentDetailsToggle = document.getElementById('assessmentDetailsToggle');
+            const assessmentDetailsContent = document.getElementById('assessmentDetailsContent');
+            const assessmentDetailsToggleIcon = assessmentDetailsToggle.querySelector('i');
+            const assessmentDetailsTitle = document.getElementById('assessment-details-title');
+            const assessmentLogoImg = document.getElementById('assessment-logo-img');
+            const assessmentInfoTitle = document.getElementById('assessment-info-title');
+            const assessmentInfoDescription = document.getElementById('assessment-info-description');
+            const assessmentInfoTags = document.getElementById('assessment-info-tags');
+            const backToSelectionBtn = document.getElementById('backToSelectionBtn');
+            
+            // NEW DOM ELEMENTS FOR INVITE MODAL
+            const addExternalReviewerBtn = document.getElementById('addExternalReviewerBtn');
+            const addedReviewersContainer = document.getElementById('addedReviewersContainer');
+            const externalNameInput = document.getElementById('externalName');
+            const externalEmailInput = document.getElementById('externalEmail');
+            const externalPasswordInput = document.getElementById('externalPassword');
+
+
+            // --- State Variables ---
+            let currentlyExpandedQuestionItem = null;
+            let addedItemsData = [];
+            let currentAssessmentName = "Python Fundamentals Assessment"; 
+
+            // --- Python Questions Data ---
+            const pythonQuestions = [
+                {
+                    questionId: "py_mcq_1",
+                    questionTextFull: "When would you use loop.run_in_executor() in an asyncio application?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Advanced",
+                    depthOfKnowledge: "Skill/Concept",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Asyncio",
+                    options: [
+                        "To create a custom Future object for fine-grained control over asynchronous results.",
+                        "To schedule another coroutine to run concurrently on the same event loop.",
+                        "To run a CPU-bound or blocking I/O function in a separate thread or process pool, preventing it from blocking the event loop.",
+                        "To set a timeout for a long-running coroutine."
+                    ],
+                    correctAnswers: [2]
+                },
+                {
+                    questionId: "py_mcq_2",
+                    questionTextFull: "What is the primary role of the LOAD_FAST opcode in CPython bytecode?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Advanced",
+                    depthOfKnowledge: "Recall",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-20",
+                    topic: "CPython Internals",
+                    options: [
+                        "It loads a constant value, like a number or string, from the constants pool.",
+                        "It loads a global variable onto the value stack.",
+                        "It retrieves a local variable from the fast locals array and pushes it onto the value stack.",
+                        "It retrieves an attribute from an object."
+                    ],
+                    correctAnswers: [2]
+                },
+                {
+                    questionId: "py_mcq_3",
+                    questionTextFull: "What is the primary purpose of the weakref module in Python?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Intermediate",
+                    depthOfKnowledge: "Skill/Concept",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Memory Management",
+                    options: [
+                        "To create thread-safe references to objects.",
+                        "To serialize objects into a byte stream more efficiently than pickle.",
+                        "To create deeply nested copies of objects.",
+                        "To create references to objects that don't increase their reference count, allowing them to be garbage collected."
+                    ],
+                    correctAnswers: [3]
+                },
+                {
+                    questionId: "py_mcq_4",
+                    questionTextFull: "When using itertools.groupby(), what is a critical pre-condition for the function to group all identical consecutive items correctly?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Intermediate",
+                    depthOfKnowledge: "Skill/Concept",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Itertools",
+                    options: [
+                        "The input iterable must be sorted by the same key that is used for grouping.",
+                        "The key function must always return a string.",
+                        "The input iterable must not contain duplicate items.",
+                        "The input iterable must be a list."
+                    ],
+                    correctAnswers: [0]
+                },
+                {
+                    questionId: "py_mcq_5",
+                    questionTextFull: "In Python's typing module, what does typing.Protocol enable?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Advanced",
+                    depthOfKnowledge: "Skill/Concept",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Typing",
+                    options: [
+                        "It defines a new data type that is distinct from its underlying base type at type-checking time.",
+                        "It enforces that a class must inherit from a specific base class.",
+                        "It is a decorator for creating asynchronous classes.",
+                        "It allows a class to implicitly satisfy a type hint by having the correct methods and attributes, without explicit inheritance."
+                    ],
+                    correctAnswers: [3]
+                },
+                {
+                    questionId: "py_mcq_6",
+                    questionTextFull: "Why is unpickling data from an untrusted source a major security vulnerability?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Intermediate",
+                    depthOfKnowledge: "Strategic Thinking",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Security",
+                    options: [
+                        "It can cause denial-of-service by consuming excessive memory (a 'pickle bomb').",
+                        "It can corrupt the Python interpreter's memory, leading to a crash.",
+                        "It bypasses the Global Interpreter Lock (GIL), causing race conditions.",
+                        "It can execute arbitrary code, as the pickle format can contain instructions to import modules and call functions."
+                    ],
+                    correctAnswers: [3]
+                },
+                {
+                    questionId: "py_mcq_7",
+                    questionTextFull: "In a metaclass, what is the difference between the operations performed in __new__ versus __init__?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Advanced",
+                    depthOfKnowledge: "Skill/Concept",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Metaclasses",
+                    options: [
+                        "__new__ handles class attributes, and __init__ handles instance attributes.",
+                        "There is no functional difference; they are interchangeable in metaclasses.",
+                        "__new__ is called before the class is created and __init__ is called after an instance of the class is created.",
+                        "__new__ constructs the class object and must return it, while __init__ receives the newly created class object to initialize it."
+                    ],
+                    correctAnswers: [3]
+                },
+                {
+                    questionId: "py_mcq_8",
+                    questionTextFull: "What happens if a class inherits from multiple base classes that each have a different, custom metaclass?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Advanced",
+                    depthOfKnowledge: "Recall",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Metaclasses",
+                    options: [
+                        "The metaclass of the first base class in the inheritance list is used.",
+                        "Python automatically creates a new composite metaclass that inherits from all the base metaclasses.",
+                        "The class will have no metaclass and will default to type.",
+                        "It results in a TypeError because Python cannot determine a single, appropriate metaclass."
+                    ],
+                    correctAnswers: [3]
+                },
+                {
+                    questionId: "py_mcq_9",
+                    questionTextFull: "What is the primary advantage of using yield from instead of a direct for loop with yield?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Intermediate",
+                    depthOfKnowledge: "Skill/Concept",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Generators",
+                    options: [
+                        "It is the only way to yield items from a tuple.",
+                        "It provides a direct, two-way channel between the outermost caller and the innermost sub-generator, forwarding send() and throw() calls.",
+                        "It is purely syntactic sugar with no performance or functional difference.",
+                        "It consumes less memory than a standard for loop."
+                    ],
+                    correctAnswers: [1]
+                },
+                {
+                    questionId: "py_mcq_10",
+                    questionTextFull: "What does the functools.singledispatch decorator enable?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Intermediate",
+                    depthOfKnowledge: "Skill/Concept",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Functools",
+                    options: [
+                        "It automatically converts all function arguments to a single, specified type.",
+                        "It allows a function to have different implementations based on the type of its first argument (generic functions).",
+                        "It ensures a function is only called once, similar to a singleton pattern.",
+                        "It dispatches function execution to a background thread pool."
+                    ],
+                    correctAnswers: [1]
+                },
+                {
+                    questionId: "py_mcq_11",
+                    questionTextFull: "What problem does the Global Interpreter Lock (GIL) solve, despite its performance implications for multithreading?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Advanced",
+                    depthOfKnowledge: "Strategic Thinking",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Concurrency",
+                    options: [
+                        "It prevents race conditions when accessing database connections.",
+                        "It simplifies CPython's memory management by protecting it from concurrent access, making C extensions easier to write.",
+                        "It ensures that asynchronous code in asyncio runs in the correct order.",
+                        "It synchronizes file system operations across different processes."
+                    ],
+                    correctAnswers: [1]
+                },
+                {
+                    questionId: "py_mcq_12",
+                    questionTextFull: "In typing, what is the difference between typing.NewType and a simple type alias (e.g., UserId = int)?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Advanced",
+                    depthOfKnowledge: "Skill/Concept",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Typing",
+                    options: [
+                        "There is no difference; NewType is the deprecated syntax for a type alias.",
+                        "NewType can only be used for classes, whereas a type alias can be used for any type.",
+                        "NewType creates a distinct type that a static type checker treats as a unique subclass, preventing accidental mixing, while a type alias is interchangeable with the original type.",
+                        "NewType adds runtime type checking, while a type alias only works for static analysis."
+                    ],
+                    correctAnswers: [2]
+                },
+                {
+                    questionId: "py_mcq_13",
+                    questionTextFull: "What is a __slots__ conflict, and what happens when a base class has __slots__ and a derived class tries to define __dict__?",
+                    questionType: "Multiple Choice",
+                    difficulty: "Advanced",
+                    depthOfKnowledge: "Skill/Concept",
+                    domain: "TECH",
+                    points: "2",
+                    time: "2-00",
+                    topic: "Memory Management",
+                    options: [
+                        "Instances of the derived class will not have a __dict__ unless '__dict__' is explicitly added to the derived class's __slots__ definition.",
+                        "The derived class __dict__ overrides the base class __slots__, and all instances will have a __dict__.",
+                        "If __dict__ is not added to the derived class's __slots__, a TypeError will be raised.",
+                        "The __slots__ from the base class are ignored in the derived class."
+                    ],
+                    correctAnswers: [0]
+                }
+            ];
+            
+            // --- Helper Functions ---
+            /**
+             * Formats total seconds into a readable string (e.g., 1h 30m 15s).
+             * @param {number} totalSeconds - The total time in seconds.
+             * @returns {string} The formatted time string.
+             */
+            function formatTimeFromSeconds(totalSeconds) {
+                if (isNaN(totalSeconds) || totalSeconds < 0) return "0s";
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                let parts = [];
+                if (hours > 0) parts.push(`${hours}h`);
+                if (minutes > 0) parts.push(`${minutes}m`);
+                if (seconds > 0 || (hours === 0 && minutes === 0)) parts.push(`${seconds}s`);
+                return parts.length > 0 ? parts.join(' ') : '0s';
+            }
+
+            function showCustomAlert(message, type = 'info', duration = 5000) {
+                const existingModal = document.getElementById('custom-alert-modal');
+                if (existingModal) document.body.removeChild(existingModal);
+                const modal = document.createElement('div');
+                modal.id = 'custom-alert-modal';
+                let bgColor = type === 'success' ? 'var(--success-color)' : (type === 'error' ? 'var(--danger-color)' : 'white');
+                let textColor = type === 'info' ? 'var(--text-color-dark)' : 'var(--text-color-light)';
+                modal.style.cssText = `
+                    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+                    background-color: ${bgColor}; color: ${textColor}; padding: 15px 25px;
+                    border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1005;
+                    display: flex; flex-direction: column; align-items: center; gap: 15px;
+                    font-family: 'Calibri', sans-serif; text-align: center; max-width: 90%;
+                    border: 1px solid ${type === 'info' ? 'var(--border-color-light)' : 'transparent'};
+                `;
+                modal.innerHTML = `<p style="font-size: 16px; margin:0;">${message}</p><button style="background-color: ${type === 'info' ? 'var(--primary-color)' : 'rgba(0,0,0,0.2)'}; color: var(--text-color-light); border: none; padding: 8px 18px; border-radius: var(--border-radius-md); cursor: pointer; font-size: 14px; font-weight: 600; transition: background-color 0.2s ease;">OK</button>`;
+                document.body.appendChild(modal);
+                const okButton = modal.querySelector('button');
+                okButton.onmouseover = () => okButton.style.backgroundColor = type === 'info' ? 'var(--primary-color-light)' : 'rgba(0,0,0,0.3)';
+                okButton.onmouseout = () => okButton.style.backgroundColor = type === 'info' ? 'var(--primary-color)' : 'rgba(0,0,0,0.2)';
+                okButton.addEventListener('click', () => { if (document.body.contains(modal)) document.body.removeChild(modal); });
+                if (duration) {
+                  setTimeout(() => { if (document.body.contains(modal)) document.body.removeChild(modal); }, duration);
+                }
+            }
+
+            function getAllQuestionItemsOnPage() {
+                return document.querySelectorAll('.question-list .question-item');
+            }
+
+            // --- Update Page Summaries ---
+            function updateMainPageSummaries() {
+                const allItems = getAllQuestionItemsOnPage();
+                const totalQuestionsListed = allItems.length;
+                customizeQuestionCountDisplay.textContent = `${totalQuestionsListed} Questions`;
+                summaryQuestionCountText.textContent = totalQuestionsListed;
+
+                let currentTotalPoints = 0;
+                let totalSeconds = 0;
+                allItems.forEach(item => {
+                    currentTotalPoints += parseInt(item.dataset.points) || 0;
+                    const timeString = item.dataset.time || "0-00";
+                    const parts = timeString.split('-').map(p => parseInt(p, 10) || 0);
+                    totalSeconds += (parts[0] * 60) + parts[1];
+                });
+                totalPointsDisplay.textContent = currentTotalPoints;
+                totalTimeDisplay.textContent = formatTimeFromSeconds(totalSeconds);
+            }
+
+            function addQuestionNumbersToMainList() {
+                getAllQuestionItemsOnPage().forEach((item, index) => {
+                    let questionNumberEl = item.querySelector('.question-number');
+                    if (!questionNumberEl) {
+                        questionNumberEl = document.createElement('div');
+                        questionNumberEl.classList.add('question-number');
+                        item.insertBefore(questionNumberEl, item.firstChild);
+                    }
+                    questionNumberEl.textContent = `Q${index + 1}`;
+                    item.dataset.qNumber = `Q${index + 1}`;
+                });
+            }
+
+            // --- Cart Functionality ---
+            function updateCartIconCounter() {
+                // Show the star only if there's at least one question
+                if (addedItemsData.length > 0) {
+                    cartItemCountHeaderDisplay.textContent = '*';
+                    cartItemCountHeaderDisplay.style.display = 'flex'; // Ensure it's visible
+                } else {
+                    cartItemCountHeaderDisplay.style.display = 'none'; // Hide the star
+                }
+
+                modalItemCountDisplay.textContent = addedItemsData.length;
+                if(createAssessmentBtnModal) {
+                    createAssessmentBtnModal.disabled = addedItemsData.length === 0;
+                    createAssessmentBtnModal.classList.toggle('disabled', addedItemsData.length === 0);
+                }
+            }
+
+            function renderCartModalItems() {
+                cartModalItemList.innerHTML = addedItemsData.length === 0 ?
+                    '<li style="text-align:center; color: var(--text-color-muted); padding: 10px 0;">No questions added yet.</li>' :
+                    addedItemsData.map((itemData, index) => {
+                        const displayQuestionText = itemData.questionTextFull || itemData.questionText || "Question text missing";
+                        return `
+                            <li class="cart-modal-item">
+                                <span class="cart-modal-item-text">
+                                    <span class="item-q-number">Q${index + 1}:</span> <span class="item-question-text">${displayQuestionText}</span>
+                                </span>
+                                <button class="cart-modal-item-remove-btn" data-question-id="${itemData.questionId}"><i class="fas fa-trash-alt"></i></button>
+                            </li>`;
+                    }).join('');
+                document.querySelectorAll('.cart-modal-item-remove-btn').forEach(btn => btn.addEventListener('click', handleRemoveItemFromCart));
+            }
+
+            function toggleAddItemButtonState(button, isAdded) {
+                if (!button) return;
+                button.classList.toggle('added', isAdded);
+                button.innerHTML = isAdded ? `<i class="fas fa-check"></i> ADDED <i class="fas fa-trash-alt"></i>` : `<i class="fas fa-plus"></i> ADD TO QUESTION LIST`;
+            }
+
+            function handleAddItemToList(questionIdForAction) {
+                let questionData = pythonQuestions.find(q => q.questionId === questionIdForAction);
+
+                if (!questionData) {
+                    questionData = addedItemsData.find(item => item.questionId === questionIdForAction);
+                }
+
+                if (!questionData) {
+                    console.error("Question data not found for ID:", questionIdForAction);
+                    return;
+                }
+
+                const itemIndex = addedItemsData.findIndex(item => item.questionId === questionIdForAction);
+                const detailPanelButton = document.getElementById('detailPanelAddButton');
+
+                if (itemIndex > -1) {
+                    addedItemsData.splice(itemIndex, 1);
+                    if (detailPanelButton && detailPanelButton.dataset.questionId === questionIdForAction) {
+                        toggleAddItemButtonState(detailPanelButton, false);
+                    }
+                } else {
+                    addedItemsData.push(questionData);
+                    if (detailPanelButton && detailPanelButton.dataset.questionId === questionIdForAction) {
+                        toggleAddItemButtonState(detailPanelButton, true);
+                    }
+                }
+                saveAddedItemsToLocalStorage(addedItemsData);
+                updateCartIconCounter();
+                renderCartModalItems();
+                if (reviewPageContainer.style.display === 'block') {
+                    displayReviewPage();
+                }
+            }
+
+            function handleRemoveItemFromCart(event) {
+                const button = event.target.closest('.cart-modal-item-remove-btn');
+                if(!button) return;
+                const questionIdToRemove = button.dataset.questionId;
+                handleAddItemToList(questionIdToRemove);
+            }
+
+            function setupCartEventListeners() {
+                if (cartIconTrigger) cartIconTrigger.addEventListener('click', () => { renderCartModalItems(); cartModalOverlay.style.display = 'flex'; 
+                });
+                if (cartModalCloseBtn) cartModalCloseBtn.addEventListener('click', () => cartModalOverlay.style.display = 'none');
+                if (cartModalOverlay) cartModalOverlay.addEventListener('click', e => { if (e.target === cartModalOverlay) cartModalOverlay.style.display = 'none'; });
+                if (clearItemListBtn) {
+                    clearItemListBtn.addEventListener('click', () => {
+                        addedItemsData = [];
+                        saveAddedItemsToLocalStorage([]);
+                        const detailButton = document.getElementById('detailPanelAddButton');
+                        if (detailButton) {
+                            toggleAddItemButtonState(detailButton, false);
+                        }
+                        document.querySelectorAll('.add-to-item-list-btn-detail').forEach(button => {
+                             toggleAddItemButtonState(button, false);
+                        });
+                        updateCartIconCounter();
+                        renderCartModalItems();
+                         if (reviewPageContainer.style.display === 'block') {
+                            displayReviewPage();
+                        }
+                    });
+                }
+                
+                if (assessmentNameInput) {
+                    assessmentNameInput.addEventListener('input', (e) => {
+                        currentAssessmentName = e.target.value.trim();
+                    });
+                }
+
+                if(createAssessmentBtnModal) {
+                    createAssessmentBtnModal.addEventListener('click', () => {
+                        const assessmentName = assessmentNameInput.value.trim();
+                        if (!assessmentName) {
+                            return showCustomAlert("Please enter an assessment name before creating.", "error");
+                        }
+                        if(addedItemsData.length === 0) return showCustomAlert("Please add questions to the item list first.", "error");
+
+                        let totalQuestions = addedItemsData.length;
+                        let totalPoints = 0;
+                        let totalSeconds = 0; 
+                        addedItemsData.forEach(item => {
+                            totalPoints += parseInt(item.points) || 0;
+                            const timeParts = (item.time || "0-00").split('-').map(p => parseInt(p, 10) || 0);
+                            totalSeconds += (timeParts[0] * 60) + timeParts[1];
+                        });
+
+                        const newAssessment = {
+                            assessmentId: 'asmt_' + Date.now(),
+                            assessmentName: assessmentName,
+                            createdAt: new Date().toISOString(),
+                            questions: addedItemsData,
+                            totalQuestions: totalQuestions,
+                            totalTime: totalSeconds, 
+                            totalPoints: totalPoints
+                        };
+
+                        let library = [];
+                        const storedLibrary = localStorage.getItem(LIBRARY_STORAGE_KEY);
+                        if (storedLibrary) {
+                            try {
+                                library = JSON.parse(storedLibrary);
+                                if (!Array.isArray(library)) library = [];
+                            } catch(e) {
+                                library = [];
+                            }
+                        }
+                        library.unshift(newAssessment);
+                        localStorage.setItem(LIBRARY_STORAGE_KEY, JSON.stringify(library));
+
+                        addedItemsData = [];
+                        saveAddedItemsToLocalStorage([]);
+                        updateCartIconCounter();
+                        
+                        showCustomAlert(`Assessment "${assessmentName}" created and saved to library.`, "success");
+                        cartModalOverlay.style.display = 'none';
+                        setTimeout(() => {
+                           window.location.href = "/configuration/";
+                        }, 1500);
+                    });
+                }
+            }
+
+            // --- Question Detail Panel Functionality ---
+            function openQuestionDetailPanel(clickedQuestionItem) {
+                if (getAllQuestionItemsOnPage().length === 0) {
+                    return showCustomAlert("There are no questions to customize. Please add some questions first.", 'info');
+                }
+
+                if (currentlyExpandedQuestionItem) {
+                    currentlyExpandedQuestionItem.classList.remove('active-detail-item');
+                    const prevArrow = currentlyExpandedQuestionItem.querySelector('.question-arrow');
+                    if (prevArrow) { prevArrow.classList.remove('fa-chevron-left'); prevArrow.classList.add('fa-chevron-right'); }
+                }
+
+                questionListDiv.classList.add('shrunk');
+                questionDetailPanel.classList.add('visible');
+                
+                mainCustomizeContent.scrollTop = 0; 
+                questionDetailPanel.scrollTop = 0; 
+                
+                clickedQuestionItem.classList.add('active-detail-item');
+
+                const ds = clickedQuestionItem.dataset;
+                let questionDataInSource = pythonQuestions.find(q => q.questionId === ds.questionId);
+                if (!questionDataInSource) {
+                     questionDataInSource = addedItemsData.find(q => q.questionId === ds.questionId);
+                }
+
+                const questionFullText = questionDataInSource ? (questionDataInSource.questionTextFull || questionDataInSource.questionText) : (ds.questionTextFull || clickedQuestionItem.querySelector('.question-text').textContent);
+                const questionTopic = questionDataInSource.topic || ds.topic || 'N/A';
+                const questionType = questionDataInSource.questionType || ds.questionType || 'N/A';
+                const difficulty = questionDataInSource.difficulty || ds.difficulty || 'N/A';
+                const domain = questionDataInSource.domain || ds.domain || 'N/A';
+                const time = questionDataInSource.time || ds.time || 'N/A';
+                const points = questionDataInSource.points || ds.points || 'N/A';
+                const depthOfKnowledge = questionDataInSource.depthOfKnowledge || ds.depthOfKnowledge || 'N/A';
+                let optionsHTML = '';
+
+                if (questionDataInSource && questionDataInSource.options) {
+                    try {
+                        const options = questionDataInSource.options;
+                        const correctAnswers = questionDataInSource.correctAnswers || [];
+
+                        if (Array.isArray(options) && options.length > 0) {
+                            optionsHTML = '<h5 style="margin-top:20px; margin-bottom:10px; color: var(--text-color-dark);">Options:</h5><ul class="question-options-list">';
+                            if (["Multiple Choice", "Multiple Selection"].includes(questionType)) {
+                                options.forEach((option, index) => {
+                                    const inputType = (questionType === "Multiple Choice") ? "radio" : "checkbox";
+                                    const inputName = (questionType === "Multiple Choice") ? `detail-question-${ds.questionId}` : `detail-question-${ds.questionId}-option`;
+                                    const isCorrect = correctAnswers.includes(index);
+                                    optionsHTML += `
+                                        <li>
+                                            <input type="${inputType}" name="${inputName}" id="detail-${ds.questionId}-option-${index}" value="${index}" disabled ${isCorrect ? 'checked' : ''}>
+                                            <label for="detail-${ds.questionId}-option-${index}">${option}</label>
+                                            ${isCorrect ? '<i class="fas fa-check-circle" style="color: var(--correct-answer-color); margin-left: 8px;"></i>' : ''}
+                                        </li>`;
+                                });
+                            } else if (["Text Entry", "Pseudo Code", "Coding", "File Upload"].includes(questionType)) {
+                                options.forEach((option, index) => {
+                                    let label = "Content";
+                                    if (questionType === "Text Entry") label = "Expected Answer";
+                                    else if (questionType === "Pseudo Code") label = "Sample Output";
+                                    else if (questionType === "Coding") label = "Example Code";
+                                    else if (questionType === "File Upload") label = "File Upload Instruction";
+
+                                    optionsHTML += `<li><strong>${label}:</strong> <pre style="background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-top: 5px; overflow-x: auto; white-space: pre-wrap; word-break: break-all;">${option}</pre></li>`;
+                                });
+                            }
+                            optionsHTML += '</ul>';
+                        } else {
+                            optionsHTML = '<p style="margin-top:15px; color: var(--text-color-muted);">No options available for this question type.</p>';
+                        }
+                    } catch (e) {
+                        console.error("Error processing question options for detail panel: ", e, questionDataInSource.options);
+                        optionsHTML = '<p style="margin-top:15px; color: var(--danger-color);">Error loading options.</p>';
+                    }
+                } else {
+                     optionsHTML = '<p style="margin-top:15px; color: var(--text-color-muted);">No options defined for this question.</p>';
+                }
+
+
+                const isInCart = addedItemsData.some(item => item.questionId === ds.questionId);
+                const addButtonText = isInCart ? `<i class="fas fa-check"></i> ADDED <i class="fas fa-trash-alt"></i>` : `<i class="fas fa-plus"></i> ADD TO QUESTION LIST`;
+                const addButtonClass = isInCart ? 'add-to-item-list-btn-detail added' : 'add-to-item-list-btn-detail';
+
+                const totalQuestionsInList = getAllQuestionItemsOnPage().length;
+                questionDetailPanel.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color-medium);">
+                        <h4 style="color: var(--primary-color); font-weight: 700; margin:0;">Question Details (${ds.qNumber} of ${totalQuestionsInList})</h4>
+                        <button id="close-detail-panel-btn" style="background:none; border:none; font-size: 24px; line-height:1; color: var(--danger-color); cursor:pointer; padding:0;">&times;</button>
+                    </div>
+                    <div class="detail-section">
+                        <h5>Question Metadata</h5>
+                        <div class="metadata-grid">
+                            <p><strong>Topic:</strong> ${questionTopic}</p>
+                            <p><strong>Type:</strong> ${questionType}</p>
+                            <p><strong>Difficulty:</strong> ${difficulty}</p>
+                            <p><strong>Domain:</strong> ${domain}</p>
+                            <p><strong>Depth of Knowledge:</strong> ${depthOfKnowledge}</p>
+                            <p><strong>Time:</strong> ${time}</p>
+                            <p><strong>Points:</strong> ${points}</p>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <h5>Question Content</h5>
+                        <div class="question-full-text-detail">${questionFullText}</div>
+                        ${optionsHTML}
+                    </div>
+                    <button class="${addButtonClass}" data-question-id="${ds.questionId}" id="detailPanelAddButton">${addButtonText}</button>
+                `;
+
+                document.getElementById('close-detail-panel-btn').addEventListener('click', closeQuestionDetailPanel);
+                document.getElementById('detailPanelAddButton').addEventListener('click', (e) => handleAddItemToList(e.target.dataset.questionId));
+
+
+                const currentArrow = clickedQuestionItem.querySelector('.question-arrow');
+                if(currentArrow) { currentArrow.classList.remove('fa-chevron-right'); currentArrow.classList.add('fa-chevron-left'); }
+                currentlyExpandedQuestionItem = clickedQuestionItem;
+            }
+
+            function closeQuestionDetailPanel() {
+                questionDetailPanel.classList.remove('visible');
+                questionListDiv.classList.remove('shrunk');
+                questionDetailPanel.innerHTML = '';
+                if (currentlyExpandedQuestionItem) {
+                    currentlyExpandedQuestionItem.classList.remove('active-detail-item');
+                    const currentQArrow = currentlyExpandedQuestionItem.querySelector('.question-arrow');
+                    if(currentQArrow) { currentQArrow.classList.remove('fa-chevron-left'); currentQArrow.classList.add('fa-chevron-right'); }
+                }
+                currentlyExpandedQuestionItem = null;
+            }
+
+            // --- Question Item Rendering ---
+            function renderQuestionItem(itemData) {
+                const questionItem = document.createElement('div');
+                questionItem.classList.add('question-item');
+                for (const key in itemData) {
+                    if (itemData.hasOwnProperty(key)) {
+                        if (typeof itemData[key] === 'object' && itemData[key] !== null) {
+                            questionItem.dataset[key] = JSON.stringify(itemData[key]);
+                        } else {
+                            questionItem.dataset[key] = itemData[key];
+                        }
+                    }
+                }
+                questionItem.dataset.questionId = itemData.questionId;
+
+                const displayQuestionText = itemData.questionTextFull || itemData.questionText;
+
+                questionItem.innerHTML = `
+                    <div class="question-number"></div>
+                    <div class="question-content-wrapper">
+                        <div class="question-main-info">
+                            <div class="question-text" title="${displayQuestionText}">${displayQuestionText}</div>
+                            <i class="fas fa-chevron-right question-arrow"></i>
+                        </div>
+                        <div class="question-summary-details-list-view">
+                            <span class="summary-detail-item type">${itemData.questionType || 'N/A'}</span>
+                            <span class="summary-detail-item domain">${itemData.domain || 'N/A'}</span>
+                            <span class="summary-detail-item difficulty">${itemData.difficulty || 'N/A'}</span>
+                            <span class="summary-detail-item time"><i class="fas fa-clock icon"></i> ${itemData.time || 'N/A'}</span>
+                            <span class="summary-detail-item points"><i class="fas fa-medal icon"></i> ${itemData.points || 'N/A'}</span>
+                        </div>
+                        <div class="question-topic">Topic : ${itemData.topic || 'N/A'}</div>
+                    </div>`;
+                return questionItem;
+            }
+
+            function setupQuestionItemEventListeners(item) {
+                // Attach the event listener to the entire question item
+                item.addEventListener('click', function() { // <--- Event listener now on 'item' (the whole question div)
+                    if (getAllQuestionItemsOnPage().length === 0) {
+                        return showCustomAlert("There are no questions to customize. Please add some questions first.", 'info');
+                    }
+                    // If the clicked item is already expanded, close it. Otherwise, open it.
+                    if (currentlyExpandedQuestionItem === item) {
+                        closeQuestionDetailPanel();
+                    } else {
+                        openQuestionDetailPanel(item);
+                    }
+                });
+            }
+
+            // --- Add New Question Functionality ---
+            function handleNewQuestionTypeChange() {
+                const type = newQuestionTypeSelect.value;
+                const showOptions = ["Multiple Choice", "Multiple Selection", "Pseudo Code"].includes(type);
+                newQuestionOptionsContainer.style.display = showOptions ? 'block' : 'none';
+            }
+
+            function addOptionToForm(optionText = "", isCorrect = false) {
+                const optionId = `new-option-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+                const optionDiv = document.createElement('div');
+                optionDiv.classList.add('option-item');
+
+                const optionCount = newQuestionOptionsList.children.length;
+                const optionChar = String.fromCharCode(65 + optionCount);
+
+                optionDiv.innerHTML = `
+                    <span class="option-label">${optionChar}.</span>
+                    <input type="checkbox" id="correct-${optionId}" class="new-option-correct" ${isCorrect ? 'checked' : ''}>
+                    <input type="text" class="new-option-text" value="${optionText}" placeholder="Option text" required>
+                    <button type="button" class="remove-option-btn"><i class="fas fa-trash-alt"></i></button>
+                `;
+                newQuestionOptionsList.appendChild(optionDiv);
+                optionDiv.querySelector('.remove-option-btn').addEventListener('click', () => newQuestionOptionsList.removeChild(optionDiv));
+            }
+
+            function resetAddQuestionForm() {
+                addQuestionForm.reset();
+                newQuestionOptionsList.innerHTML = '';
+                handleNewQuestionTypeChange();
+                if (newQuestionDepthOfKnowledgeSelect) newQuestionDepthOfKnowledgeSelect.value = '';
+            }
+
+            function saveNewQuestion() {
+                const form = addQuestionForm.elements;
+                const questionData = {
+                    questionId: `custom-${Date.now()}`,
+                    questionTextFull: form.newQuestionText.value.trim(),
+                    questionText: form.newQuestionText.value.trim().split('\n')[0],
+                    topic: form.newQuestionTopic.value.trim(),
+                    questionType: form.newQuestionType.value,
+                    difficulty: form.newQuestionDifficulty.value,
+                    depthOfKnowledge: form.newQuestionDepthOfKnowledge.value,
+                    domain: form.newQuestionDomain.value,
+                    points: form.newQuestionPoints.value,
+                    time: form.newQuestionTime.value.trim(),
+                    options: [],
+                    correctAnswers: []
+                };
+
+
+                if (!questionData.questionTextFull || !questionData.topic || !questionData.time.match(/^\d{1,2}-\d{2}$/)) {
+                    return showCustomAlert('Please fill all required fields correctly (Time format MM-SS).', 'error');
+                }
+                if (!questionData.depthOfKnowledge) {
+                    return showCustomAlert('Please select a Depth of Knowledge.', 'error');
+                }
+
+                if (["Multiple Choice", "Multiple Selection", "Pseudo Code"].includes(questionData.questionType)) {
+                    const optionItems = newQuestionOptionsList.querySelectorAll('.option-item');
+                    if (optionItems.length === 0) return showCustomAlert(`Please add at least one option for ${questionData.questionType} questions.`, 'error');
+                    optionItems.forEach((item, index) => {
+                        const text = item.querySelector('.new-option-text').value.trim();
+                        if (text) {
+                            questionData.options.push(text);
+                            if (item.querySelector('.new-option-correct').checked) questionData.correctAnswers.push(index);
+                        }
+                    });
+                    if (questionData.questionType === "Multiple Choice" && questionData.correctAnswers.length !== 1) return showCustomAlert('Multiple Choice questions must have exactly one correct answer.', 'error');
+                    if (["Multiple Selection", "Pseudo Code"].includes(questionData.questionType) && questionData.correctAnswers.length === 0) return showCustomAlert(`${questionData.questionType} questions must have at least one correct answer.`, 'error');
+                } else if (["Coding", "Text Entry", "File Upload"].includes(questionData.questionType)) {
+                     if(questionData.options.length === 0) {
+                        questionData.options.push(questionData.questionTextFull);
+                        questionData.correctAnswers.push(0);
+                     }
+                }
+
+                const newQuestionItem = renderQuestionItem(questionData);
+                questionListDiv.appendChild(newQuestionItem);
+                setupQuestionItemEventListeners(newQuestionItem);
+                addQuestionNumbersToMainList();
+                updateMainPageSummaries();
+
+                pythonQuestions.push(questionData);
+                addedItemsData.push(questionData);
+                saveAddedItemsToLocalStorage(addedItemsData);
+
+                updateCartIconCounter();
+                renderCartModalItems();
+
+                addQuestionModalOverlay.style.display = 'none';
+                resetAddQuestionForm();
+                showCustomAlert('New question added successfully!', 'success');
+
+                if (reviewPageContainer.style.display === 'block') {
+                    displayReviewPage();
+                }
+            }
+
+            function setupAddQuestionModalListeners() {
+                if (addNewQuestionBtnMainPage) {
+                    addNewQuestionBtnMainPage.addEventListener('click', () => {
+                        window.location.href = "classic_question_type.html";
+                    });
+                }
+
+                if (questionLibraryBtn) {
+                    questionLibraryBtn.addEventListener('click', () => {
+                        window.location.href = "/question-library/";
+                    });
+                }
+
+                if (addQuestionModalCloseBtn) addQuestionModalCloseBtn.addEventListener('click', () => addQuestionModalOverlay.style.display = 'none');
+                if (cancelAddQuestionBtn) cancelAddQuestionBtn.addEventListener('click', () => addQuestionModalOverlay.style.display = 'none');
+                if (addQuestionModalOverlay) addQuestionModalOverlay.addEventListener('click', e => { if (e.target === addQuestionModalOverlay) addQuestionModalOverlay.style.display = 'none'; });
+                if (addQuestionForm) addQuestionForm.addEventListener('submit', e => { e.preventDefault(); saveNewQuestion(); });
+                if (newQuestionTypeSelect) newQuestionTypeSelect.addEventListener('change', handleNewQuestionTypeChange);
+                if (addNewOptionBtn) addNewOptionBtn.addEventListener('click', () => addOptionToForm());
+            }
+
+            // --- Review Page Functionality ---
+            function displayReviewPage() {
+                selectedQuestionsDisplay.innerHTML = '';
+                
+                reviewPageTitle.textContent = `Reviewing for: "${currentAssessmentName || 'Python Fundamentals'}"`;
+
+                let totalReviewSeconds = 0; 
+                addedItemsData.forEach(item => {
+                    const timeString = item.time || "0-00";
+                    const parts = timeString.split('-').map(p => parseInt(p, 10) || 0);
+                    totalReviewSeconds += (parts[0] * 60) + parts[1];
+                });
+
+                const formattedReviewTime = formatTimeFromSeconds(totalReviewSeconds); 
+                reviewPageTotalTimeDisplay.textContent = `(${addedItemsData.length} Qs, ${formattedReviewTime})`;
+
+                if (addedItemsData.length === 0) {
+                    selectedQuestionsDisplay.innerHTML = '<p style="text-align:center; color: var(--text-color-muted); padding: 20px 0;">No questions selected for review.</p>';
+                } else {
+                    addedItemsData.forEach((itemInCart, index) => {
+                        const questionData = itemInCart;
+
+                        const questionFullText = questionData.questionTextFull || questionData.questionText || '';
+                        const questionType = questionData.questionType || 'N/A';
+                        const questionId = questionData.questionId;
+                        const correctAnswers = questionData.correctAnswers || [];
+
+                        let optionsHTML = '';
+                        if (questionData.options && questionData.options.length > 0) {
+                            optionsHTML = '<ul class="review-options-list">';
+                            const options = questionData.options;
+
+                            if (["Multiple Choice", "Multiple Selection"].includes(questionType)) {
+                                options.forEach((option, optIndex) => {
+                                    const inputType = (questionType === "Multiple Choice") ? "radio" : "checkbox";
+                                    const inputName = (questionType === "Multiple Choice") ? `review-question-${questionId}` : `review-question-${questionId}-option`;
+                                    const isCorrect = correctAnswers.includes(optIndex);
+                                    optionsHTML += `
+                                        <li>
+                                            <input type="${inputType}" name="${inputName}" id="review-${questionId}-option-${optIndex}" value="${optIndex}" ${isCorrect ? 'checked' : ''} disabled>
+                                            <label for="review-${questionId}-option-${optIndex}">${option}</label>
+                                            ${isCorrect ? '<i class="fas fa-check-circle" style="color: var(--correct-answer-color); margin-left: 8px;"></i>' : ''}
+                                        </li>`;
+                                });
+                            } else if (["Text Entry", "Pseudo Code", "Coding", "File Upload"].includes(questionType)) {
+                                options.forEach((option, optIndex) => {
+                                    let label = "Content";
+                                    if (questionType === "Text Entry") label = "Expected Answer";
+                                    else if (questionType === "Pseudo Code") label = "Sample Output";
+                                    else if (questionType === "Coding") label = "Example Code";
+                                    else if (questionType === "File Upload") label = "File Upload Instruction";
+
+                                    optionsHTML += `<li><strong>${label}:</strong> <pre style="background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-top: 5px; overflow-x: auto; white-space: pre-wrap; word-break: break-all;">${option}</pre></li>`;
+                                });
+                            }
+                            optionsHTML += '</ul>';
+                        } else {
+                            optionsHTML = '<p style="color: var(--text-color-muted);">No options defined for this question type.</p>';
+                        }
+
+                        const questionHtml = `
+                            <div class="review-question-item" data-question-id="${questionId}">
+                                <div class="watermark">Face D Interview</div>
+                                <h4>Q${index + 1}: ${questionFullText}</h4>
+                                ${optionsHTML}
+                                <button class="delete-question-btn" data-question-id="${questionId}" title="Remove this question"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        `;
+                        selectedQuestionsDisplay.insertAdjacentHTML('beforeend', questionHtml);
+                    });
+
+                    document.querySelectorAll('.review-question-item .delete-question-btn').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            const questionIdToDelete = event.currentTarget.dataset.questionId;
+                            removeQuestionFromReviewPage(questionIdToDelete);
+                        });
+                    });
+                }
+
+                mainCustomizeContent.style.display = 'none';
+                bottomActionButtons.style.display = 'none';
+                reviewPageContainer.style.display = 'block';
+
+                nextReviewPageBtn.style.display = 'block';
+                nextActionsContainer.classList.remove('visible');
+
+
+                if (addNewQuestionBtnReviewPage) {
+                    addNewQuestionBtnReviewPage.onclick = () => {
+                        window.location.href = "classic_question_type.html";
+                    };
+                }
+                if (questionLibraryBtnReview) {
+                    questionLibraryBtnReview.onclick = () => {
+                         window.location.href = "/question-library/";
+                    };
+                }
+            }
+            
+            if (nextActionSaveAndProceed) {
+                nextActionSaveAndProceed.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    nextActionsContainer.classList.remove('visible');
+
+                    if (addedItemsData.length === 0) {
+                        showCustomAlert("There are no questions in the list to save.", "error");
+                        return;
+                    }
+
+                    const storedDetails = sessionStorage.getItem('selectedAssessmentDetails');
+                    if (storedDetails) {
+                        try {
+                            const details = JSON.parse(storedDetails);
+                            const assessmentId = details.id;
+
+                            let popularityData = JSON.parse(localStorage.getItem(POPULARITY_STORAGE_KEY)) || {};
+                            
+                            if (popularityData.hasOwnProperty(assessmentId)) {
+                                popularityData[assessmentId]++;
+                            } else {
+                                popularityData[assessmentId] = 1;
+                            }
+                            localStorage.setItem(POPULARITY_STORAGE_KEY, JSON.stringify(popularityData));
+
+                        } catch(e) {
+                            console.error("Error updating popularity count:", e);
+                        }
+                    }
+
+                    let totalQuestions = addedItemsData.length;
+                    let totalPoints = 0;
+                    let totalSeconds = 0; 
+                    addedItemsData.forEach(item => {
+                        totalPoints += parseInt(item.points) || 0;
+                        const timeParts = (item.time || "0-00").split('-').map(p => parseInt(p, 10) || 0);
+                        totalSeconds += (timeParts[0] * 60) + timeParts[1];
+                    });
+                    
+                    const newAssessment = {
+                        assessmentId: 'asmt_' + Date.now(),
+                        assessmentName: currentAssessmentName,
+                        createdAt: new Date().toISOString(),
+                        questions: addedItemsData,
+                        totalQuestions: totalQuestions,
+                        totalTime: totalSeconds, 
+                        totalPoints: totalPoints
+                    };
+
+                    let library = [];
+                    const storedLibrary = localStorage.getItem(LIBRARY_STORAGE_KEY);
+                    if (storedLibrary) {
+                        try {
+                            library = JSON.parse(storedLibrary);
+                            if (!Array.isArray(library)) library = [];
+                        } catch(e) {
+                            library = [];
+                        }
+                    }
+                    library.unshift(newAssessment);
+                    localStorage.setItem(LIBRARY_STORAGE_KEY, JSON.stringify(library));
+
+                    updateCartIconCounter();
+                    
+                    showCustomAlert("Assessment saved successfully! Redirecting...", "success", 2500);
+                    
+                    setTimeout(() => {
+                        window.location.href = "/configuration/";
+                    }, 2500);
+                });
+            }
+
+
+            function handleNextReviewPage() {
+                if (addedItemsData.length === 0) {
+                    showCustomAlert("Please select at least one question to proceed.", "info");
+                    return;
+                }
+                nextActionsContainer.classList.toggle('visible');
+            }
+
+            function removeQuestionFromReviewPage(questionIdToRemove) {
+                const initialLength = addedItemsData.length;
+                addedItemsData = addedItemsData.filter(item => item.questionId !== questionIdToRemove);
+                saveAddedItemsToLocalStorage(addedItemsData);
+
+                if (addedItemsData.length < initialLength) {
+                    showCustomAlert('Question removed successfully!', 'success');
+                } else {
+                    showCustomAlert('Could not find question to remove.', 'error');
+                }
+
+                updateCartIconCounter();
+                renderCartModalItems();
+                displayReviewPage();
+
+                const detailPanelAddButton = document.getElementById('detailPanelAddButton');
+                if (detailPanelAddButton && detailPanelAddButton.dataset.questionId === questionIdToRemove) {
+                    toggleAddItemButtonState(detailPanelAddButton, false);
+                }
+            }
+            
+            // --- Initial Page Load Setup ---
+            function initializePage() {
+                questionListDiv.innerHTML = '';
+
+                // *** CORRECTED LOGIC: Prioritize name from sessionStorage ***
+                currentAssessmentName = sessionStorage.getItem('assessmentName') || 'Python Fundamentals Assessment';
+                assessmentNameInput.value = currentAssessmentName;
+                
+                const storedAssessmentDetails = sessionStorage.getItem('selectedAssessmentDetails');
+                let assessmentToDisplay = null;
+
+                if (storedAssessmentDetails) {
+                    try {
+                        assessmentToDisplay = JSON.parse(storedAssessmentDetails);
+                    } catch (e) {
+                        console.error("Error parsing stored assessment details:", e);
+                        assessmentToDisplay = null; 
+                    }
+                }
+                
+                // Update the page elements with the correct assessment details
+                // The title will now correctly reflect the name from the previous page
+                assessmentDetailsTitle.textContent = 'Python Fundamentals Assessment';
+                assessmentInfoTitle.textContent = 'Python Fundamentals Assessment';
+
+                if (assessmentToDisplay) {
+                    assessmentInfoDescription.textContent = `Description: ${assessmentToDisplay.description || 'This assessment covers core Python concepts.'}`;
+                    assessmentLogoImg.src = assessmentToDisplay.imageUrl || 'https://placehold.co/80x80/3776ab/ffffff?text=Py';
+                    assessmentLogoImg.alt = assessmentToDisplay.imageAlt || 'Python Assessment Logo';
+
+                    assessmentInfoTags.innerHTML = '';
+                    const tags = assessmentToDisplay.filterTags || ["PYTHON", "BACKEND", "TECH"];
+                    if (Array.isArray(tags)) {
+                        tags.forEach(tag => {
+                            const span = document.createElement('span');
+                            span.classList.add('assessment-tag');
+                            span.textContent = tag.toUpperCase();
+                            assessmentInfoTags.appendChild(span);
+                        });
+                    }
+                    
+                    assessmentDetailsContent.classList.remove('collapsed');
+                    assessmentDetailsToggle.classList.remove('collapsed');
+                    assessmentDetailsToggleIcon.classList.remove('fa-chevron-down');
+                    assessmentDetailsToggleIcon.classList.add('fa-chevron-up');
+                } else {
+                    assessmentDetailsContent.classList.add('collapsed');
+                    assessmentDetailsToggle.classList.add('collapsed');
+                    assessmentDetailsToggleIcon.classList.add('fa-chevron-down');
+                    assessmentDetailsToggleIcon.classList.remove('fa-chevron-up');
+                }
+
+
+                addedItemsData = getAddedItemsFromLocalStorage();
+
+                pythonQuestions.forEach(qData => {
+                    const questionItemEl = renderQuestionItem(qData);
+                    questionListDiv.appendChild(questionItemEl);
+                    setupQuestionItemEventListeners(questionItemEl);
+                });
+
+                addQuestionNumbersToMainList();
+                updateMainPageSummaries();
+
+                updateCartIconCounter();
+                renderCartModalItems();
+                setupCartEventListeners();
+                setupAddQuestionModalListeners();
+                handleNewQuestionTypeChange();
+
+                if (profileMenuContainer && profileDropdown) {
+                    profileMenuContainer.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        profileDropdown.classList.toggle('show');
+                    });
+                }
+            }
+            
+            // --- Invite Reviewer Modal Logic ---
+            const freeEmailDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com'];
+
+            function isBusinessEmail(email) {
+                if (!email || email.indexOf('@') === -1) return false;
+                const domain = email.split('@')[1];
+                return !freeEmailDomains.includes(domain.toLowerCase());
+            }
+
+            function renderAddedReviewers() {
+                addedReviewersContainer.innerHTML = '';
+                if (externalReviewers.length === 0) {
+                    addedReviewersContainer.style.display = 'none';
+                    return;
+                }
+                addedReviewersContainer.style.display = 'flex';
+
+                externalReviewers.forEach(reviewer => {
+                    const reviewerItem = document.createElement('div');
+                    reviewerItem.className = 'added-reviewer-item';
+                    reviewerItem.dataset.id = reviewer.id;
+
+                    reviewerItem.innerHTML = `
+                        <div class="reviewer-info">
+                            <span class="reviewer-name" title="${reviewer.name}">${reviewer.name}</span>
+                            <span class="reviewer-email" title="${reviewer.email}">${reviewer.email}</span>
+                            <span class="reviewer-password" data-password="${reviewer.password}">****</span>
+                        </div>
+                        <div class="reviewer-actions">
+                            <i class="fas fa-eye show-hide-password" title="Show/Hide Password"></i>
+                            <i class="fas fa-pen edit-reviewer" title="Edit"></i>
+                            <i class="fas fa-trash-alt remove-reviewer" title="Remove"></i>
+                        </div>
+                    `;
+                    addedReviewersContainer.appendChild(reviewerItem);
+                });
+            }
+
+            function handleAddOrUpdateReviewer() {
+                const name = externalNameInput.value.trim();
+                const email = externalEmailInput.value.trim();
+                const password = externalPasswordInput.value.trim();
+
+                if (!name || !email || !password) {
+                    showCustomAlert("Please fill all reviewer fields.", "error");
+                    return;
+                }
+                if (!isBusinessEmail(email)) {
+                    showCustomAlert("Please enter a valid business email address. Public domains like gmail.com are not allowed.", "error");
+                    return;
+                }
+
+                if (editingReviewerId) {
+                    const reviewer = externalReviewers.find(r => r.id === editingReviewerId);
+                    if (reviewer) {
+                        reviewer.name = name;
+                        reviewer.email = email;
+                        reviewer.password = password;
+                    }
+                    editingReviewerId = null;
+                    addExternalReviewerBtn.textContent = 'ADD';
+                } else {
+                    const newReviewer = { id: Date.now(), name, email, password };
+                    externalReviewers.push(newReviewer);
+                }
+                
+                renderAddedReviewers();
+                
+                externalNameInput.value = '';
+                externalEmailInput.value = '';
+                externalPasswordInput.value = '';
+                externalNameInput.focus();
+            }
+
+            if (addExternalReviewerBtn) {
+                addExternalReviewerBtn.addEventListener('click', handleAddOrUpdateReviewer);
+            }
+
+            if (addedReviewersContainer) {
+                addedReviewersContainer.addEventListener('click', (e) => {
+                    const target = e.target;
+                    const reviewerItem = target.closest('.added-reviewer-item');
+                    if (!reviewerItem) return;
+                    
+                    const reviewerId = Number(reviewerItem.dataset.id);
+
+                    if (target.classList.contains('show-hide-password')) {
+                        const passwordSpan = reviewerItem.querySelector('.reviewer-password');
+                        const isHidden = passwordSpan.textContent === '****';
+                        if (isHidden) {
+                            passwordSpan.textContent = passwordSpan.dataset.password;
+                            target.classList.remove('fa-eye');
+                            target.classList.add('fa-eye-slash');
+                        } else {
+                            passwordSpan.textContent = '****';
+                            target.classList.remove('fa-eye-slash');
+                            target.classList.add('fa-eye');
+                        }
+                    }
+                    
+                    if (target.classList.contains('edit-reviewer')) {
+                        const reviewerToEdit = externalReviewers.find(r => r.id === reviewerId);
+                        if (reviewerToEdit) {
+                            externalNameInput.value = reviewerToEdit.name;
+                            externalEmailInput.value = reviewerToEdit.email;
+                            externalPasswordInput.value = reviewerToEdit.password;
+                            editingReviewerId = reviewerId;
+                            addExternalReviewerBtn.textContent = 'UPDATE';
+                            externalNameInput.focus();
+                        }
+                    }
+                    
+                    if (target.classList.contains('remove-reviewer')) {
+                        externalReviewers = externalReviewers.filter(r => r.id !== reviewerId);
+                        if (editingReviewerId === reviewerId) {
+                            editingReviewerId = null;
+                            addExternalReviewerBtn.textContent = 'ADD';
+                            externalNameInput.value = '';
+                            externalEmailInput.value = '';
+                            externalPasswordInput.value = '';
+                        }
+                        renderAddedReviewers();
+                    }
+                });
+            }
+
+            function updateInviteModalFields() {
+                if (externalReviewerRadio.checked) {
+                    externalReviewerFieldsWrapper.style.display = 'flex';
+                    teamMemberFields.style.display = 'none';
+                } else if (teamMemberRadio.checked) {
+                    externalReviewerFieldsWrapper.style.display = 'none';
+                    teamMemberFields.style.display = 'flex';
+                }
+            }
+
+
+            // --- General Event Listeners & Initial Calls ---
+            if (proceedToReviewBtn) {
+                proceedToReviewBtn.addEventListener('click', function() {
+                    if (addedItemsData.length === 0) {
+                        showCustomAlert("Please add questions to the item list before proceeding to review.", "info");
+                        return;
+                    }
+                    displayReviewPage();
+                });
+            }
+            
+            if (backToSelectionBtn) {
+                backToSelectionBtn.addEventListener('click', () => {
+                    mainCustomizeContent.style.display = 'block';
+                    bottomActionButtons.style.display = 'flex';
+                    reviewPageContainer.style.display = 'none';
+                    if (nextActionsContainer) {
+                        nextActionsContainer.classList.remove('visible');
+                    }
+                });
+            }
+
+            if (nextReviewPageBtn) nextReviewPageBtn.addEventListener('click', handleNextReviewPage);
+
+            if (nextActionInviteForReview) {
+                nextActionInviteForReview.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    nextActionsContainer.classList.remove('visible');
+                    inviteReviewModalOverlay.style.display = 'flex';
+                    externalReviewerRadio.checked = true;
+                    updateInviteModalFields();
+                });
+            }
+
+            if (inviteReviewModalCloseBtn) inviteReviewModalCloseBtn.addEventListener('click', () => { inviteReviewModalOverlay.style.display = 'none'; });
+            if (inviteReviewModalOverlay) inviteReviewModalOverlay.addEventListener('click', (e) => { if (e.target === inviteReviewModalOverlay && !e.target.closest('.modal-content')) inviteReviewModalOverlay.style.display = 'none'; });
+            if (externalReviewerRadio) externalReviewerRadio.addEventListener('change', updateInviteModalFields);
+            if (teamMemberRadio) teamMemberRadio.addEventListener('change', updateInviteModalFields);
+
+
+            if (shareViaEmailBtn) {
+                shareViaEmailBtn.addEventListener('click', () => {
+                    if (externalReviewerRadio.checked) {
+                        if (externalNameInput.value || externalEmailInput.value || externalPasswordInput.value) {
+                            return showCustomAlert("You have unsaved reviewer information. Please ADD or clear the fields first.", "error");
+                        }
+                        if (externalReviewers.length === 0) {
+                             return showCustomAlert("Please add at least one external reviewer.", "error");
+                        }
+                        
+                        const reviewData = {
+                            reviewers: externalReviewers,
+                            questions: addedItemsData,
+                            assessmentTitle: document.getElementById('assessment-info-title').textContent
+                        };
+
+                        const dataString = btoa(JSON.stringify(reviewData));
+                        const reviewLink = `review_link_page.html?data=${encodeURIComponent(dataString)}`;
+                        
+                        const linkHtml = `<p><b>Email simulation:</b> An invitation has been sent to ${externalReviewers.length} reviewer(s).</p>
+                                          <p style="margin-top:15px;">Click the link below to see the reviewer's page:</p>
+                                          <a href="${reviewLink}" target="_blank" style="color: var(--primary-color-light); font-weight: bold; text-decoration: underline;">Open Review Page</a>`;
+                        
+                        showCustomAlert(linkHtml, 'success', 15000);
+
+                    } else if (teamMemberRadio.checked) {
+                        const nameEmail = document.getElementById('teamMemberNameEmail').value.trim();
+                        if (!nameEmail) {
+                            return showCustomAlert("Please enter Name/Email for Team member.", "error");
+                        }
+                        
+                        const emailPart = nameEmail.split(' ').pop();
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                        if (!emailRegex.test(emailPart) || !isBusinessEmail(emailPart)) {
+                            return showCustomAlert("Please provide a valid business email address. Free email providers are not allowed.", "error");
+                        }
+
+                        showCustomAlert(`Inviting Team Member: ${nameEmail}. (This is a simulation)`, 'success');
+                    }
+                    
+                    externalReviewers = [];
+                    renderAddedReviewers();
+                    inviteReviewModalOverlay.style.display = 'none';
+                });
+            }
+            
+            if (customizeButtonRight) {
+                customizeButtonRight.addEventListener('click', function() {
+                    if (getAllQuestionItemsOnPage().length === 0) return showCustomAlert("There are no questions to customize. Please add some questions first.", 'info');
+                    showCustomAlert('Customize button clicked!', 'info');
+                });
+            }
+
+            if (assessmentDetailsToggle) {
+                assessmentDetailsToggle.addEventListener('click', () => {
+                    assessmentDetailsContent.classList.toggle('collapsed');
+                    if (assessmentDetailsContent.classList.contains('collapsed')) {
+                        assessmentDetailsToggleIcon.classList.remove('fa-chevron-up');
+                        assessmentDetailsToggleIcon.classList.add('fa-chevron-down');
+                    } else {
+                        assessmentDetailsToggleIcon.classList.remove('fa-chevron-down');
+                        assessmentDetailsToggleIcon.classList.add('fa-chevron-up');
+                    }
+                });
+            }
+
+
+            const backLink = document.querySelector('.breadcrumb-link');
+            if (backLink) backLink.addEventListener('click', e => { e.preventDefault(); history.back(); });
+
+            initializePage();
+
+            document.addEventListener('click', (event) => {
+                if (profileDropdown && profileDropdown.classList.contains('show') && !profileMenuContainer.contains(event.target)) {
+                    profileDropdown.classList.remove('show');
+                }
+                if (nextActionsContainer && nextActionsContainer.classList.contains('visible') && !nextActionsContainer.contains(event.target) && event.target !== nextReviewPageBtn) {
+                    nextActionsContainer.classList.remove('visible');
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>

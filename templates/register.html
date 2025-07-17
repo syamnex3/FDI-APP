@@ -1,0 +1,610 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+     {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Base Styles - Consistent, clean and responsive foundation */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Inter', Arial, sans-serif; 
+        }
+
+        body, html { 
+            height: 100%; 
+            width: 100%; 
+            background: #f4f4f4; 
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        
+        .container { 
+            display: flex; 
+            width: 100%; 
+            min-height: 100vh; /* Use min-height to ensure it covers the screen but can grow */
+            height: 100%;
+        }
+
+        .left { 
+            width: 50%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; /* Align form to the top */
+            background-color: #ffffff; 
+            padding: 40px 20px; /* Add vertical and horizontal padding */
+            overflow-y: auto; /* Allow scrolling ONLY on this panel if content is too long */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+        .left::-webkit-scrollbar {
+            display: none; /* Hide scrollbar */
+        }
+         
+
+        /* Custom scrollbar for webkit browsers */
+        /* .left::-webkit-scrollbar {
+            width: 8px;
+        } */
+        .left::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .left::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .left::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        body::-webkit-scrollbar, html::-webkit-scrollbar {
+            display: none; /* Hides the scrollbar */
+        }
+        body, html {
+            -ms-overflow-style: none; /* Hides the scrollbar */
+        }
+        body, html {
+            scrollbar-width: none; /* Hides the scrollbar */
+        }
+
+        .right { 
+            width: 50%; 
+            height: 100vh; /* Make right panel stick to viewport height */
+            position: sticky; /* Make it sticky */
+            top: 0; /* Stick to the top */
+        } 
+        .right img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; /* Ensures image covers area */
+        }
+
+        /* --- UNCOMMENTED AND REFINED --- */
+        .register-container { 
+            width: 100%; /* Use 100% width to be responsive within the parent */
+            max-width: 500px; /* Set a max-width for readability on large screens */
+            background: white; 
+            padding: 40px; 
+            border-radius: 0.75rem; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Spacing between elements */
+        }
+
+        h2 { 
+            margin-bottom: 10px; 
+            font-size: 28px; 
+            text-align: center; 
+            color: #333; 
+        }
+        
+        /* Input Group Styles */
+        .input-group { 
+            position: relative; 
+        }
+
+        label { 
+            display: block;
+            font-weight: 600; 
+            margin-bottom: 6px; 
+            font-size: 15px; 
+            color: #444; 
+        }
+        
+        input, select { 
+            width: 100%; 
+            padding: 12px 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 0.5rem; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        input:focus, select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none; /* Remove default outline */
+        }
+        
+        /* Name Fields Layout */
+        .name-fields { 
+            display: flex; 
+            gap: 15px; 
+        }
+        .name-fields .input-group { 
+            flex: 1; 
+        } 
+
+        /* Styles for side-by-side password fields */
+        .password-fields {
+            display: flex;
+            gap: 15px; /* Spacing between password and confirm password fields */
+            width: 100%;
+        }
+        .password-fields .input-group {
+            flex: 1; /* Makes them take equal width */
+        }
+
+        /* Wrapper for input and icon for stable positioning */
+        .password-input-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex; 
+            align-items: center; 
+        }
+        
+        .password-input-wrapper input {
+            flex-grow: 1; 
+            padding-right: 40px; /* Ensure space for the icon */
+        }
+
+        /* Styles for password toggle icons */
+        .toggle-password {
+            position: absolute;
+            right: 15px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            cursor: pointer;
+            color: #888; 
+            font-size: 18px; 
+            z-index: 10; 
+            display: none; /* Hidden by default */
+        }
+
+        /* Submit Button */
+        .submit-btn { 
+            width: 100%; 
+            padding: 14px; 
+            background-color: #28a745; 
+            color: white; 
+            font-size: 18px; 
+            font-weight: bold; 
+            border: none; 
+            border-radius: 0.5rem; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            transition: background-color 0.2s, transform 0.1s; 
+        }
+        .submit-btn:hover:not(:disabled) { 
+            background-color: #218838; 
+            transform: translateY(-1px); 
+        }
+        .submit-btn:active {
+            transform: translateY(0); 
+        }
+        .submit-btn:disabled { 
+            background-color: #a5d6a7; 
+            cursor: not-allowed; 
+            opacity: 0.7; 
+        }
+
+        /* Messages from Django backend */
+        .messages { 
+            list-style-type: none; 
+            padding: 0; 
+            margin-bottom: 20px; 
+        }
+        .messages li { 
+            padding: 12px; 
+            border-radius: 0.5rem; 
+            text-align: center; 
+            font-weight: bold; 
+            margin-bottom: 10px; 
+            font-size: 15px;
+        }
+        .messages li.error { 
+            color: #721c24; 
+            background-color: #f8d7da; 
+            border: 1px solid #f5c6cb; 
+        }
+        .messages li.success { 
+            color: #155724; 
+            background-color: #d4edda; 
+            border: 1px solid #c3e6cb; 
+        } 
+
+        /* Form Link */
+        .form-link { 
+            text-align: center; 
+            margin-top: 20px; 
+            font-size: 15px; 
+        }
+        .form-link a { 
+            color: #007bff; 
+            text-decoration: none; 
+            font-weight: bold; 
+        }
+        .form-link a:hover { 
+            text-decoration: underline; 
+        }
+
+        /* Styles for Client-Side Validation Feedback */
+        .validation-error { 
+            color: #dc3545; 
+            font-size: 13px; 
+            margin-top: 5px; 
+            min-height: 18px; /* Use min-height to prevent layout shifts */
+            text-align: left; 
+            font-weight: 500;
+        }
+        #passErrors ul { 
+            list-style-type: none; 
+            padding-left: 0; 
+            margin: 5px 0 0 0; 
+        } 
+        #passErrors li { 
+            font-size: 13px; 
+            transition: color 0.3s; 
+            text-align: left; 
+            margin-bottom: 2px;
+        }
+        #passErrors li.invalid { 
+            color: #dc3545; 
+        }
+        #passErrors li.invalid::before { 
+            content: '✗ '; 
+            font-weight: bold; 
+        }
+
+        /* Responsive Adjustments */
+        @media screen and (max-width: 992px) { /* Tablet size */
+            .left { 
+                width: 65%; 
+            }
+            .right { 
+                width: 35%; 
+            }
+            .register-container { 
+                padding: 30px; 
+            }
+            .password-fields { 
+                flex-direction: column; /* Stack password fields on tablet */
+                gap: 15px;
+            }
+        }
+
+        @media screen and (max-width: 768px) { /* Mobile size */
+            .container { 
+                flex-direction: column; 
+                height: auto; /* Allow container to grow */
+            }
+            .left { 
+                width: 100%; 
+                height: auto; 
+                padding: 20px; 
+                overflow-y: visible; /* Let the body handle scrolling */
+            }
+            .right { 
+                display: none; /* Hide image on small screens */
+            } 
+            .register-container { 
+                width: 100%; 
+                max-width: none; 
+                padding: 25px; 
+                margin: 0;
+                box-shadow: none; /* Optional: remove shadow on mobile */
+            } 
+            .name-fields {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="left">
+        <div class="register-container">
+            <h2>Employer Register</h2>
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        {# Use message.tags for dynamic styling (error, success, info) #}
+                        <li class="{{ message.tags }}">{{ message }}</li> 
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <form id="registrationForm" action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+                <div class="name-fields">
+                    <div class="input-group">
+                        <label>First Name <span style="color:red">*</span></label>
+                        <input type="text" name="firstName" id="firstName" required maxlength="50" placeholder="e.g. Sai Neeraj" value="{{ request.POST.firstName }}">
+                        <div class="validation-error" id="firstNameError"></div>
+                    </div>
+                    <div class="input-group">
+                        <label>Last Name</label>
+                        <input type="text" name="lastName" id="lastName" maxlength="50" placeholder="e.g. Gorle" value="{{ request.POST.lastName }}">
+                        <div class="validation-error" id="lastNameError"></div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Business Email <span style="color:red">*</span></label>
+                    <input type="email" name="email" id="email" required maxlength="50" placeholder="e.g. your.name@company.com" value="{{ request.POST.email }}">
+                    <div class="validation-error" id="emailError"></div>
+                </div>
+                <div class="input-group">
+                    <label for="role">Role <span style="color:red">*</span></label>
+                    <select id="role" name="role" required>
+                        <option value="">Select your role</option>
+                        <option value="HR Manager" {% if request.POST.role == 'HR Manager' %}selected{% endif %}>HR Manager</option>
+                        <option value="Internal Recruiter" {% if request.POST.role == 'Internal Recruiter' %}selected{% endif %}>Internal Recruiter</option>
+                        <option value="Hiring Manager" {% if request.POST.role == 'Hiring Manager' %}selected{% endif %}>Hiring Manager</option>
+                        <option value="Interviewer" {% if request.POST.role == 'Interviewer' %}selected{% endif %}>Interviewer</option>
+                        <option value="External Interviewer" {% if request.POST.role == 'External Interviewer' %}selected{% endif %}>External Interviewer</option>
+                    </select>
+                    <div class="validation-error" id="roleError"></div>
+                </div>
+                <div class="input-group">
+                    <label>Organization Name <span style="color:red">*</span></label>
+                    <input type="text" name="organizationName" id="organizationName" required maxlength="50" placeholder="e.g. Nexnora Technologies" value="{{ request.POST.organizationName }}">
+                    <div class="validation-error" id="orgNameError"></div>
+                </div>
+                
+                {# Flex container for side-by-side password fields #}
+                <div class="password-fields">
+                    <div class="input-group">
+                        <label>Password <span style="color:red">*</span></label>
+                        <!-- NEW: Wrapper for input and icon -->
+                        <div class="password-input-wrapper">
+                            <input type="password" name="password" id="password" required maxlength="16">
+                            <i class="fas fa-eye toggle-password" id="togglePasswordVisibility"></i>
+                        </div>
+                        <div id="passErrors"></div>
+                    </div>
+                    <div class="input-group">
+                        <label>Confirm Password <span style="color:red">*</span></label>
+                        <!-- NEW: Wrapper for input and icon -->
+                        <div class="password-input-wrapper">
+                            <input type="password" name="confirmPassword" id="confirmPassword" required maxlength="16">
+                            <i class="fas fa-eye toggle-password" id="toggleConfirmPasswordVisibility"></i>
+                        </div>
+                        <div class="validation-error" id="confirmPassError"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="registerBtn" disabled>Register</button>
+            </form>
+            <p class="form-link">Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+        </div>
+    </div>
+    <div class="right">
+        <img src="{% static 'images/FDI_BG.png' %}" alt="FDI logo displayed on a green and white background, conveying a professional and welcoming atmosphere for employer registration. The environment is clean and modern. If present, the text FDI is shown prominently." onerror="this.onerror=null;this.src='https://placehold.co/800x1200/28A745/FFFFFF?text=Image';">
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const emailInput = document.getElementById('email');
+        const roleSelect = document.getElementById('role');
+        const orgNameInput = document.getElementById('organizationName');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const registerBtn = document.getElementById('registerBtn');
+        const passErrorsDiv = document.getElementById('passErrors');
+        const firstNameError = document.getElementById('firstNameError');
+        const lastNameError = document.getElementById('lastNameError');
+        const emailError = document.getElementById('emailError');
+        const roleError = document.getElementById('roleError');
+        const orgNameError = document.getElementById('orgNameError');
+        const confirmPassError = document.getElementById('confirmPassError');
+
+        // Get references to the eye icons
+        const togglePasswordVisibility = document.getElementById('togglePasswordVisibility');
+        const toggleConfirmPasswordVisibility = document.getElementById('toggleConfirmPasswordVisibility');
+
+        let roleSelectTouched = false;
+
+        let passwordCriteria = {
+            length: false,
+            uppercase: false,
+            lowercase: false,
+            number: false,
+            special: false,
+            match: false
+        };
+
+        // Validate name fields (no numbers)
+        function validateName(input, errorDiv) {
+            const hasNumbers = /\d/.test(input.value);
+            if (hasNumbers) {
+                errorDiv.textContent = 'Cannot contain numbers.';
+            } else {
+                errorDiv.textContent = '';
+            }
+            return !hasNumbers;
+        }
+
+        // Validate email format
+        function validateEmailFormat(input, errorDiv) {
+            const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+            if (!isValid && input.value.trim() !== '') {
+                errorDiv.textContent = 'Invalid email format.';
+            } else {
+                errorDiv.textContent = '';
+            }
+            return isValid;
+        }
+
+        // Validate select box (a role is selected)
+        function validateSelect(select, errorDiv) {
+            const isSelected = select.value !== "";
+            if (!isSelected && roleSelectTouched) { // Only show error if touched and not selected
+                errorDiv.textContent = 'Please select a role.';
+            } else {
+                errorDiv.textContent = '';
+            }
+            return isSelected;
+        }
+
+        // Validate generic text input is not empty
+        function validateTextNotEmpty(input, errorDiv, message) {
+            const isEmpty = input.value.trim() === "";
+            if (isEmpty) {
+                errorDiv.textContent = message;
+            } else {
+                errorDiv.textContent = '';
+            }
+            return !isEmpty;
+        }
+
+        // Validate password strength against criteria
+        function validatePassword() {
+            const pass = passwordInput.value;
+            passwordCriteria.length = pass.length >= 8 && pass.length <= 16;
+            passwordCriteria.uppercase = /[A-Z]/.test(pass);
+            passwordCriteria.lowercase = /[a-z]/.test(pass);
+            passwordCriteria.number = /[0-9]/.test(pass);
+            passwordCriteria.special = /[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?`~]/.test(pass); 
+
+            let errorMessages = '';
+            if (!passwordCriteria.length) {
+                errorMessages += '<li class="invalid">8-16 characters.</li>';
+            }
+            if (!passwordCriteria.uppercase) {
+                errorMessages += '<li class="invalid">At least one uppercase letter.</li>';
+            }
+            if (!passwordCriteria.lowercase) {
+                errorMessages += '<li class="invalid">At least one lowercase letter.</li>';
+            }
+            if (!passwordCriteria.number) {
+                errorMessages += '<li class="invalid">At least one number.</li>';
+            }
+            if (!passwordCriteria.special) {
+                errorMessages += '<li class="invalid">At least one special character.</li>';
+            }
+
+            if (errorMessages) {
+                passErrorsDiv.innerHTML = `<ul>${errorMessages}</ul>`;
+            } else {
+                passErrorsDiv.innerHTML = ''; // Hide all criteria if valid
+            }
+
+            // Always re-validate confirm password when password changes
+            validateConfirmPassword(); 
+            checkFormValidity();
+        }
+
+        // Validate confirm password matches password
+        function validateConfirmPassword() {
+            const pass = passwordInput.value;
+            const confirmPass = confirmPasswordInput.value;
+            passwordCriteria.match = (pass === confirmPass && pass !== ''); 
+
+            if (confirmPass.trim() === '') {
+                confirmPassError.textContent = 'Confirm password is required.';
+            } else if (!passwordCriteria.match) {
+                confirmPassError.textContent = 'Passwords do not match.';
+            } else {
+                confirmPassError.textContent = '';
+            }
+            checkFormValidity();
+        }
+
+        // Overall form validity check to enable/disable the submit button
+        function checkFormValidity() {
+            // Re-run all individual validations to get latest error states
+            const isFirstNameValid = validateName(firstNameInput, firstNameError) && validateTextNotEmpty(firstNameInput, firstNameError);
+            const isLastNameValid = validateName(lastNameInput, lastNameError); 
+            const isEmailValid = validateEmailFormat(emailInput, emailError) && validateTextNotEmpty(emailInput, emailError);
+            const isRoleSelected = validateSelect(roleSelect, roleError);
+            const isOrgNameValid = validateTextNotEmpty(orgNameInput, orgNameError);
+            
+            // Check if all password criteria are met (excluding 'match' for strength check)
+            const isPasswordStrong = Object.values(passwordCriteria).slice(0, 5).every(Boolean); 
+            const doPasswordsMatch = passwordCriteria.match;
+
+            // Enable button only if all checks pass
+            if (isFirstNameValid && isLastNameValid && isEmailValid && isRoleSelected && isOrgNameValid && isPasswordStrong && doPasswordsMatch) {
+                registerBtn.disabled = false;
+            } else {
+                registerBtn.disabled = true;
+            }
+        }
+
+        // Function to set up password toggle logic for an input field and its icon
+        function setupPasswordToggle(inputElement, toggleIcon) {
+            // Toggle password visibility on icon click
+            toggleIcon.addEventListener('click', function() {
+                const type = inputElement.getAttribute('type') === 'password' ? 'text' : 'password';
+                inputElement.setAttribute('type', type);
+                // Toggle the eye icon class
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+
+            // Show/hide icon based on input content
+            inputElement.addEventListener('input', function() {
+                if (this.value.length > 0) {
+                    toggleIcon.style.display = 'block';
+                } else {
+                    toggleIcon.style.display = 'none';
+                    // Ensure password type is 'password' when icon disappears
+                    // This prevents leaving the password visible if cleared by user
+                    inputElement.setAttribute('type', 'password');
+                    toggleIcon.classList.add('fa-eye');
+                    toggleIcon.classList.remove('fa-eye-slash');
+                }
+            });
+
+            // Initial check in case there's pre-filled content (e.g., from Django post request)
+            if (inputElement.value.length > 0) {
+                toggleIcon.style.display = 'block';
+            }
+        }
+
+        // Add event listeners for real-time validation
+        firstNameInput.addEventListener('input', checkFormValidity);
+        lastNameInput.addEventListener('input', checkFormValidity);
+        emailInput.addEventListener('input', checkFormValidity); 
+        roleSelect.addEventListener('change', checkFormValidity); 
+        
+        // Add a blur listener to know when the user has interacted with the role select
+        roleSelect.addEventListener('blur', function() {
+            roleSelectTouched = true;
+            checkFormValidity();
+        });
+
+        orgNameInput.addEventListener('input', checkFormValidity); 
+        passwordInput.addEventListener('input', validatePassword);
+        confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+
+        // Apply the toggle setup to both password fields
+        setupPasswordToggle(passwordInput, togglePasswordVisibility);
+        setupPasswordToggle(confirmPasswordInput, toggleConfirmPasswordVisibility);
+
+        // Initial check on page load to set button state
+        checkFormValidity();
+    });
+</script>
+</body>
+</html>

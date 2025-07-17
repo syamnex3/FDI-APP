@@ -1,0 +1,257 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+    <meta charset="UTF-8">
+    <title>Employer Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Prevent body from scrolling */
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .left, .right {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .left {
+            width: 55%;
+            background-color: #f9f9f9;
+            overflow-y: auto; /* Allow left side to scroll if content overflows */
+            -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
+            scrollbar-width: none;  /* Hide scrollbar for Firefox */
+        }
+
+        .left::-webkit-scrollbar {
+            display: none;
+        }
+
+
+        .right {
+            width: 45%;
+            background-color: #fff;
+        }
+
+        .right img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .signin-container {
+            width: 80%;
+            max-width: 400px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .signin-container h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .required-star {
+            color: red;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .toggle-icon {
+            position: absolute;
+            top: 70%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .messages {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 15px;
+        }
+        .messages li {
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .messages li.error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .messages li.success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .form-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .form-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .form-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media screen and (max-width: 768px) {
+            html, body {
+                overflow: auto; /* Re-enable scrolling for mobile */
+            }
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .left, .right {
+                width: 100%;
+                height: auto;
+            }
+            .left {
+               padding: 20px 0;
+               min-height: 100vh;
+            }
+            .right {
+                display: none; /* Hide image on mobile for better form focus */
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="left">
+        <div class="signin-container">
+            <h2>Employer Login</h2>
+
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <form action="{% url 'employer_login' %}" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="email">Email <span class="required-star">*</span></label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your business email">
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password <span class="required-star">*</span></label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                    <i class="fas fa-eye toggle-icon" id="togglePassword"></i>
+                </div>
+
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+
+            <p class="form-link">
+                <a href="{% url 'forgot_password' %}">Forgot password?</a>
+            </p>
+            <p class="form-link">Don’t have an account?
+                <a href="{% url 'register' %}">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="right">
+        <img src="{% static 'images/FDI_BG.png' %}" alt="Login Visual" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/2C3E50/FFFFFF?text=Image';">
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordField = document.getElementById('password');
+
+        if (togglePassword && passwordField) {
+            togglePassword.addEventListener('click', function() {
+                // Toggle the type attribute
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                
+                // Toggle the icon
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        }
+    });
+</script>
+</body>
+</html>

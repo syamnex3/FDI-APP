@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     {% load static %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+    <meta charset="UTF-8">
+    <title>Registration Successful</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f2f2f2; display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center; }
+        .container { padding: 40px; background: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #28a745; margin-bottom: 20px; }
+        p { margin-bottom: 20px; font-size: 1.1em; }
+        a { color: #fff; background-color: #007bff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thank You For Registering on FDI!</h1>
+        <p>A confirmation email has been sent to your registered mail ID.</p>
+        <p><a href="{% url 'login' %}">Click Here to Login</a></p>
+    </div>
+</body>
+</html>
